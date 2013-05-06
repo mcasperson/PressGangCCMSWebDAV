@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 /**
     The virtual folder that holds all the topic's details
  */
-@Path("{var:.*}/TOPICS/{topicId: \\d+}")
+@Path("{var:.*}TOPICS/{topicId:\\d+}")
 public class WebDavTopic extends WebDavResource {
 
     private static final Logger LOGGER = Logger.getLogger(WebDavTopic.class.getName());
@@ -58,26 +58,20 @@ public class WebDavTopic extends WebDavResource {
             } else {
                 LOGGER.info("Depth != 0");
 
-                try {
-                    final EntityManager entityManager = WebDavUtils.getEntityManager(false);
+                final EntityManager entityManager = WebDavUtils.getEntityManager(false);
 
-                    final Topic topic = entityManager.find(Topic.class, topicId);
+                final Topic topic = entityManager.find(Topic.class, topicId);
 
-                    if (topic != null) {
-                        /* Otherwise we are retuning info on the children in this collection */
-                        final List<Response> responses = new ArrayList<Response>();
-                        responses.add(WebDavTopicContent.getProperties(uriInfo, topic));
-                        final MultiStatus st = new MultiStatus(responses.toArray(new Response[responses.size()]));
-                        return javax.ws.rs.core.Response.status(207).entity(st).type(WebDavConstants.XML_MIME).build();
-                    } else {
-                        return javax.ws.rs.core.Response.status(404).build();
-                    }
-
-                } catch (final NumberFormatException ex) {
+                if (topic != null) {
+                    /* Otherwise we are retuning info on the children in this collection */
+                    final List<Response> responses = new ArrayList<Response>();
+                    responses.add(WebDavTopicContent.getProperties(uriInfo, topic));
+                    final MultiStatus st = new MultiStatus(responses.toArray(new Response[responses.size()]));
+                    return javax.ws.rs.core.Response.status(207).entity(st).type(WebDavConstants.XML_MIME).build();
+                } else {
+                    LOGGER.info("Could not find topic " + topicId);
                     return javax.ws.rs.core.Response.status(404).build();
                 }
-
-
             }
 
         } catch (final Exception ex) {

@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 /**
     A WebDAV file that holds the topics contents.
  */
-@Path("{var:.*}/{topicId: \\d+}/CONTENT")
+@Path("{var:.*}/{topicId:\\d+}/CONTENT")
 public class WebDavTopicContent extends WebDavResource {
 
     private static final String RESOURCE_NAME = "CONTENT";
@@ -39,7 +39,7 @@ public class WebDavTopicContent extends WebDavResource {
     @GET
     @Produces(WebDavConstants.OCTET_STREAM_MIME)
     public javax.ws.rs.core.Response get() {
-        LOGGER.info("ENTER WebDavTopic.get()");
+        LOGGER.info("ENTER WebDavTopicContent.get()");
 
         try {
             final EntityManager entityManager = WebDavUtils.getEntityManager(false);
