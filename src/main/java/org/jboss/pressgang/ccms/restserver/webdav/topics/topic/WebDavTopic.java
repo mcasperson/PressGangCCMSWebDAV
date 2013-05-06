@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 /**
     The virtual folder that holds all the topic's details
  */
-@Path("{var:.*}TOPICS/{start:\\d+}-{end:\\d+}/{topicId:\\d+}")
+@Path("{var:.*}TOPICS{var:.*}/{topicId:\\d+}")
 public class WebDavTopic extends WebDavResource {
 
     private static final Logger LOGGER = Logger.getLogger(WebDavTopic.class.getName());
@@ -68,7 +68,6 @@ public class WebDavTopic extends WebDavResource {
 
                     /* Fix the last modified date */
                     topic.setLastModifiedDate(EnversUtilities.getFixedLastModifiedDate(entityManager, topic));
-
 
                     final List<Response> responses = new ArrayList<Response>();
                     responses.add(WebDavTopicContent.getProperties(uriInfo, topic));

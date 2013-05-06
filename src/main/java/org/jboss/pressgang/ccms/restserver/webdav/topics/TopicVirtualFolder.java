@@ -36,7 +36,7 @@ public class TopicVirtualFolder extends WebDavResource {
 
     public static final String RESOURCE_NAME = "TOPICS";
     private static final Logger LOGGER = Logger.getLogger(TopicVirtualFolder.class.getName());
-    private static final int GROUP_SIZE = 100;
+
 
     @Override
     @Produces(MediaType.APPLICATION_XML)
@@ -45,7 +45,7 @@ public class TopicVirtualFolder extends WebDavResource {
                                               @HeaderParam(CONTENT_LENGTH) final long contentLength, @Context final Providers providers,
                                               @Context final HttpHeaders httpHeaders) throws URISyntaxException, IOException {
         try {
-            LOGGER.info("ENTER TopicGroupedVirtualFolder.propfind()");
+            LOGGER.info("ENTER TopicVirtualFolder.propfind()");
 
             if (depth == 0) {
                 LOGGER.info("Depth == 0");
@@ -64,9 +64,9 @@ public class TopicVirtualFolder extends WebDavResource {
 
                 final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
 
-                for (int i = minId; i < maxId; i += GROUP_SIZE) {
+                for (int i = minId; i < maxId; i += WebDavConstants.GROUP_SIZE) {
                     final String start = String.format("%0" + maxIdDigits + "d", i);
-                    final String end = String.format("%0" + maxIdDigits + "d", (i + GROUP_SIZE - 1));
+                    final String end = String.format("%0" + maxIdDigits + "d", (i + WebDavConstants.GROUP_SIZE - 1));
 
                     responses.add(getFolderProperties(uriInfo, start + "-" + end));
                 }
