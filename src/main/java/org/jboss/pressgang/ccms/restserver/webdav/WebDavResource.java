@@ -66,23 +66,22 @@ public class WebDavResource {
     @Produces("application/octet-stream")
     public javax.ws.rs.core.Response get() {
         LOGGER.info("ENTER WebDavResource.get()");
-        return javax.ws.rs.core.Response.status(404).build();
+        return javax.ws.rs.core.Response.serverError().build();
     }
 
     @PUT
     @Consumes("application/octet-stream")
-    public javax.ws.rs.core.Response put(@Context final UriInfo uriInfo,
-                                  final InputStream entityStream,
-                                  @HeaderParam(CONTENT_LENGTH) final long contentLength)
+    public javax.ws.rs.core.Response put(@Context final UriInfo uriInfo, final InputStream entityStream, @HeaderParam(CONTENT_LENGTH) final long contentLength,
+                                         @HeaderParam("Expect") final String expect)
             throws IOException, URISyntaxException {
         LOGGER.info("ENTER WebDavResource.put()");
-        return javax.ws.rs.core.Response.status(404).build();
+        return javax.ws.rs.core.Response.serverError().build();
     }
 
     @MKCOL
     public javax.ws.rs.core.Response mkcol() {
         LOGGER.info("ENTER WebDavResource.mkcol()");
-        return javax.ws.rs.core.Response.status(404).build();
+        return javax.ws.rs.core.Response.serverError().build();
     }
 
     @Produces("application/xml")
@@ -91,19 +90,19 @@ public class WebDavResource {
                                        @HeaderParam(CONTENT_LENGTH) final long contentLength, @Context final Providers providers,
                                        @Context final HttpHeaders httpHeaders) throws URISyntaxException, IOException {
         LOGGER.info("ENTER WebDavResource.propfind()");
-        return javax.ws.rs.core.Response.status(404).build();
+        return javax.ws.rs.core.Response.serverError().build();
     }
 
     @PROPPATCH
-    public javax.ws.rs.core.Response proppatch() {
+    public javax.ws.rs.core.Response proppatch(@Context final UriInfo uriInfo, final InputStream body, @Context final Providers providers, @Context final HttpHeaders httpHeaders) throws IOException, URISyntaxException {
         LOGGER.info("ENTER WebDavResource.proppatch()");
-        return javax.ws.rs.core.Response.status(404).build();
+        return javax.ws.rs.core.Response.serverError().build();
     }
 
     @COPY
     public javax.ws.rs.core.Response copy() {
         LOGGER.info("ENTER WebDavResource.copy()");
-        return javax.ws.rs.core.Response.status(404).build();
+        return javax.ws.rs.core.Response.serverError().build();
     }
 
     /*
@@ -118,13 +117,13 @@ public class WebDavResource {
     @MOVE
     public javax.ws.rs.core.Response move(@Context final UriInfo uriInfo, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) throws URISyntaxException {
         LOGGER.info("ENTER WebDavResource.move()");
-        return javax.ws.rs.core.Response.status(404).build();
+        return javax.ws.rs.core.Response.serverError().build();
     }
 
     @DELETE
     public javax.ws.rs.core.Response delete() {
         LOGGER.info("ENTER WebDavResource.delete()");
-        return javax.ws.rs.core.Response.status(404).build();
+        return javax.ws.rs.core.Response.serverError().build();
     }
 
     @OPTIONS

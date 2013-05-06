@@ -1,19 +1,14 @@
-package org.jboss.pressgang.ccms.restserver.webdav.topics.topic;
+package org.jboss.pressgang.ccms.restserver.webdav.topics;
 
 import net.java.dev.webdav.jaxrs.methods.PROPFIND;
-import static net.java.dev.webdav.jaxrs.xml.properties.ResourceType.COLLECTION;
 import net.java.dev.webdav.jaxrs.xml.elements.*;
-import net.java.dev.webdav.jaxrs.xml.elements.Response;
-import net.java.dev.webdav.jaxrs.xml.properties.*;
 import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTopicContent;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
 
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
-import static javax.ws.rs.core.Response.Status.OK;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.*;
@@ -25,22 +20,22 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.ext.Providers;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
-    The virtual folder that holds all the topic's details
+    The virtual folder that holds all the topics within a given id range.
  */
-@Path("{var:.*}TOPICS/{topicId:\\d+}")
-public class WebDavTopic extends WebDavResource {
+@Path("/TOPICS/{start:\\d+}-{end:\\d+}")
+public class TopicGroupedVirtualFolder extends WebDavResource {
 
-    private static final Logger LOGGER = Logger.getLogger(WebDavTopic.class.getName());
+    public static final String RESOURCE_NAME = "TOPICS";
+    private static final Logger LOGGER = Logger.getLogger(TopicGroupedVirtualFolder.class.getName());
 
-    @PathParam("topicId") int topicId;
+    @PathParam("start") int start;
+    @PathParam("end") int end;
 
     @Override
     @Produces(MediaType.APPLICATION_XML)
@@ -56,22 +51,21 @@ public class WebDavTopic extends WebDavResource {
                 /* A depth of zero means we are returning information about this item only */
                 return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(getFolderProperties(uriInfo))).type(WebDavConstants.XML_MIME).build();
             } else {
-                LOGGER.info("Depth != 0");
-
+                LOGGER.info("Getting children of the TOPICS virtual folder");
+                /* Otherwise we are retuning info on the children in this collection */
                 final EntityManager entityManager = WebDavUtils.getEntityManager(false);
+                final List<Topic> topics = entityManager.createQuery("SELECT topic FROM Topic topic where topic.topicId >= " + start + " and topic.topicId <= " + end).getResultList();
+                final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
 
-                final Topic topic = entityManager.find(Topic.class, topicId);
+                LOGGER.info(topics.size() + " topics found.");
 
-                if (topic != null) {
-                    /* Otherwise we are retuning info on the children in this collection */
-                    final List<Response> responses = new ArrayList<Response>();
-                    responses.add(WebDavTopicContent.getProperties(uriInfo, topic));
-                    final MultiStatus st = new MultiStatus(responses.toArray(new Response[responses.size()]));
-                    return javax.ws.rs.core.Response.status(207).entity(st).type(WebDavConstants.XML_MIME).build();
-                } else {
-                    LOGGER.info("Could not find topic " + topicId);
-                    return javax.ws.rs.core.Response.status(404).build();
+                for (final Topic topic : topics) {
+                    responses.add(getFolderProperties(uriInfo, topic.getTopicId().toString()));
                 }
+
+                final MultiStatus st = new MultiStatus(responses.toArray(new net.java.dev.webdav.jaxrs.xml.elements.Response[responses.size()]));
+
+                return javax.ws.rs.core.Response.status(207).entity(st).type(WebDavConstants.XML_MIME).build();
             }
 
         } catch (final Exception ex) {
@@ -80,4 +74,5 @@ public class WebDavTopic extends WebDavResource {
             return javax.ws.rs.core.Response.status(500).build();
         }
     }
+
 }

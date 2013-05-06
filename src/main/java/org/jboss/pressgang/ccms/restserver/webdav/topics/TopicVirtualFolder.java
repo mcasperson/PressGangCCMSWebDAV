@@ -1,45 +1,45 @@
 package org.jboss.pressgang.ccms.restserver.webdav.topics;
 
 import net.java.dev.webdav.jaxrs.methods.PROPFIND;
-import static net.java.dev.webdav.jaxrs.xml.properties.ResourceType.COLLECTION;
-import net.java.dev.webdav.jaxrs.xml.elements.*;
-import net.java.dev.webdav.jaxrs.xml.elements.Response;
-import net.java.dev.webdav.jaxrs.xml.properties.*;
+import net.java.dev.webdav.jaxrs.xml.elements.MultiStatus;
 import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.WebDavTopic;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTopicContent;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
-
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
-import static javax.ws.rs.core.Response.Status.OK;
-
-import javax.ws.rs.core.*;
 
 import javax.persistence.EntityManager;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
+import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
+
 /**
-    The virtual folder that holds all the topics.
+    The virtual folder that holds groups of topic ids. Grouping in this way prevents
+    the server from having to process too many topics in any part of the tree.
  */
 @Path("/TOPICS")
 public class TopicVirtualFolder extends WebDavResource {
 
     public static final String RESOURCE_NAME = "TOPICS";
     private static final Logger LOGGER = Logger.getLogger(TopicVirtualFolder.class.getName());
+    private static final int GROUP_SIZE = 100;
+
+    @PathParam("start") int start;
+    @PathParam("end") int end;
 
     @Override
     @Produces(MediaType.APPLICATION_XML)
@@ -48,20 +48,23 @@ public class TopicVirtualFolder extends WebDavResource {
                                               @HeaderParam(CONTENT_LENGTH) final long contentLength, @Context final Providers providers,
                                               @Context final HttpHeaders httpHeaders) throws URISyntaxException, IOException {
         try {
-            LOGGER.info("ENTER TopicVirtualFolder.propfind()");
+            LOGGER.info("ENTER TopicGroupedVirtualFolder.propfind()");
 
             if (depth == 0) {
                 LOGGER.info("Depth == 0");
                 /* A depth of zero means we are returning information about this item only */
                 return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(getFolderProperties(uriInfo))).type(WebDavConstants.XML_MIME).build();
             } else {
-                LOGGER.info("Depth != 0");
+                LOGGER.info("Getting children of the TOPICS virtual folder");
                 /* Otherwise we are retuning info on the children in this collection */
                 final EntityManager entityManager = WebDavUtils.getEntityManager(false);
-                final List<Topic> topics = entityManager.createQuery("SELECT topic FROM Topic topic").getResultList();
+                final int minId = entityManager.createQuery("SELECT MIN(topic.topicId) FROM Topic topic").getFirstResult();
+                final int maxId = entityManager.createQuery("SELECT MAX(topic.topicId) FROM Topic topic").getFirstResult();
+
                 final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
-                for (final Topic topic : topics) {
-                    responses.add(getFolderProperties(uriInfo, topic.getTopicId().toString()));
+
+                for (int i = minId; i < maxId; i += GROUP_SIZE) {
+                    responses.add(getFolderProperties(uriInfo, i + "-" + (i + GROUP_SIZE - 1)));
                 }
 
                 final MultiStatus st = new MultiStatus(responses.toArray(new net.java.dev.webdav.jaxrs.xml.elements.Response[responses.size()]));
