@@ -58,13 +58,17 @@ public class TopicVirtualFolder extends WebDavResource {
 
                 final Integer minId = entityManager.createQuery("SELECT MIN(topic.topicId) FROM Topic topic", Integer.class).getSingleResult();
                 final Integer maxId = entityManager.createQuery("SELECT MAX(topic.topicId) FROM Topic topic", Integer.class).getSingleResult();
+                final int maxIdDigits = maxId.toString().length();
 
                 LOGGER.info("Minimum topic id is " + minId + " and the maximum id is " + maxId);
 
                 final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
 
                 for (int i = minId; i < maxId; i += GROUP_SIZE) {
-                    responses.add(getFolderProperties(uriInfo, i + "-" + (i + GROUP_SIZE - 1)));
+                    final String start = String.format("%0" + maxIdDigits + " d", i);
+                    final String end = String.format("%0" + maxIdDigits + " d", (i + GROUP_SIZE - 1));
+
+                    responses.add(getFolderProperties(uriInfo, start + "-" + end));
                 }
 
                 final MultiStatus st = new MultiStatus(responses.toArray(new net.java.dev.webdav.jaxrs.xml.elements.Response[responses.size()]));
