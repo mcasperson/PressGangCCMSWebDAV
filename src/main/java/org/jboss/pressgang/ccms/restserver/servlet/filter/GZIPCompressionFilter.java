@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
     <url-pattern>/*</url-pattern>
 </filter-mapping>}</pre>
  */
-@WebFilter(urlPatterns = "/rest/*")
+@WebFilter(urlPatterns = "/webdav/*")
 public class GZIPCompressionFilter implements Filter {
     private static Logger log = LoggerFactory.getLogger(GZIPCompressionFilter.class);
     private static AtomicBoolean initialised = new AtomicBoolean(false);
