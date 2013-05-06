@@ -55,8 +55,11 @@ public class TopicVirtualFolder extends WebDavResource {
                 LOGGER.info("Getting children of the TOPICS virtual folder");
                 /* Otherwise we are retuning info on the children in this collection */
                 final EntityManager entityManager = WebDavUtils.getEntityManager(false);
-                final int minId = entityManager.createQuery("SELECT MIN(topic.topicId) FROM Topic topic").getFirstResult();
-                final int maxId = entityManager.createQuery("SELECT MAX(topic.topicId) FROM Topic topic").getFirstResult();
+
+                final Integer minId = entityManager.createQuery("SELECT MIN(topic.topicId) FROM Topic topic", Integer.class).getSingleResult();
+                final Integer maxId = entityManager.createQuery("SELECT MAX(topic.topicId) FROM Topic topic", Integer.class).getSingleResult();
+
+                LOGGER.info("Minimum topic id is " + minId + " and the maximum id is " + maxId);
 
                 final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
 
