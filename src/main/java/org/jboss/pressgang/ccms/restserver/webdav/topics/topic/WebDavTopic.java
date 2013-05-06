@@ -6,6 +6,7 @@ import net.java.dev.webdav.jaxrs.xml.elements.*;
 import net.java.dev.webdav.jaxrs.xml.elements.Response;
 import net.java.dev.webdav.jaxrs.xml.properties.*;
 import org.jboss.pressgang.ccms.model.Topic;
+import org.jboss.pressgang.ccms.restserver.utils.EnversUtilities;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTopicContent;
@@ -52,18 +53,23 @@ public class WebDavTopic extends WebDavResource {
             LOGGER.info("ENTER TopicGroupedVirtualFolder.propfind()");
 
             if (depth == 0) {
-                LOGGER.info("Depth == 0");
                 /* A depth of zero means we are returning information about this item only */
+                LOGGER.info("Depth == 0");
+
                 return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(getFolderProperties(uriInfo))).type(WebDavConstants.XML_MIME).build();
             } else {
+                /* Otherwise we are retuning info on the children in this collection */
                 LOGGER.info("Depth != 0");
-
                 final EntityManager entityManager = WebDavUtils.getEntityManager(false);
 
                 final Topic topic = entityManager.find(Topic.class, topicId);
 
                 if (topic != null) {
-                    /* Otherwise we are retuning info on the children in this collection */
+
+                    /* Fix the last modified date */
+                    topic.setLastModifiedDate(EnversUtilities.getFixedLastModifiedDate(entityManager, topic));
+
+
                     final List<Response> responses = new ArrayList<Response>();
                     responses.add(WebDavTopicContent.getProperties(uriInfo, topic));
                     final MultiStatus st = new MultiStatus(responses.toArray(new Response[responses.size()]));
