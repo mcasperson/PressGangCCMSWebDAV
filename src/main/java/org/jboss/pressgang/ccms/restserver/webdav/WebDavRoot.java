@@ -32,7 +32,7 @@ import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.WebDavTopic;
 /**
     The root of the WebDAV server.
  */
-@Path("/webdav")
+@Path("/")
 public class WebDavRoot extends WebDavResource {
 
     private static final Logger LOGGER = Logger.getLogger(WebDavRoot.class.getName());

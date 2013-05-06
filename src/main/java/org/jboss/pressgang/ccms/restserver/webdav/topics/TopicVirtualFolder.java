@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 /**
     The virtual folder that holds all the topics.
  */
-@Path("/webdav/TOPICS")
+@Path("/TOPICS")
 public class TopicVirtualFolder extends WebDavResource {
 
     public static final String RESOURCE_NAME = "TOPICS";
