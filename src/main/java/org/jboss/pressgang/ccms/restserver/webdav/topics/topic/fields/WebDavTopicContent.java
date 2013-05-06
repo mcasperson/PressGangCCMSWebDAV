@@ -35,9 +35,10 @@ public class WebDavTopicContent extends WebDavResource {
 
     @PathParam("topicId") int topicId;
 
+    @Override
     @GET
     @Produces(WebDavConstants.OCTET_STREAM_MIME)
-    public javax.ws.rs.core.Response get(@PathParam("topicId") final int topicId) {
+    public javax.ws.rs.core.Response get() {
         LOGGER.info("ENTER WebDavTopic.get()");
 
         try {
@@ -55,6 +56,8 @@ public class WebDavTopicContent extends WebDavResource {
 
         return javax.ws.rs.core.Response.status(404).build();
     }
+
+
 
     @Override
     public javax.ws.rs.core.Response propfind(@Context UriInfo uriInfo, @HeaderParam(DEPTH) int depth, InputStream entityStream, @HeaderParam(CONTENT_LENGTH) long contentLength, @Context Providers providers, @Context HttpHeaders httpHeaders) throws URISyntaxException, IOException {

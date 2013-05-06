@@ -49,16 +49,7 @@ public class WebDavRoot extends WebDavResource {
             if (depth == 0) {
                 LOGGER.info("Depth == 0");
                 /* A depth of zero means we are returning information about this item only */
-                final URI uri = uriInfo.getRequestUri();
-                final HRef hRef = new HRef(uri);
-                final Date lastModified = new Date();
-                final CreationDate creationDate = new CreationDate(lastModified);
-                final GetLastModified getLastModified = new GetLastModified(lastModified);
-                final Status status = new Status((StatusType) OK);
-                final Prop prop = new Prop(creationDate,getLastModified, COLLECTION);
-                final PropStat propStat = new PropStat(prop, status);
-
-                final Response folder = new Response(hRef, null, null, null, propStat);
+                final Response folder = getFolderProperties(uriInfo);
 
                 return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(folder)).type(WebDavConstants.XML_MIME).build();
             } else {
@@ -67,7 +58,7 @@ public class WebDavRoot extends WebDavResource {
                 final List<Response> responses = new ArrayList<Response>();
 
                 /* The topic collection */
-                responses.add(TopicVirtualFolder.getProperties(uriInfo));
+                responses.add(getFolderProperties(uriInfo, TopicVirtualFolder.RESOURCE_NAME));
 
 
                 final MultiStatus st = new MultiStatus(responses.toArray(new Response[responses.size()]));

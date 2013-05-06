@@ -19,11 +19,15 @@
 package org.jboss.pressgang.ccms.restserver.webdav;
 
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
+import static javax.ws.rs.core.Response.Status.OK;
 import static net.java.dev.webdav.jaxrs.Headers.*;
+import static net.java.dev.webdav.jaxrs.xml.properties.ResourceType.COLLECTION;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.naming.NamingException;
@@ -47,6 +51,9 @@ import net.java.dev.webdav.jaxrs.methods.MKCOL;
 import net.java.dev.webdav.jaxrs.methods.MOVE;
 import net.java.dev.webdav.jaxrs.methods.PROPFIND;
 import net.java.dev.webdav.jaxrs.methods.PROPPATCH;
+import net.java.dev.webdav.jaxrs.xml.elements.*;
+import net.java.dev.webdav.jaxrs.xml.properties.CreationDate;
+import net.java.dev.webdav.jaxrs.xml.properties.GetLastModified;
 import org.jboss.pressgang.ccms.restserver.utils.JNDIUtilities;
 import org.jboss.resteasy.spi.InternalServerErrorException;
 
@@ -129,5 +136,47 @@ public class WebDavResource {
         return builder.build();
     }
 
+    /**
+     * Returning a child folder means returning a Respose that identifies a WebDAV collection.
+     * This method populates the returned request with the information required to identify
+     * a child folder.
+     *
+     * @param uriInfo The URI of the current request
+     * @param resourceName The name of the child folder
+     * @return The properties for a child folder
+     */
+    public static Response getFolderProperties(final UriInfo uriInfo, final String resourceName) {
+        final URI uri = uriInfo.getRequestUriBuilder().path(resourceName).build();
+        final HRef hRef = new HRef(uri);
+        final Date lastModified = new Date();
+        final CreationDate creationDate = new CreationDate(lastModified);
+        final GetLastModified getLastModified = new GetLastModified(lastModified);
+        final Status status = new Status((javax.ws.rs.core.Response.StatusType) OK);
+        final Prop prop = new Prop(creationDate, getLastModified, COLLECTION);
+        final PropStat propStat = new PropStat(prop, status);
 
+        final Response folder = new Response(hRef, null, null, null, propStat);
+
+        return folder;
+    }
+
+    /**
+     *
+     * @param uriInfo The URI of the current request
+     * @return The properties for the current folder
+     */
+    public static Response getFolderProperties(final UriInfo uriInfo) {
+        final URI uri = uriInfo.getRequestUri();
+        final HRef hRef = new HRef(uri);
+        final Date lastModified = new Date();
+        final CreationDate creationDate = new CreationDate(lastModified);
+        final GetLastModified getLastModified = new GetLastModified(lastModified);
+        final Status status = new Status((javax.ws.rs.core.Response.StatusType) OK);
+        final Prop prop = new Prop(creationDate, getLastModified, COLLECTION);
+        final PropStat propStat = new PropStat(prop, status);
+
+        final Response folder = new Response(hRef, null, null, null, propStat);
+
+        return folder;
+    }
 }

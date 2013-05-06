@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 @Path("/webdav/TOPICS")
 public class TopicVirtualFolder extends WebDavResource {
 
-    private static final String RESOURCE_NAME = "TOPICS";
+    public static final String RESOURCE_NAME = "TOPICS";
     private static final Logger LOGGER = Logger.getLogger(TopicVirtualFolder.class.getName());
 
     @Override
@@ -53,7 +53,7 @@ public class TopicVirtualFolder extends WebDavResource {
             if (depth == 0) {
                 LOGGER.info("Depth == 0");
                 /* A depth of zero means we are returning information about this item only */
-                return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(getProperties(uriInfo))).type(WebDavConstants.XML_MIME).build();
+                return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(getFolderProperties(uriInfo))).type(WebDavConstants.XML_MIME).build();
             } else {
                 LOGGER.info("Depth != 0");
                 /* Otherwise we are retuning info on the children in this collection */
@@ -61,7 +61,7 @@ public class TopicVirtualFolder extends WebDavResource {
                 final List<Topic> topics = entityManager.createQuery("SELECT topic FROM Topic topic").getResultList();
                 final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
                 for (final Topic topic : topics) {
-                    responses.add(WebDavTopic.getProperties(uriInfo, topic.getTopicId()));
+                    responses.add(getFolderProperties(uriInfo, topic.getTopicId().toString()));
                 }
 
                 final MultiStatus st = new MultiStatus(responses.toArray(new net.java.dev.webdav.jaxrs.xml.elements.Response[responses.size()]));
@@ -74,21 +74,6 @@ public class TopicVirtualFolder extends WebDavResource {
             ex.printStackTrace();
             return javax.ws.rs.core.Response.status(500).build();
         }
-    }
-
-    public static Response getProperties(final UriInfo uriInfo) {
-        final URI uri = uriInfo.getRequestUriBuilder().path(RESOURCE_NAME).build();
-        final HRef hRef = new HRef(uri);
-        final Date lastModified = new Date();
-        final CreationDate creationDate = new CreationDate(lastModified);
-        final GetLastModified getLastModified = new GetLastModified(lastModified);
-        final Status status = new Status((javax.ws.rs.core.Response.StatusType) OK);
-        final Prop prop = new Prop(creationDate, getLastModified, COLLECTION);
-        final PropStat propStat = new PropStat(prop, status);
-
-        final Response folder = new Response(hRef, null, null, null, propStat);
-
-        return folder;
     }
 
 }
