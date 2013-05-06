@@ -31,7 +31,7 @@ import java.util.logging.Logger;
     We do this because "ls -la" is a killer. It will enumerate the grandchildren
     of the current directory in order to provide file counts.
 
-    This means that without at least two levels of indirection, a ls call
+    This means that without at least two levels of indirection, an ls call
     could result in every topic being returned.
 
     With two levels of indirection we can reduce that down to a call that returns
@@ -63,12 +63,10 @@ public class TopicGroupedVirtualFolder extends WebDavResource {
 
                 final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
 
-
+                final int maxIdDigits = (end + "").length();
 
                 if (end - start + 1 > WebDavConstants.SECOND_LEVEL_GROUP_SIZE) {
-                    LOGGER.info("Creating new level of grouping");
-
-                    final int maxIdDigits = (end + "").length();
+                    LOGGER.info("Creating new level of grouping. This doesn't involve any query.");
 
                     for (int i = start; i < end; i += WebDavConstants.SECOND_LEVEL_GROUP_SIZE) {
                         final String start = String.format("%0" + maxIdDigits + "d", i);
@@ -78,13 +76,14 @@ public class TopicGroupedVirtualFolder extends WebDavResource {
                     }
                 } else {
 
-                    LOGGER.info("Getting child topics");
+                    LOGGER.info("Getting child topics. This will return topics ids.");
                     /* Otherwise we are retuning info on the children in this collection */
                     final EntityManager entityManager = WebDavUtils.getEntityManager(false);
-                    final List<Topic> topics = entityManager.createQuery("SELECT topic FROM Topic topic where topic.topicId >= " + start + " and topic.topicId <= " + end).getResultList();
+                    final List<Integer> topics = entityManager.createQuery("SELECT topic.topicId FROM Topic topic where topic.topicId >= " + start + " and topic.topicId <= " + end, Integer.class).getResultList();
 
-                    for (final Topic topic : topics) {
-                        responses.add(getFolderProperties(uriInfo, topic.getTopicId().toString()));
+                    for (final Integer topic : topics) {
+                        final String topicId = String.format("%0" + maxIdDigits + "d", topic.toString());
+                        responses.add(getFolderProperties(uriInfo, topicId));
                     }
                 }
 

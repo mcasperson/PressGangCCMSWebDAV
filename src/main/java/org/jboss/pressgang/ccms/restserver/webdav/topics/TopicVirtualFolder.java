@@ -52,7 +52,7 @@ public class TopicVirtualFolder extends WebDavResource {
                 /* A depth of zero means we are returning information about this item only */
                 return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(getFolderProperties(uriInfo))).type(WebDavConstants.XML_MIME).build();
             } else {
-                LOGGER.info("Getting children of the TOPICS virtual folder");
+                LOGGER.info("Getting children of the TOPICS virtual folder. This is a min/max query.");
                 /* Otherwise we are retuning info on the children in this collection */
                 final EntityManager entityManager = WebDavUtils.getEntityManager(false);
 
