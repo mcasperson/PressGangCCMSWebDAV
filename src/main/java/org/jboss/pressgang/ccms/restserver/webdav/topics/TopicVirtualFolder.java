@@ -65,8 +65,8 @@ public class TopicVirtualFolder extends WebDavResource {
                 final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
 
                 for (int i = minId; i < maxId; i += GROUP_SIZE) {
-                    final String start = String.format("%0" + maxIdDigits + " d", i);
-                    final String end = String.format("%0" + maxIdDigits + " d", (i + GROUP_SIZE - 1));
+                    final String start = String.format("%0" + maxIdDigits + "d", i);
+                    final String end = String.format("%0" + maxIdDigits + "d", (i + GROUP_SIZE - 1));
 
                     responses.add(getFolderProperties(uriInfo, start + "-" + end));
                 }
