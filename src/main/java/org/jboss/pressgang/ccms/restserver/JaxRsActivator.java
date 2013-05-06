@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  * annotation.
  * </p>
  */
-@ApplicationPath("/rest")
+@ApplicationPath("/")
 public class JaxRsActivator extends Application {
     private static final Logger LOGGER = Logger.getLogger(JaxRsActivator.class.getName());
 
