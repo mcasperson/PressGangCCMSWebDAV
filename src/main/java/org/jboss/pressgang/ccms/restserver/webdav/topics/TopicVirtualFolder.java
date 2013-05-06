@@ -38,9 +38,6 @@ public class TopicVirtualFolder extends WebDavResource {
     private static final Logger LOGGER = Logger.getLogger(TopicVirtualFolder.class.getName());
     private static final int GROUP_SIZE = 100;
 
-    @PathParam("start") int start;
-    @PathParam("end") int end;
-
     @Override
     @Produces(MediaType.APPLICATION_XML)
     @PROPFIND
