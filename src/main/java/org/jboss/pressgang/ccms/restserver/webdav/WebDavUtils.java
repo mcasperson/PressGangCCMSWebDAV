@@ -18,7 +18,7 @@ public class WebDavUtils {
     public static EntityManager getEntityManager(boolean joinTransaction) {
         if (entityManagerFactory == null) {
             try {
-                entityManagerFactory = JNDIUtilities.lookupJBossEntityManagerFactory();
+                entityManagerFactory = JNDIUtilities.lookupEntityManagerFactory();
             } catch (NamingException e) {
                 throw new InternalServerErrorException("Could not find the EntityManagerFactory");
             }

@@ -7,6 +7,7 @@ import net.java.dev.webdav.jaxrs.xml.elements.Response;
 import net.java.dev.webdav.jaxrs.xml.properties.*;
 import org.apache.commons.io.IOUtils;
 import org.jboss.pressgang.ccms.model.Topic;
+import org.jboss.pressgang.ccms.restserver.utils.JNDIUtilities;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
@@ -17,6 +18,7 @@ import static javax.ws.rs.core.Response.Status.OK;
 
 
 import javax.persistence.EntityManager;
+import javax.transaction.TransactionManager;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import javax.ws.rs.ext.Providers;
@@ -69,9 +71,13 @@ public class WebDavTopicContent extends WebDavResource {
             throws IOException, URISyntaxException {
 
         EntityManager entityManager = null;
+        TransactionManager transactionManager = null;
 
         try {
             LOGGER.info("ENTER WebDavTopicContent.put()");
+
+            transactionManager = JNDIUtilities.lookupTransactionManager();
+            transactionManager.begin();
 
             entityManager = WebDavUtils.getEntityManager(false);
 
@@ -89,11 +95,22 @@ public class WebDavTopicContent extends WebDavResource {
                 LOGGER.info(newContents);
 
                 topic.setTopicXML(newContents);
+
                 entityManager.persist(topic);
+                entityManager.flush();
+                transactionManager.commit();
 
                 return javax.ws.rs.core.Response.ok().build();
             }
         } catch (final Exception ex) {
+            if (transactionManager != null) {
+                try {
+                    transactionManager.rollback();
+                } catch (final Exception ex2) {
+                    LOGGER.severe("There was an error rolling back the transaction " + ex2.toString());
+                }
+            }
+
             return javax.ws.rs.core.Response.status(404).build();
         }  finally {
             if (entityManager != null) {
