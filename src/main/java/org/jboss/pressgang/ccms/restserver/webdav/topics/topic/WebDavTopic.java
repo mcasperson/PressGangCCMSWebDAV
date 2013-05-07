@@ -1,6 +1,10 @@
 package org.jboss.pressgang.ccms.restserver.webdav.topics.topic;
 
+import net.java.dev.webdav.jaxrs.methods.MOVE;
 import net.java.dev.webdav.jaxrs.methods.PROPFIND;
+
+import static net.java.dev.webdav.jaxrs.Headers.DESTINATION;
+import static net.java.dev.webdav.jaxrs.Headers.OVERWRITE;
 import static net.java.dev.webdav.jaxrs.xml.properties.ResourceType.COLLECTION;
 import net.java.dev.webdav.jaxrs.xml.elements.*;
 import net.java.dev.webdav.jaxrs.xml.elements.Response;
@@ -16,13 +20,10 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
 import static javax.ws.rs.core.Response.Status.OK;
 
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 import javax.persistence.EntityManager;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.ext.Providers;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,4 +84,5 @@ public class WebDavTopic extends WebDavResource {
             return javax.ws.rs.core.Response.status(500).build();
         }
     }
+
 }

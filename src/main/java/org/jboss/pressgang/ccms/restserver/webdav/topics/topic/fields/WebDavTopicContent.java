@@ -1,5 +1,6 @@
 package org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields;
 
+import net.java.dev.webdav.jaxrs.methods.MOVE;
 import net.java.dev.webdav.jaxrs.methods.PROPFIND;
 import net.java.dev.webdav.jaxrs.methods.PROPPATCH;
 import net.java.dev.webdav.jaxrs.xml.elements.*;
@@ -15,6 +16,8 @@ import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
 import static javax.ws.rs.core.Response.Status.OK;
+import static net.java.dev.webdav.jaxrs.Headers.DESTINATION;
+import static net.java.dev.webdav.jaxrs.Headers.OVERWRITE;
 
 
 import javax.persistence.EntityManager;
@@ -39,8 +42,11 @@ public class WebDavTopicContent extends WebDavResource {
 
     private static final Logger LOGGER = Logger.getLogger(WebDavTopicContent.class.getName());
 
-    @PathParam("topicId") int topicId;
-    @PathParam("topicId2") int topicId2;
+    @PathParam("topicId") private int topicId;
+    @PathParam("topicId2") private int topicId2;
+
+    @Context private UriInfo uriInfo;
+    @HeaderParam(CONTENT_LENGTH) private long contentLength;
 
     @Override
     @GET
@@ -74,7 +80,7 @@ public class WebDavTopicContent extends WebDavResource {
     @Override
     @PUT
     @Consumes("*/*")
-    public javax.ws.rs.core.Response put(@Context final UriInfo uriInfo, final InputStream entityStream, @HeaderParam(CONTENT_LENGTH) final long contentLength)
+    public javax.ws.rs.core.Response put(final InputStream entityStream)
             throws IOException, URISyntaxException {
 
         EntityManager entityManager = null;
@@ -130,8 +136,8 @@ public class WebDavTopicContent extends WebDavResource {
 
     @Override
     @PROPFIND
-    public javax.ws.rs.core.Response propfind(@Context UriInfo uriInfo, @HeaderParam(DEPTH) int depth, InputStream entityStream, @HeaderParam(CONTENT_LENGTH) long contentLength,
-                                              @Context Providers providers, @Context HttpHeaders httpHeaders) throws URISyntaxException, IOException {
+    public javax.ws.rs.core.Response propfind(@Context final UriInfo uriInfo, @HeaderParam(DEPTH) int depth, final InputStream entityStream, @HeaderParam(CONTENT_LENGTH) final long contentLength,
+                                              @Context final Providers providers, @Context final HttpHeaders httpHeaders) throws URISyntaxException, IOException {
         LOGGER.info("ENTER WebDavTopic.propfind()");
 
         try {
@@ -180,5 +186,20 @@ public class WebDavTopicContent extends WebDavResource {
         final Response davFile = new Response(hRef, null, null, null, propStat);
 
         return davFile;
+    }
+
+
+    @Override
+    @MOVE
+    public javax.ws.rs.core.Response move(@Context final UriInfo uriInfo, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) throws URISyntaxException {
+        LOGGER.info("ENTER WebDavResource.move()");
+        return javax.ws.rs.core.Response.ok().build();
+    }
+
+    @Override
+    @DELETE
+    public javax.ws.rs.core.Response delete() {
+        LOGGER.info("ENTER WebDavResource.delete()");
+        return javax.ws.rs.core.Response.ok().build();
     }
 }
