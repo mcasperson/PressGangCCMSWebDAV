@@ -63,19 +63,18 @@ public class TopicGroupedVirtualFolder extends WebDavResource {
 
                 final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
 
-                if (end - start + 1 > WebDavConstants.GROUP_SIZE) {
+                final int range = end - start + 1;
+
+                if (range > WebDavConstants.GROUP_SIZE) {
 
                     /* find out how large is the largest (or smallest) topic id, logarithmicly speaking */
-                    int zeros = MathUtils.getScale(end) + 1;
-
-                    /* the parent is the next 10-base number that can hold the largest scale */
-                    final int parent = (int)Math.pow(10, zeros);
+                    int zeros = MathUtils.getScale(range);
 
                     /* what is our grouping */
-                    final int grouping = parent / WebDavConstants.GROUP_SIZE;
+                    final int grouping = (int)Math.pow(10, zeros - 1);
 
                     /* max digits */
-                    final int maxDigits = zeros + 1;
+                    final int maxDigits = zeros;
 
                     for (int i = start; i < end; i += grouping) {
                         final String startGroup = String.format("%0" + maxDigits + "d", i);
