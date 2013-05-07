@@ -1,5 +1,6 @@
 package org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields;
 
+import net.java.dev.webdav.jaxrs.methods.PROPFIND;
 import net.java.dev.webdav.jaxrs.methods.PROPPATCH;
 import net.java.dev.webdav.jaxrs.xml.elements.*;
 import net.java.dev.webdav.jaxrs.xml.elements.Response;
@@ -64,39 +65,49 @@ public class WebDavTopicContent extends WebDavResource {
     @Override
     @PUT
     @Consumes("*/*")
-    public javax.ws.rs.core.Response put(@Context final UriInfo uriInfo, final InputStream entityStream, @HeaderParam(CONTENT_LENGTH) final long contentLength,
-                                         @HeaderParam("Expect") final String expect)
+    public javax.ws.rs.core.Response put(@Context final UriInfo uriInfo, final InputStream entityStream, @HeaderParam(CONTENT_LENGTH) final long contentLength)
             throws IOException, URISyntaxException {
 
+        EntityManager entityManager = null;
+
         try {
-            if(expect != null){
-                return javax.ws.rs.core.Response.status(417).build();
-            }
+            LOGGER.info("ENTER WebDavTopicContent.put()");
+
+            entityManager = WebDavUtils.getEntityManager(false);
 
             if (contentLength == 0)
                 return javax.ws.rs.core.Response.ok().build();
 
-            final EntityManager entityManager = WebDavUtils.getEntityManager(false);
             final Topic topic = entityManager.find(Topic.class, topicId);
 
             if (topic != null) {
 
-                StringWriter writer = new StringWriter();
+                final StringWriter writer = new StringWriter();
                 IOUtils.copy(entityStream, writer, "UTF-8");
+                final String newContents = writer.toString();
 
-                topic.setTopicXML(writer.toString());
+                LOGGER.info(newContents);
+
+                topic.setTopicXML(newContents);
                 entityManager.persist(topic);
-            }
 
+                return javax.ws.rs.core.Response.ok().build();
+            }
         } catch (final Exception ex) {
             return javax.ws.rs.core.Response.status(404).build();
+        }  finally {
+            if (entityManager != null) {
+                entityManager.close();
+            }
         }
 
         return javax.ws.rs.core.Response.status(404).build();
     }
 
     @Override
-    public javax.ws.rs.core.Response propfind(@Context UriInfo uriInfo, @HeaderParam(DEPTH) int depth, InputStream entityStream, @HeaderParam(CONTENT_LENGTH) long contentLength, @Context Providers providers, @Context HttpHeaders httpHeaders) throws URISyntaxException, IOException {
+    @PROPFIND
+    public javax.ws.rs.core.Response propfind(@Context UriInfo uriInfo, @HeaderParam(DEPTH) int depth, InputStream entityStream, @HeaderParam(CONTENT_LENGTH) long contentLength,
+                                              @Context Providers providers, @Context HttpHeaders httpHeaders) throws URISyntaxException, IOException {
         LOGGER.info("ENTER WebDavTopic.propfind()");
 
         try {
@@ -107,7 +118,7 @@ public class WebDavTopicContent extends WebDavResource {
             if (topic != null) {
                 final Response response = getProperties(uriInfo, topic);
                 final MultiStatus st = new MultiStatus(response);
-                return javax.ws.rs.core.Response.status(207).entity(st).type(WebDavConstants.XML_MIME).build();
+                return javax.ws.rs.core.Response.status(207).entity(st).type(MediaType.TEXT_XML).build();
             }
 
         } catch (final NumberFormatException ex) {
