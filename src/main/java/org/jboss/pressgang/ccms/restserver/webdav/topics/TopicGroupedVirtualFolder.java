@@ -38,7 +38,7 @@ import java.util.logging.Logger;
     With two levels of indirection we can reduce that down to a call that returns
     only 100 or so topics, which is manageable.
  */
-@Path("/TOPICS{var:.*}/{start:\\d+} - {end:\\d+}")
+@Path("/TOPICS.*/{start:\\d+} - {end:\\d+}")
 public class TopicGroupedVirtualFolder extends WebDavResource {
 
     public static final String RESOURCE_NAME = "TOPICS";

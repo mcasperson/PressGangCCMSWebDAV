@@ -71,12 +71,8 @@ public class TopicVirtualFolder extends WebDavResource {
 
                     int maxScale = Math.abs(minId) > maxId ? Math.abs(minId) : maxId;
 
-                    LOGGER.info(maxScale + "");
-
                     /* find out how large is the largest (or smallest) topic id, logarithmicaly speaking */
                     final int zeros = MathUtils.getScale(maxScale) + 1;
-
-                    LOGGER.info(zeros + "");
 
                     /* the parent is the next 10-base number that can hold the largest scale */
                     final int parent = (int)Math.pow(10, zeros);
