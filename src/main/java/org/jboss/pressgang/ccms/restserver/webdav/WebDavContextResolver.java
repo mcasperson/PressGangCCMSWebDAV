@@ -82,7 +82,11 @@ import net.java.dev.webdav.jaxrs.xml.properties.SupportedLock;
 /**
  * Provides support for custom extensions to WebDAV, like custom Properties and XML Elements.<br>
  *
- * WebDAV allows custom extensions for XML Elements and Properties. To enable JAX-RS to deal with these, each of them must be implemented as a JAXB class and registered by passing it to the constructor of this resolver.
+ * WebDAV allows custom extensions for XML Elements and Properties. To enable JAX-RS to deal with these,
+ * each of them must be implemented as a JAXB class and registered by passing it to the constructor of this resolver.
+ *
+ * This version of the class has been extended to provide the text/html mime type. This is required by tools like
+ * perl-HTTP-DAV, which do not accept application/xml responses as valid WedDAV responses.
  *
  * @author Markus KARG (mkarg@users.dev.java.net)
  *
