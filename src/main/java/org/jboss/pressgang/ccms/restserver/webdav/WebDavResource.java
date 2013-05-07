@@ -70,9 +70,8 @@ public class WebDavResource {
     }
 
     @PUT
-    @Consumes("application/octet-stream")
-    public javax.ws.rs.core.Response put(@Context final UriInfo uriInfo, final InputStream entityStream, @HeaderParam(CONTENT_LENGTH) final long contentLength,
-                                         @HeaderParam("Expect") final String expect)
+    @Consumes("*/*")
+    public javax.ws.rs.core.Response put(@Context final UriInfo uriInfo, final InputStream entityStream, @HeaderParam(CONTENT_LENGTH) final long contentLength)
             throws IOException, URISyntaxException {
         LOGGER.info("ENTER WebDavResource.put()");
         return javax.ws.rs.core.Response.serverError().build();

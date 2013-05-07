@@ -56,7 +56,7 @@ public class WebDavTopic extends WebDavResource {
                 /* A depth of zero means we are returning information about this item only */
                 LOGGER.info("Depth == 0");
 
-                return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(getFolderProperties(uriInfo))).type(WebDavConstants.XML_MIME).build();
+                return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(getFolderProperties(uriInfo))).type(MediaType.TEXT_XML).build();
             } else {
                 /* Otherwise we are retuning info on the children in this collection */
                 LOGGER.info("Depth != 0");
@@ -72,7 +72,7 @@ public class WebDavTopic extends WebDavResource {
                     final List<Response> responses = new ArrayList<Response>();
                     responses.add(WebDavTopicContent.getProperties(uriInfo, topic));
                     final MultiStatus st = new MultiStatus(responses.toArray(new Response[responses.size()]));
-                    return javax.ws.rs.core.Response.status(207).entity(st).type(WebDavConstants.XML_MIME).build();
+                    return javax.ws.rs.core.Response.status(207).entity(st).type(MediaType.TEXT_XML).build();
                 } else {
                     LOGGER.info("Could not find topic " + topicId);
                     return javax.ws.rs.core.Response.status(404).build();

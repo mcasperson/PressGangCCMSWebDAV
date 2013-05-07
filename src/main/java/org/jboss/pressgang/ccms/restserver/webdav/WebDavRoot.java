@@ -44,7 +44,7 @@ public class WebDavRoot extends WebDavResource {
                 /* A depth of zero means we are returning information about this item only */
                 final Response folder = getFolderProperties(uriInfo);
 
-                return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(folder)).type(WebDavConstants.XML_MIME).build();
+                return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(folder)).type(MediaType.TEXT_XML).build();
             } else {
                 LOGGER.info("Depth != 0");
                 /* Otherwise we are retuning info on the children in this collection */
@@ -55,7 +55,7 @@ public class WebDavRoot extends WebDavResource {
 
 
                 final MultiStatus st = new MultiStatus(responses.toArray(new Response[responses.size()]));
-                return javax.ws.rs.core.Response.status(207).entity(st).type(WebDavConstants.XML_MIME).build();
+                return javax.ws.rs.core.Response.status(207).entity(st).type(MediaType.TEXT_XML).build();
             }
 
         } catch (final Exception ex) {
