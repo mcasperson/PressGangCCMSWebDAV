@@ -81,7 +81,7 @@ public class TopicVirtualFolder extends WebDavResource {
                     final int grouping = parent / WebDavConstants.GROUP_SIZE;
 
                     /* max digits */
-                    final int maxDigits = zeros + 1;
+                    final int maxDigits = zeros;
 
                     /* do we have to show negative groupings too? */
                     final boolean startAtZero = minId >= 0;

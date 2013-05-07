@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 /**
     A WebDAV file that holds the topics contents.
  */
-@Path("/TOPICS.*/{topicId:\\d+}/CONTENT")
+@Path("/TOPICS{var:.*}/{topicId:\\d+}/CONTENT")
 public class WebDavTopicContent extends WebDavResource {
 
     private static final String RESOURCE_NAME = "CONTENT";

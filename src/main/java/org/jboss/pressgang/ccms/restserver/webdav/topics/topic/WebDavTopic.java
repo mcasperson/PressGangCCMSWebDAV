@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 /**
     The virtual folder that holds all the topic's details
  */
-@Path("/TOPICS.*/{topicId:\\d+}")
+@Path("/TOPICS{var:.*}/{topicId:\\d+}")
 public class WebDavTopic extends WebDavResource {
 
     private static final Logger LOGGER = Logger.getLogger(WebDavTopic.class.getName());
