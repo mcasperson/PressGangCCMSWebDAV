@@ -188,7 +188,10 @@ public class WebDavTopicContent extends WebDavResource {
         return davFile;
     }
 
-
+    /**
+     *  A lot of text editors try to move files around during their saving process. This simply tricks them into
+     *  believing that they have successfully performed a move.
+     */
     @Override
     @MOVE
     public javax.ws.rs.core.Response move(@Context final UriInfo uriInfo, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) throws URISyntaxException {
@@ -196,6 +199,10 @@ public class WebDavTopicContent extends WebDavResource {
         return javax.ws.rs.core.Response.ok().build();
     }
 
+    /**
+     *  A lot of text editors try to delete files around during their saving process. This simply tricks them into
+     *  believing that they have successfully performed a delete.
+     */
     @Override
     @DELETE
     public javax.ws.rs.core.Response delete() {
