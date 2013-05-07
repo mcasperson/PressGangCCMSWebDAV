@@ -54,12 +54,10 @@ public class WebDavTopic extends WebDavResource {
 
             if (depth == 0) {
                 /* A depth of zero means we are returning information about this item only */
-                LOGGER.info("Depth == 0");
 
                 return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(getFolderProperties(uriInfo))).type(MediaType.TEXT_XML).build();
             } else {
                 /* Otherwise we are retuning info on the children in this collection */
-                LOGGER.info("Depth != 0");
                 final EntityManager entityManager = WebDavUtils.getEntityManager(false);
 
                 final Topic topic = entityManager.find(Topic.class, topicId);
