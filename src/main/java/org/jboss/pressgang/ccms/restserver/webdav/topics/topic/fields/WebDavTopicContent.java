@@ -34,19 +34,26 @@ import java.util.logging.Logger;
 /**
     A WebDAV file that holds the topics contents.
  */
-@Path("/TOPICS{var:.*}/{topicId:\\d+}/CONTENT")
+@Path("/TOPICS{var:.*}/{topicId:\\d+}/{topicId2:\\d+}.xml")
 public class WebDavTopicContent extends WebDavResource {
 
-    private static final String RESOURCE_NAME = "CONTENT";
     private static final Logger LOGGER = Logger.getLogger(WebDavTopicContent.class.getName());
 
     @PathParam("topicId") int topicId;
+    @PathParam("topicId2") int topicId2;
 
     @Override
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public javax.ws.rs.core.Response get() {
         LOGGER.info("ENTER WebDavTopicContent.get()");
+
+        /*
+            The regex will allow two different ids, so check for that here.
+         */
+        if (topicId != topicId2) {
+            return javax.ws.rs.core.Response.status(404).build();
+        }
 
         try {
             final EntityManager entityManager = WebDavUtils.getEntityManager(false);
@@ -160,12 +167,12 @@ public class WebDavTopicContent extends WebDavResource {
     }
 
     public static Response getProperties(final UriInfo uriInfo, final Topic topic) {
-        final HRef hRef = new HRef(uriInfo.getRequestUriBuilder().path(RESOURCE_NAME).build());
+        final HRef hRef = new HRef(uriInfo.getRequestUriBuilder().path(topic.getId() + ".xml").build());
         final CreationDate creationDate = new CreationDate(topic.getTopicTimeStamp() == null ? new Date() : topic.getTopicTimeStamp());
         final GetLastModified getLastModified = new GetLastModified(topic.getLastModifiedDate() == null ? new Date() : topic.getLastModifiedDate());
         final GetContentType getContentType = new GetContentType(MediaType.APPLICATION_OCTET_STREAM);
         final GetContentLength getContentLength = new GetContentLength(topic.getTopicXML() == null ? 0 : topic.getTopicXML().length());
-        final DisplayName displayName = new DisplayName(RESOURCE_NAME);
+        final DisplayName displayName = new DisplayName(topic.getId() + ".xml");
         final Prop prop = new Prop(creationDate, getLastModified, getContentType, getContentLength, displayName);
         final Status status = new Status((javax.ws.rs.core.Response.StatusType) OK);
         final PropStat propStat = new PropStat(prop, status);
