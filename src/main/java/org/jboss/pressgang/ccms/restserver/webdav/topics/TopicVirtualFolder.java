@@ -29,8 +29,15 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
 
 /**
-    The virtual folder that holds groups of topic ids. Grouping in this way prevents
-    the server from having to process too many topics in any part of the tree.
+ *  The TOPICS virtual directory breaks down the list of topics such that no folder has more than 10 directory.
+ *  This is because when the folder is mounted under linux (and possibly other OSs), a directory listing
+ *  will return the local directory's contents and also the number of children of its children.
+ *
+ *  With tens or hundreds of thousands of topics, a flat directory structure would require many thousands
+ *  of REST calls just to do a directory listing, making the file system unusable.
+ *
+ *  This way, each directory listing requires only 11 REST calls: one for the directory itself, and then 10
+ *  for each of its children. It's still slow over a WAN connection, but is usable.
  */
 @Path("/TOPICS")
 public class TopicVirtualFolder extends WebDavResource {
