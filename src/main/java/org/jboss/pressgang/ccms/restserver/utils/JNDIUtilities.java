@@ -23,7 +23,7 @@ public class JNDIUtilities {
     public static EntityManagerFactory lookupEntityManagerFactory() throws NamingException {
         final InitialContext initCtx = new InitialContext();
         final EntityManagerFactory entityManagerFactory = (EntityManagerFactory) initCtx
-                .lookup("java:jboss/EntityManagerFactory");
+                .lookup("java:jboss/WebDavEntityManagerFactory");
 
         return entityManagerFactory;
     }

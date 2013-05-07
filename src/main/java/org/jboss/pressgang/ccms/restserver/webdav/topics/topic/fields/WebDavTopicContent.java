@@ -44,7 +44,7 @@ public class WebDavTopicContent extends WebDavResource {
 
     @Override
     @GET
-    @Produces(WebDavConstants.OCTET_STREAM_MIME)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public javax.ws.rs.core.Response get() {
         LOGGER.info("ENTER WebDavTopicContent.get()");
 
@@ -163,7 +163,7 @@ public class WebDavTopicContent extends WebDavResource {
         final HRef hRef = new HRef(uriInfo.getRequestUriBuilder().path(RESOURCE_NAME).build());
         final CreationDate creationDate = new CreationDate(topic.getTopicTimeStamp() == null ? new Date() : topic.getTopicTimeStamp());
         final GetLastModified getLastModified = new GetLastModified(topic.getLastModifiedDate() == null ? new Date() : topic.getLastModifiedDate());
-        final GetContentType getContentType = new GetContentType(WebDavConstants.OCTET_STREAM_MIME);
+        final GetContentType getContentType = new GetContentType(MediaType.APPLICATION_OCTET_STREAM);
         final GetContentLength getContentLength = new GetContentLength(topic.getTopicXML() == null ? 0 : topic.getTopicXML().length());
         final DisplayName displayName = new DisplayName(RESOURCE_NAME);
         final Prop prop = new Prop(creationDate, getLastModified, getContentType, getContentLength, displayName);

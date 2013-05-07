@@ -144,15 +144,18 @@ public class WebDavResource {
      * @return The properties for a child folder
      */
     public static Response getFolderProperties(final UriInfo uriInfo, final String resourceName) {
-        final URI uri = uriInfo.getRequestUriBuilder().path(resourceName).build();
-        final HRef hRef = new HRef(uri);
-        final Date lastModified = new Date(0);
+        /*final Date lastModified = new Date(0);
         final CreationDate creationDate = new CreationDate(lastModified);
         final GetLastModified getLastModified = new GetLastModified(lastModified);
+        final Prop prop = new Prop(creationDate, getLastModified, COLLECTION);*/
+
+        final Prop prop = new Prop(COLLECTION);
+
         final Status status = new Status((javax.ws.rs.core.Response.StatusType) OK);
-        final Prop prop = new Prop(creationDate, getLastModified, COLLECTION);
         final PropStat propStat = new PropStat(prop, status);
 
+        final URI uri = uriInfo.getRequestUriBuilder().path(resourceName).build();
+        final HRef hRef = new HRef(uri);
         final Response folder = new Response(hRef, null, null, null, propStat);
 
         return folder;
@@ -164,15 +167,18 @@ public class WebDavResource {
      * @return The properties for the current folder
      */
     public static Response getFolderProperties(final UriInfo uriInfo) {
-        final URI uri = uriInfo.getRequestUri();
-        final HRef hRef = new HRef(uri);
-        final Date lastModified = new Date(0);
+        /*final Date lastModified = new Date(0);
         final CreationDate creationDate = new CreationDate(lastModified);
         final GetLastModified getLastModified = new GetLastModified(lastModified);
+        final Prop prop = new Prop(creationDate, getLastModified, COLLECTION);*/
+
+        final Prop prop = new Prop(COLLECTION);
+
         final Status status = new Status((javax.ws.rs.core.Response.StatusType) OK);
-        final Prop prop = new Prop(creationDate, getLastModified, COLLECTION);
         final PropStat propStat = new PropStat(prop, status);
 
+        final URI uri = uriInfo.getRequestUri();
+        final HRef hRef = new HRef(uri);
         final Response folder = new Response(hRef, null, null, null, propStat);
 
         return folder;

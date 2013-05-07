@@ -3,6 +3,7 @@ package org.jboss.pressgang.ccms.restserver.webdav.topics;
 import net.java.dev.webdav.jaxrs.methods.PROPFIND;
 import net.java.dev.webdav.jaxrs.xml.elements.MultiStatus;
 import org.jboss.pressgang.ccms.model.Topic;
+import org.jboss.pressgang.ccms.restserver.webdav.MathUtils;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
@@ -48,32 +49,58 @@ public class TopicVirtualFolder extends WebDavResource {
             LOGGER.info("ENTER TopicVirtualFolder.propfind()");
 
             if (depth == 0) {
-                LOGGER.info("Depth == 0");
                 /* A depth of zero means we are returning information about this item only */
                 return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(getFolderProperties(uriInfo))).type(MediaType.TEXT_XML).build();
             } else {
-                LOGGER.info("Getting children of the TOPICS virtual folder. This is a min/max query.");
                 /* Otherwise we are retuning info on the children in this collection */
-                final EntityManager entityManager = WebDavUtils.getEntityManager(false);
 
-                final Integer minId = entityManager.createQuery("SELECT MIN(topic.topicId) FROM Topic topic", Integer.class).getSingleResult();
-                final Integer maxId = entityManager.createQuery("SELECT MAX(topic.topicId) FROM Topic topic", Integer.class).getSingleResult();
-                final int maxIdDigits = maxId.toString().length();
+                EntityManager entityManager = null;
+                try {
 
-                LOGGER.info("Minimum topic id is " + minId + " and the maximum id is " + maxId);
+                    entityManager = WebDavUtils.getEntityManager(false);
 
-                final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
+                    final Integer minId = entityManager.createQuery("SELECT MIN(topic.topicId) FROM Topic topic", Integer.class).getSingleResult();
+                    final Integer maxId = entityManager.createQuery("SELECT MAX(topic.topicId) FROM Topic topic", Integer.class).getSingleResult();
 
-                for (int i = minId; i < maxId; i += WebDavConstants.GROUP_SIZE) {
-                    final String start = String.format("%0" + maxIdDigits + "d", i);
-                    final String end = String.format("%0" + maxIdDigits + "d", (i + WebDavConstants.GROUP_SIZE - 1));
+                    int maxScale = Math.abs(minId) > maxId ? Math.abs(minId) : maxId;
 
-                    responses.add(getFolderProperties(uriInfo, start + "-" + end));
+                    LOGGER.info(maxScale + "");
+
+                    /* find out how large is the largest (or smallest) topic id, logarithmicaly speaking */
+                    final int zeros = MathUtils.getScale(maxScale) + 1;
+
+                    LOGGER.info(zeros + "");
+
+                    /* the parent is the next 10-base number that can hold the largest scale */
+                    final int parent = (int)Math.pow(10, zeros);
+
+                    /* what is our grouping */
+                    final int grouping = parent / WebDavConstants.GROUP_SIZE;
+
+                    /* max digits */
+                    final int maxDigits = zeros + 1;
+
+                    /* do we have to show negative groupings too? */
+                    final boolean startAtZero = minId >= 0;
+
+                    /* the response collection */
+                    final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
+
+                    for (int i = startAtZero ? 0 : -parent; i < parent; i += grouping) {
+                        final String start = String.format("%0" + maxDigits + "d", i);
+                        final String end = String.format("%0" + maxDigits + "d", (i + grouping - 1));
+
+                        responses.add(getFolderProperties(uriInfo, start + " - " + end));
+                    }
+
+                    final MultiStatus st = new MultiStatus(responses.toArray(new net.java.dev.webdav.jaxrs.xml.elements.Response[responses.size()]));
+
+                    return javax.ws.rs.core.Response.status(207).entity(st).type(MediaType.TEXT_XML).build();
+                } finally {
+                    if (entityManager != null) {
+                        entityManager.close();
+                    }
                 }
-
-                final MultiStatus st = new MultiStatus(responses.toArray(new net.java.dev.webdav.jaxrs.xml.elements.Response[responses.size()]));
-
-                return javax.ws.rs.core.Response.status(207).entity(st).type(MediaType.TEXT_XML).build();
             }
 
         } catch (final Exception ex) {
