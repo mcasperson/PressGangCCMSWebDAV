@@ -147,7 +147,7 @@ public class WebDavResource {
     public static Response getFolderProperties(final UriInfo uriInfo, final String resourceName) {
         final URI uri = uriInfo.getRequestUriBuilder().path(resourceName).build();
         final HRef hRef = new HRef(uri);
-        final Date lastModified = new Date();
+        final Date lastModified = new Date(0);
         final CreationDate creationDate = new CreationDate(lastModified);
         final GetLastModified getLastModified = new GetLastModified(lastModified);
         final Status status = new Status((javax.ws.rs.core.Response.StatusType) OK);
@@ -167,7 +167,7 @@ public class WebDavResource {
     public static Response getFolderProperties(final UriInfo uriInfo) {
         final URI uri = uriInfo.getRequestUri();
         final HRef hRef = new HRef(uri);
-        final Date lastModified = new Date();
+        final Date lastModified = new Date(0);
         final CreationDate creationDate = new CreationDate(lastModified);
         final GetLastModified getLastModified = new GetLastModified(lastModified);
         final Status status = new Status((javax.ws.rs.core.Response.StatusType) OK);

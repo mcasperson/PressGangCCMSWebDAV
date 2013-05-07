@@ -82,7 +82,7 @@ public class TopicGroupedVirtualFolder extends WebDavResource {
                     final List<Integer> topics = entityManager.createQuery("SELECT topic.topicId FROM Topic topic where topic.topicId >= " + start + " and topic.topicId <= " + end, Integer.class).getResultList();
 
                     for (final Integer topic : topics) {
-                        final String topicId = String.format("%0" + maxIdDigits + "d", topic.toString());
+                        final String topicId = String.format("%0" + maxIdDigits + "d", topic);
                         responses.add(getFolderProperties(uriInfo, topicId));
                     }
                 }
