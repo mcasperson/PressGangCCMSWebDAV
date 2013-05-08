@@ -70,8 +70,8 @@ fi
 echo Starting grep test 1
 echo "I love grep\ngrep is the best" > "${TEMP_DOC}"
 echo "I love grep\ngrep is the best" > "${TEST_DOC}"
-grep "${TEMP_DOC}" grep > /tmp/grep1.tmp
-grep "${TEST_DOC}" grep > /tmp/grep2.tmp
+grep grep "${TEMP_DOC}" > /tmp/grep1.tmp
+grep grep "${TEST_DOC}" > /tmp/grep2.tmp
 
 diff /tmp/grep1.tmp /tmp/grep2.tmp
 
