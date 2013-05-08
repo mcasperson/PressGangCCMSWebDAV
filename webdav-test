@@ -29,8 +29,8 @@ then
 	echo "************ cp test 2 failed ************"
 fi
 
-# cp test 2
-echo Starting cp test 2
+# cat test 2
+echo Starting cat test 1
 echo '<!-- cat test 1 -->' > "${TEMP_DOC}"
 echo '<!-- cat test 1 -->' > "${TEST_DOC}"
 cat "${TEMP_DOC}" > /tmp/cattest1
