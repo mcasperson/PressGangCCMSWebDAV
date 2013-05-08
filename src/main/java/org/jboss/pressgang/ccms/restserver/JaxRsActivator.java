@@ -1,7 +1,7 @@
 package org.jboss.pressgang.ccms.restserver;
 
 
-import org.jboss.pressgang.ccms.restserver.webdav.system.WebDavContextResolver;
+import org.jboss.pressgang.ccms.restserver.webdav.system.FixedWebDavContextResolver;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavRoot;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.TopicGroupedVirtualFolder;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.TopicVirtualFolder;
@@ -44,7 +44,7 @@ public class JaxRsActivator extends Application {
     @Override
     public Set<Object> getSingletons() {
         try {
-            return new HashSet<Object>(Arrays.asList(new WebDavContextResolver()));
+            return new HashSet<Object>(Arrays.asList(new FixedWebDavContextResolver()));
         } catch (final JAXBException e) {
             LOGGER.severe(e.toString());
             return null;

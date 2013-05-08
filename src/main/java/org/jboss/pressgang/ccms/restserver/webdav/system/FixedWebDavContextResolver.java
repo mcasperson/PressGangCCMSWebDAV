@@ -94,7 +94,7 @@ import net.java.dev.webdav.jaxrs.xml.properties.SupportedLock;
  */
 @Provider
 @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML})
-public final class WebDavContextResolver implements ContextResolver<JAXBContext> {
+public final class FixedWebDavContextResolver implements ContextResolver<JAXBContext> {
 
     private final JAXBContext context;
 
@@ -115,7 +115,7 @@ public final class WebDavContextResolver implements ContextResolver<JAXBContext>
      *             files generated at the development time.)
      */
     @SuppressWarnings("unchecked")
-    public WebDavContextResolver(final Class<?>... additionalClasses) throws JAXBException {
+    public FixedWebDavContextResolver(final Class<?>... additionalClasses) throws JAXBException {
         final List<Class<?>> classesInContext = new ArrayList<Class<?>>(Arrays.asList(ActiveLock.class, AllProp.class, CannotModifyProtectedProperty.class,
                 Collection.class, CreationDate.class, Depth.class, DisplayName.class, Error.class, Exclusive.class, GetContentLanguage.class,
                 GetContentLength.class, GetContentType.class, GetETag.class, GetLastModified.class, HRef.class, Include.class, Location.class,
