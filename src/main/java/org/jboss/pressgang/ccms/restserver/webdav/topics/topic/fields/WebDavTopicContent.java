@@ -1,8 +1,6 @@
 package org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields;
 
-import net.java.dev.webdav.jaxrs.methods.MOVE;
-import net.java.dev.webdav.jaxrs.methods.PROPFIND;
-import net.java.dev.webdav.jaxrs.methods.PROPPATCH;
+import net.java.dev.webdav.jaxrs.methods.*;
 import net.java.dev.webdav.jaxrs.xml.elements.*;
 import net.java.dev.webdav.jaxrs.xml.elements.Response;
 import net.java.dev.webdav.jaxrs.xml.properties.*;
@@ -12,17 +10,17 @@ import org.jboss.pressgang.ccms.restserver.utils.JNDIUtilities;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
+import org.jboss.pressgang.ccms.restserver.webdav.system.FixedCreationDate;
 
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
 import static javax.ws.rs.core.Response.Status.OK;
-import static net.java.dev.webdav.jaxrs.Headers.DESTINATION;
-import static net.java.dev.webdav.jaxrs.Headers.OVERWRITE;
+import static net.java.dev.webdav.jaxrs.Headers.*;
 
 
 import javax.persistence.EntityManager;
 import javax.transaction.TransactionManager;
 import javax.ws.rs.*;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.core.*;
 import javax.ws.rs.ext.Providers;
 
@@ -174,7 +172,7 @@ public class WebDavTopicContent extends WebDavResource {
 
     public static Response getProperties(final UriInfo uriInfo, final Topic topic) {
         final HRef hRef = new HRef(uriInfo.getRequestUriBuilder().path(topic.getId() + ".xml").build());
-        final CreationDate creationDate = new CreationDate(topic.getTopicTimeStamp() == null ? new Date() : topic.getTopicTimeStamp());
+        final FixedCreationDate creationDate = new FixedCreationDate(topic.getTopicTimeStamp() == null ? new Date() : topic.getTopicTimeStamp());
         final GetLastModified getLastModified = new GetLastModified(topic.getLastModifiedDate() == null ? new Date() : topic.getLastModifiedDate());
         final GetContentType getContentType = new GetContentType(MediaType.APPLICATION_OCTET_STREAM);
         final GetContentLength getContentLength = new GetContentLength(topic.getTopicXML() == null ? 0 : topic.getTopicXML().length());
@@ -207,6 +205,28 @@ public class WebDavTopicContent extends WebDavResource {
     @DELETE
     public javax.ws.rs.core.Response delete() {
         LOGGER.info("ENTER WebDavResource.delete()");
+        return javax.ws.rs.core.Response.ok().build();
+    }
+
+    @Override
+    @OPTIONS
+    public javax.ws.rs.core.Response options() {
+        LOGGER.info("ENTER WebDavResource.options()");
+        javax.ws.rs.core.Response.ResponseBuilder builder = javax.ws.rs.core.Response.ok();
+        builder.header(DAV, WEBDAV_COMPLIANCE_LEVEL);
+        builder.header("Allow","OPTIONS,GET,MOVE,PUT,PROPPATCH,PROPFIND,LOCK,UNLOCK");
+        return builder.build();
+    }
+
+    @LOCK
+    public javax.ws.rs.core.Response lock() {
+        LOGGER.info("ENTER WebDavResource.lock()");
+        return javax.ws.rs.core.Response.ok().build();
+    }
+
+    @UNLOCK
+    public javax.ws.rs.core.Response unlock() {
+        LOGGER.info("ENTER WebDavResource.unlock()");
         return javax.ws.rs.core.Response.ok().build();
     }
 }

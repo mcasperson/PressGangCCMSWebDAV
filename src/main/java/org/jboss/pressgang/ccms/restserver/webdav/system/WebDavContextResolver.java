@@ -17,7 +17,7 @@
  * along with webdav-jaxrs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jboss.pressgang.ccms.restserver.webdav;
+package org.jboss.pressgang.ccms.restserver.webdav.system;
 
 import javax.ws.rs.core.MediaType;
 
@@ -123,7 +123,7 @@ public final class WebDavContextResolver implements ContextResolver<JAXBContext>
                 LockTokenSubmitted.class, LockType.class, MultiStatus.class, NoConflictingLock.class, NoExternalEntities.class, Owner.class,
                 PreservedLiveProperties.class, Prop.class, PropertyUpdate.class, PropFind.class, PropFindFiniteDepth.class, PropName.class, PropStat.class,
                 Remove.class, ResourceType.class, Response.class, ResponseDescription.class, Set.class, Shared.class, Status.class,
-                SupportedLock.class, TimeOut.class, Write.class));
+                SupportedLock.class, TimeOut.class, Write.class, FixedCreationDate.class));
 
         if (additionalClasses != null)
             classesInContext.addAll(Arrays.asList(additionalClasses));

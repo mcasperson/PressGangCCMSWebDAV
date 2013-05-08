@@ -1,7 +1,7 @@
 package org.jboss.pressgang.ccms.restserver;
 
 
-import org.jboss.pressgang.ccms.restserver.webdav.WebDavContextResolver;
+import org.jboss.pressgang.ccms.restserver.webdav.system.WebDavContextResolver;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavRoot;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.TopicGroupedVirtualFolder;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.TopicVirtualFolder;
