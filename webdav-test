@@ -1,0 +1,91 @@
+#!/bin/bash
+
+TEST_FILENAME=3737.xml
+TEST_DIR="/mnt/pressgang/TOPICS/00000 - 09999/3000 - 3999/3700 - 3799/3730 - 3739/3737/"
+TEST_DOC=${TEST_DIR}/${TEST_FILENAME}
+TEMP_DIR=/tmp
+TEMP_DOC=${TEMP_DIR}/${TEST_FILENAME}
+
+sudo mount.davfs http://skynet-dev.usersys.redhat.com:8080/pressgang-ccms-webdav /mnt/pressgang -o uid=matthe
+
+# cp test 1
+echo Starting cp test 1
+cp "${TEST_DOC}" "${TEMP_DIR}"
+diff "${TEST_DOC}" "${TEMP_DOC}"
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ cp test 1 failed ************"
+fi
+
+# cp test 2
+echo Starting cp test 2
+echo '<!-- cp test 2 -->' > "${TEMP_DOC}"
+cp "${TEMP_DOC}" "${TEST_DIR}"
+diff "${TEST_DOC}" "${TEMP_DOC}"
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ cp test 2 failed ************"
+fi
+
+# cp test 2
+echo Starting cp test 2
+echo '<!-- cat test 1 -->' > "${TEMP_DOC}"
+echo '<!-- cat test 1 -->' > "${TEST_DOC}"
+cat "${TEMP_DOC}" > /tmp/cattest1
+cat "${TEST_DOC}" > /tmp/cattest2
+diff /tmp/cattest1 /tmp/cattest2
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ cat test 1 failed ************"
+fi
+
+# redirect test 1
+echo Starting redirect test 1
+echo '<!-- redirect test 1 -->' > "${TEMP_DOC}"
+echo '<!-- redirect test 1 -->' > "${TEST_DOC}"
+diff "${TEST_DOC}" "${TEMP_DOC}"
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ redirect test 1 failed ************"
+fi
+
+# sed test 1
+echo Starting sed test 1
+echo '<!-- sed test -->' > "${TEMP_DOC}"
+echo '<!-- sed test -->' > "${TEST_DOC}"
+sed -i 's/test/sedreplaced/g' "${TEMP_DOC}"
+sed -i 's/test/sedreplaced/g' "${TEST_DOC}"
+diff "${TEST_DOC}" "${TEMP_DOC}"
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ sed test 1 failed ************"
+fi
+
+# grep test 1
+echo Starting grep test 1
+echo "I love grep\ngrep is the best" > "${TEMP_DOC}"
+echo "I love grep\ngrep is the best" > "${TEST_DOC}"
+grep "${TEMP_DOC}" grep > /tmp/grep1.tmp
+grep "${TEST_DOC}" grep > /tmp/grep2.tmp
+
+diff /tmp/grep1.tmp /tmp/grep2.tmp
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ grep test 1 failed ************"
+fi
+
+
+# find test 1
+#echo Starting find test 1. Grab a coffee, this will take a while.
+#find /mnt/pressgang -name 3737.xml
+
+#if [[ $? -ne 0 ]]
+#then
+#	echo "find test 1 failed"
+#fi
