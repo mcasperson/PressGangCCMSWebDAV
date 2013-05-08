@@ -67,18 +67,18 @@ then
 	echo "************ grep test 1 failed ************"
 fi
 
-# xmllint test 1
-echo Starting xmllint test 1
-echo '<section></section1>' &> "${TEMP_DOC}"
-echo '<section></section1>' &> "${TEST_DOC}"
-xmllint --valid "${TEMP_DOC}" 2> /tmp/xml1.tmp
-xmllint --valid "${TEST_DOC}" 2> /tmp/xml2.tmp
+# xmllint test 2
+echo Starting xmllint test 2
+echo '<section></section>' &> "${TEMP_DOC}"
+echo '<section></section>' &> "${TEST_DOC}"
+xmllint --output "${TEMP_DOC}" "${TEMP_DOC}"
+xmllint --output "${TEST_DOC}" "${TEST_DOC}"
 
-diff /tmp/xml1.tmp /tmp/xml2.tmp
+diff "${TEST_DOC}" "${TEMP_DOC}"
 
 if [[ $? -ne 0 ]]
 then
-	echo "************ xmllint test 1 failed ************"
+	echo "************ xmllint test 2 failed ************"
 fi
 
 # sed test 1
