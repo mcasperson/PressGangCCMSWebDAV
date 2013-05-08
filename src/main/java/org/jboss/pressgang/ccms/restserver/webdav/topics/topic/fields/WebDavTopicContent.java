@@ -144,7 +144,7 @@ public class WebDavTopicContent extends WebDavResource {
             final Topic topic = entityManager.find(Topic.class, topicId);
 
             if (topic != null) {
-                final Response response = getProperties(uriInfo, topic);
+                final Response response = getProperties(uriInfo, topic, true);
                 final MultiStatus st = new MultiStatus(response);
                 return javax.ws.rs.core.Response.status(207).entity(st).type(MediaType.TEXT_XML).build();
             }
@@ -170,8 +170,16 @@ public class WebDavTopicContent extends WebDavResource {
         return propfind(uriInfo, 0, body, 0, providers, httpHeaders);
     }
 
-    public static Response getProperties(final UriInfo uriInfo, final Topic topic) {
-        final HRef hRef = new HRef(uriInfo.getRequestUriBuilder().path(topic.getId() + ".xml").build());
+    /**
+     *
+     * @param uriInfo The uri that was used to access this resource
+     * @param topic The topic that this content represents
+     * @param local true if we are building the properties for the resource at the given uri, and false if we are building
+     *              properties for a child resource.
+     * @return
+     */
+    public static Response getProperties(final UriInfo uriInfo, final Topic topic, final boolean local) {
+        final HRef hRef = local ? new HRef(uriInfo.getRequestUri()) : new HRef(uriInfo.getRequestUriBuilder().path(topic.getId() + ".xml").build());
         final FixedCreationDate creationDate = new FixedCreationDate(topic.getTopicTimeStamp() == null ? new Date() : topic.getTopicTimeStamp());
         final GetLastModified getLastModified = new GetLastModified(topic.getLastModifiedDate() == null ? new Date() : topic.getLastModifiedDate());
         final GetContentType getContentType = new GetContentType(MediaType.APPLICATION_OCTET_STREAM);

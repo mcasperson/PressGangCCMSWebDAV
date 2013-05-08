@@ -69,7 +69,7 @@ public class WebDavTopic extends WebDavResource {
                     topic.setLastModifiedDate(EnversUtilities.getFixedLastModifiedDate(entityManager, topic));
 
                     final List<Response> responses = new ArrayList<Response>();
-                    responses.add(WebDavTopicContent.getProperties(uriInfo, topic));
+                    responses.add(WebDavTopicContent.getProperties(uriInfo, topic, false));
                     final MultiStatus st = new MultiStatus(responses.toArray(new Response[responses.size()]));
                     return javax.ws.rs.core.Response.status(207).entity(st).type(MediaType.TEXT_XML).build();
                 } else {
