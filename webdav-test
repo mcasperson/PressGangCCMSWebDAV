@@ -53,23 +53,10 @@ then
 	echo "************ redirect test 1 failed ************"
 fi
 
-# sed test 1
-echo Starting sed test 1
-echo '<!-- sed test -->' > "${TEMP_DOC}"
-echo '<!-- sed test -->' > "${TEST_DOC}"
-sed -i 's/test/sedreplaced/g' "${TEMP_DOC}"
-sed -i 's/test/sedreplaced/g' "${TEST_DOC}"
-diff "${TEST_DOC}" "${TEMP_DOC}"
-
-if [[ $? -ne 0 ]]
-then
-	echo "************ sed test 1 failed ************"
-fi
-
 # grep test 1
 echo Starting grep test 1
-echo "I love grep\ngrep is the best" > "${TEMP_DOC}"
-echo "I love grep\ngrep is the best" > "${TEST_DOC}"
+echo -e "I love grep\ngrep is the best" > "${TEMP_DOC}"
+echo -e "I love grep\ngrep is the best" > "${TEST_DOC}"
 grep grep "${TEMP_DOC}" > /tmp/grep1.tmp
 grep grep "${TEST_DOC}" > /tmp/grep2.tmp
 
@@ -80,6 +67,32 @@ then
 	echo "************ grep test 1 failed ************"
 fi
 
+# xmllint test 1
+echo Starting grep test 1
+echo '<section></section1>' > "${TEMP_DOC}"
+echo ''<section></section1>' > "${TEST_DOC}"
+xmllint "${TEMP_DOC}" > /tmp/xml1.tmp
+xmllint "${TEST_DOC}" > /tmp/xml2.tmp
+
+diff /tmp/xml1.tmp /tmp/xml2.tmp
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ xmllint test 1 failed ************"
+fi
+
+# sed test 1
+echo Starting sed test 1
+echo '<!-- sed test -->' > "${TEMP_DOC}"
+echo '<!-- sed test -->' > "${TEST_DOC}"
+sed -i -c 's/test/sedreplaced/g' "${TEMP_DOC}"
+sed -i -c 's/test/sedreplaced/g' "${TEST_DOC}"
+diff "${TEST_DOC}" "${TEMP_DOC}"
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ sed test 1 failed ************"
+fi
 
 # find test 1
 #echo Starting find test 1. Grab a coffee, this will take a while.
