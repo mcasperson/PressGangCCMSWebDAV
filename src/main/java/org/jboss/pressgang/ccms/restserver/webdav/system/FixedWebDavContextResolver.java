@@ -137,7 +137,13 @@ public final class FixedWebDavContextResolver implements ContextResolver<JAXBCon
      */
     @Override
     public final JAXBContext getContext(final Class<?> cls) {
-        return cls.getPackage().getName().startsWith("net.java.dev.webdav.jaxrs.xml") ? this.context : null;
+
+        if (cls.getPackage().getName().startsWith("net.java.dev.webdav.jaxrs.xml") ||
+                cls.getPackage().getName().startsWith("org.jboss.pressgang.ccms.restserver.webdav.system")) {
+            return this.context;
+        }
+
+        return null;
     }
 
 }
