@@ -177,7 +177,9 @@ public class WebDavTopicContent extends WebDavResource {
         final GetContentType getContentType = new GetContentType(MediaType.APPLICATION_OCTET_STREAM);
         final GetContentLength getContentLength = new GetContentLength(topic.getTopicXML() == null ? 0 : topic.getTopicXML().length());
         final DisplayName displayName = new DisplayName(topic.getId() + ".xml");
-        final Prop prop = new Prop(creationDate, getLastModified, getContentType, getContentLength, displayName);
+        final SupportedLock supportedLock = new SupportedLock();
+        final LockDiscovery lockDiscovery = new LockDiscovery();
+        final Prop prop = new Prop(creationDate, getLastModified, getContentType, getContentLength, displayName, supportedLock, lockDiscovery);
         final Status status = new Status((javax.ws.rs.core.Response.StatusType) OK);
         final PropStat propStat = new PropStat(prop, status);
 
@@ -205,28 +207,6 @@ public class WebDavTopicContent extends WebDavResource {
     @DELETE
     public javax.ws.rs.core.Response delete() {
         LOGGER.info("ENTER WebDavResource.delete()");
-        return javax.ws.rs.core.Response.ok().build();
-    }
-
-    @Override
-    @OPTIONS
-    public javax.ws.rs.core.Response options() {
-        LOGGER.info("ENTER WebDavResource.options()");
-        javax.ws.rs.core.Response.ResponseBuilder builder = javax.ws.rs.core.Response.ok();
-        builder.header(DAV, WEBDAV_COMPLIANCE_LEVEL);
-        builder.header("Allow","OPTIONS,GET,MOVE,PUT,PROPPATCH,PROPFIND,LOCK,UNLOCK");
-        return builder.build();
-    }
-
-    @LOCK
-    public javax.ws.rs.core.Response lock() {
-        LOGGER.info("ENTER WebDavResource.lock()");
-        return javax.ws.rs.core.Response.ok().build();
-    }
-
-    @UNLOCK
-    public javax.ws.rs.core.Response unlock() {
-        LOGGER.info("ENTER WebDavResource.unlock()");
         return javax.ws.rs.core.Response.ok().build();
     }
 }
