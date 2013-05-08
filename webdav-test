@@ -71,8 +71,8 @@ fi
 echo Starting xmllint test 1
 echo '<section></section1>' &> "${TEMP_DOC}"
 echo '<section></section1>' &> "${TEST_DOC}"
-xmllint "${TEMP_DOC}" > /tmp/xml1.tmp
-xmllint "${TEST_DOC}" > /tmp/xml2.tmp
+xmllint --valid "${TEMP_DOC}" 2> /tmp/xml1.tmp
+xmllint --valid "${TEST_DOC}" 2> /tmp/xml2.tmp
 
 diff /tmp/xml1.tmp /tmp/xml2.tmp
 
