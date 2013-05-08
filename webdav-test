@@ -68,9 +68,9 @@ then
 fi
 
 # xmllint test 1
-echo Starting grep test 1
-echo '<section></section1>' > "${TEMP_DOC}"
-echo '<section></section1>' > "${TEST_DOC}"
+echo Starting xmllint test 1
+echo '<section></section1>' &> "${TEMP_DOC}"
+echo '<section></section1>' &> "${TEST_DOC}"
 xmllint "${TEMP_DOC}" > /tmp/xml1.tmp
 xmllint "${TEST_DOC}" > /tmp/xml2.tmp
 
