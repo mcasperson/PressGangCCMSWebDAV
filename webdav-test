@@ -1,12 +1,12 @@
 #!/bin/bash
 
 TEST_FILENAME=3737.xml
-TEST_DIR="/mnt/pressgang/TOPICS/00000 - 09999/3000 - 3999/3700 - 3799/3730 - 3739/3737/"
+TEST_DIR="/mnt/pressgang/TOPICS/00000 - 09999/3000 - 3999/3700 - 3799/3730 - 3739/3737"
 TEST_DOC=${TEST_DIR}/${TEST_FILENAME}
 TEMP_DIR=/tmp
 TEMP_DOC=${TEMP_DIR}/${TEST_FILENAME}
 
-sudo mount.davfs http://skynet-dev.usersys.redhat.com:8080/pressgang-ccms-webdav /mnt/pressgang -o uid=matthe
+#sudo mount.davfs http://skynet-dev.usersys.redhat.com:8080/pressgang-ccms-webdav /mnt/pressgang -o uid=matthew
 
 # cp test 1
 echo Starting cp test 1
@@ -73,6 +73,9 @@ echo '<section></section1>' > "${TEMP_DOC}"
 echo '<section></section1>' > "${TEST_DOC}"
 xmllint --valid "${TEMP_DOC}" 2> /tmp/xml1.tmp
 xmllint --valid "${TEST_DOC}" 2> /tmp/xml2.tmp
+
+sed -e 's/${TEMP_DOC}//g' /tmp/xml1.tmp > /tmp/xml1.tmp
+sed -e 's/${TEST_DOC}//g' /tmp/xml2.tmp > /tmp/xml2.tmp
 
 diff /tmp/xml1.tmp /tmp/xml2.tmp
 
