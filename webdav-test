@@ -158,8 +158,8 @@ fi
 echo Starting saxon test 1
 echo '<article><title>test</title><para>hi</para></article>' > "${TEMP_DOC}"
 echo '<article><title>test</title><para>hi</para></article>' > "${TEST_DOC}"
-saxon -o /tmp/docbook1.html "${TEMP_DOC}" "${DOCBOOK_HTML_XSL}"
-saxon -o /tmp/docbook2.html "${TEST_DOC}" "${DOCBOOK_HTML_XSL}"
+saxon -o:/tmp/docbook1.html "${TEMP_DOC}" "${DOCBOOK_HTML_XSL}"
+saxon -o:/tmp/docbook2.html "${TEST_DOC}" "${DOCBOOK_HTML_XSL}"
 diff /tmp/docbook1.html /tmp/docbook2.html
 
 if [[ $? -ne 0 ]]
@@ -206,12 +206,10 @@ echo '<!DOCTYPE article PUBLIC '"'"'-//OASIS//DTD DocBook XML V4.5//EN'"'"' '"'"
 echo '<!DOCTYPE article PUBLIC '"'"'-//OASIS//DTD DocBook XML V4.5//EN'"'"' '"'"'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'"'"'>
 <article><title>test</title><para>hi</para></article>' > "${TEST_DOC}"
 
-echo -jar ""${JING_JAR}"" ""${TEMP_DOC}"" ""${DOCBOOK_DTD}"" > /tmp/jing1.tmp
 java -jar "${JING_JAR}" "${TEMP_DOC}" "${DOCBOOK_DTD}" > /tmp/jing1.tmp
 java -jar "${JING_JAR}" "${TEST_DOC}" "${DOCBOOK_DTD}" > /tmp/jing2.tmp
 
 # The file names change
-echo "sed -e 's/${TEMP_DOC}//g' /tmp/jing1.tmp | sponge /tmp/jing1.tmp"
 sed -e 's#'${TEMP_DOC}'##g' /tmp/jing1.tmp | sponge /tmp/jing1.tmp
 sed -e 's#'${TEST_DOC}'##g' /tmp/jing2.tmp | sponge /tmp/jing2.tmp
 
