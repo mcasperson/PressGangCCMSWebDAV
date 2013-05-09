@@ -37,12 +37,12 @@ import java.util.logging.Logger;
 /**
     The virtual folder that holds all the topic's details
  */
-@Path("/TOPICS{var:.*}/{topicId:\\d+}")
+@Path("/TOPICS{var:.*}/{topicId:TOPIC\\d*}")
 public class WebDavTopic extends WebDavResource {
 
     private static final Logger LOGGER = Logger.getLogger(WebDavTopic.class.getName());
 
-    @PathParam("topicId") int topicId;
+    @PathParam("topicId") String topicIdString;
 
     @Override
     @Produces(MediaType.APPLICATION_XML)
@@ -61,6 +61,7 @@ public class WebDavTopic extends WebDavResource {
                 /* Otherwise we are retuning info on the children in this collection */
                 final EntityManager entityManager = WebDavUtils.getEntityManager(false);
 
+                final Integer topicId = Integer.parseInt(topicIdString.replaceFirst("TOPIC", ""));
                 final Topic topic = entityManager.find(Topic.class, topicId);
 
                 if (topic != null) {

@@ -29,22 +29,13 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
 
 /**
- *  The TOPICS virtual directory breaks down the list of topics such that no folder has more than 10 directory.
- *  This is because when the folder is mounted under linux (and possibly other OSs), a directory listing
- *  will return the local directory's contents and also the number of children of its children.
- *
- *  With tens or hundreds of thousands of topics, a flat directory structure would require many thousands
- *  of REST calls just to do a directory listing, making the file system unusable.
- *
- *  This way, each directory listing requires only 11 REST calls: one for the directory itself, and then 10
- *  for each of its children. It's still slow over a WAN connection, but is usable.
+
  */
-@Path("/TOPICS")
+@Path("/TOPICS{var:(/\\d)*}")
 public class TopicVirtualFolder extends WebDavResource {
 
-    public static final String RESOURCE_NAME = "TOPICS";
     private static final Logger LOGGER = Logger.getLogger(TopicVirtualFolder.class.getName());
-
+    @PathParam("var") private String var;
 
     @Override
     @Produces(MediaType.APPLICATION_XML)
@@ -72,28 +63,32 @@ public class TopicVirtualFolder extends WebDavResource {
                     int maxScale = Math.abs(minId) > maxId ? Math.abs(minId) : maxId;
 
                     /* find out how large is the largest (or smallest) topic id, logarithmicaly speaking */
-                    final int zeros = MathUtils.getScale(maxScale) + 1;
+                    final int zeros = MathUtils.getScale(maxScale);
 
-                    /* the parent is the next 10-base number that can hold the largest scale */
-                    final int parent = (int)Math.pow(10, zeros);
+                    Integer lastPath = null;
 
-                    /* what is our grouping */
-                    final int grouping = parent / WebDavConstants.GROUP_SIZE;
+                    if (!(var == null || var.isEmpty())) {
+                        final String[] varElements = var.split("/");
+                        StringBuilder path = new StringBuilder();
+                        for (final String varElement : varElements) {
+                            path.append(varElement);
+                        }
+                        lastPath = Integer.parseInt(path.toString());
+                    }
 
-                    /* max digits */
-                    final int maxDigits = zeros;
+                    final int thisPathZeros = lastPath == null ? 0 : MathUtils.getScale(lastPath);
 
-                    /* do we have to show negative groupings too? */
-                    final boolean startAtZero = minId >= 0;
+                    /* we've gone too deep */
+                    if (thisPathZeros > zeros)  {
+                        return javax.ws.rs.core.Response.status(404).build();
+                    }
 
                     /* the response collection */
                     final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
 
-                    for (int i = startAtZero ? 0 : -parent; i < parent; i += grouping) {
-                        final String start = String.format("%0" + maxDigits + "d", i);
-                        final String end = String.format("%0" + maxDigits + "d", (i + grouping - 1));
-
-                        responses.add(getFolderProperties(uriInfo, start + " - " + end));
+                    for (int i = 0; i < 10; ++i) {
+                        responses.add(getFolderProperties(uriInfo, i + ""));
+                        responses.add(getFolderProperties(uriInfo, "TOPIC" + (lastPath == null ? "" : lastPath.toString()) + i));
                     }
 
                     final MultiStatus st = new MultiStatus(responses.toArray(new net.java.dev.webdav.jaxrs.xml.elements.Response[responses.size()]));
