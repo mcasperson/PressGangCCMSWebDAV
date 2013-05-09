@@ -5,6 +5,7 @@ TEST_DIR="/mnt/pressgang/TOPICS/00000 - 09999/3000 - 3999/3700 - 3799/3730 - 373
 TEST_DOC=${TEST_DIR}/${TEST_FILENAME}
 TEMP_DIR=/tmp
 TEMP_DOC=${TEMP_DIR}/${TEST_FILENAME}
+DOCBOOK_HTML_XSL=/usr/share/sgml/docbook/xsl-stylesheets-1.75.2/html/docbook.xsl
 
 #sudo mount.davfs http://skynet-dev.usersys.redhat.com:8080/pressgang-ccms-webdav /mnt/pressgang -o uid=matthew
 
@@ -110,6 +111,38 @@ if [[ $? -ne 0 ]]
 then
 	echo "************ sed test 1 failed ************"
 fi
+
+# saxon test 1
+echo Starting saxon test 1
+echo '<article><title>test</title><para>hi</para></article>' > "${TEMP_DOC}"
+echo '<article><title>test</title><para>hi</para></article>' > "${TEST_DOC}"
+saxon -o /tmp/docbook1.html "${TEMP_DOC}" "${DOCBOOK_HTML_XSL}"
+saxon -o /tmp/docbook2.html "${TEST_DOC}" "${DOCBOOK_HTML_XSL}"
+diff /tmp/docbook1.html /tmp/docbook2.html
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ saxon test 1 failed ************"
+fi
+
+# xsltproc test 1
+echo Starting xsltproc test 1
+echo '<article><title>test</title><para>hi</para></article>' > "${TEMP_DOC}"
+echo '<article><title>test</title><para>hi</para></article>' > "${TEST_DOC}"
+xsltproc -o /tmp/docbook1.html "${DOCBOOK_HTML_XSL}" "${TEMP_DOC}" 
+xsltproc -o /tmp/docbook2.html "${DOCBOOK_HTML_XSL}" "${TEST_DOC}" 
+
+# the name attributes change
+sed 's/name=".*?"//g' "${TEMP_DOC}" > "${TEMP_DOC}"
+sed 's/name=".*?"//g' "${TEST_DOC}" > "${TEST_DOC}"
+
+diff /tmp/docbook1.html /tmp/docbook2.html
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ xsltproc test 1 failed ************"
+fi
+
 
 # find test 1
 #echo Starting find test 1. Grab a coffee, this will take a while.
