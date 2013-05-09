@@ -102,8 +102,8 @@ fi
 echo Starting sed test 1
 echo '<!-- sed test -->' > "${TEMP_DOC}"
 echo '<!-- sed test -->' > "${TEST_DOC}"
-sed -i -c 's/test/sedreplaced/g' "${TEMP_DOC}"
-sed -i -c 's/test/sedreplaced/g' "${TEST_DOC}"
+sed 's/test/sedreplaced/g' "${TEMP_DOC}" > "${TEMP_DOC}"
+sed 's/test/sedreplaced/g' "${TEST_DOC}" > "${TEST_DOC}"
 diff "${TEST_DOC}" "${TEMP_DOC}"
 
 if [[ $? -ne 0 ]]
