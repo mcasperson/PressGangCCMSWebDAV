@@ -1,12 +1,14 @@
 #!/bin/bash
 
 TEST_FILENAME=3737.xml
-TEST_DIR="/mnt/pressgang/TOPICS/00000 - 09999/3000 - 3999/3700 - 3799/3730 - 3739/3737"
+TEST_DIR="/mnt/pressgang/TOPICS/3/7/3/7/TOPIC3737"
 TEST_DOC=${TEST_DIR}/${TEST_FILENAME}
 TEMP_DIR=/tmp
 TEMP_DOC=${TEMP_DIR}/${TEST_FILENAME}
-DOCBOOK_HTML_XSL=/usr/share/sgml/docbook/xsl-stylesheets-1.75.2/html/docbook.xsl
-DOCBOOK_DTD=/usr/share/sgml/docbook/xml-dtd-4.5-1.0-51.el6/docbookx.dtd
+#DOCBOOK_HTML_XSL=/usr/share/sgml/docbook/xsl-stylesheets-1.75.2/html/docbook.xsl
+DOCBOOK_HTML_XSL=/usr/share/sgml/docbook/xsl-stylesheets-1.78.1/html/docbook.xsl
+#DOCBOOK_DTD=/usr/share/sgml/docbook/xml-dtd-4.5-1.0-51.el6/docbookx.dtd
+DOCBOOK_DTD=/usr/share/sgml/docbook/xml-dtd-4.5/docbookx.dtd
 JING_JAR=/home/mcaspers/Applications/jing-20091111/bin/jing.jar
 XML_FORMAT_LOCATION=/home/mcaspers/Applications/xmlformat-1.04
 
@@ -106,8 +108,8 @@ fi
 echo Starting sed test 1
 echo '<!-- sed test -->' > "${TEMP_DOC}"
 echo '<!-- sed test -->' > "${TEST_DOC}"
-sed 's/test/sedreplaced/g' "${TEMP_DOC}" > "${TEMP_DOC}"
-sed 's/test/sedreplaced/g' "${TEST_DOC}" > "${TEST_DOC}"
+sed 's/test/sedreplaced/g' "${TEMP_DOC}" | sponge "${TEMP_DOC}"
+sed 's/test/sedreplaced/g' "${TEST_DOC}" | sponge "${TEST_DOC}"
 diff "${TEST_DOC}" "${TEMP_DOC}"
 
 if [[ $? -ne 0 ]]
@@ -207,8 +209,8 @@ java -jar "${JING_JAR}" "${TEMP_DOC}" "${DOCBOOK_DTD}" > /tmp/jing1.tmp
 java -jar "${JING_JAR}" "${TEST_DOC}" "${DOCBOOK_DTD}" > /tmp/jing2.tmp
 
 # The file names change
-sed -e 's/${TEMP_DOC}//g' /tmp/jing1.tmp > /tmp/jing1.tmp
-sed -e 's/${TEST_DOC}//g' /tmp/jing2.tmp > /tmp/jing2.tmp
+sed -e 's/${TEMP_DOC}//g' /tmp/jing1.tmp | sponge /tmp/jing1.tmp
+sed -e 's/${TEST_DOC}//g' /tmp/jing2.tmp | sponge /tmp/jing2.tmp
 
 diff /tmp/jing1.tmp /tmp/jing2.tmp
 
