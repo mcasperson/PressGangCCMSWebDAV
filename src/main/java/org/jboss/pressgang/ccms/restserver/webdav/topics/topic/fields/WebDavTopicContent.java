@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 /**
     A WebDAV file that holds the topics contents.
  */
-@Path("/TOPICS{var:.*}/{topicId:\\d+}/{topicId2:\\d+}.xml")
+@Path("/TOPICS{var:(/\\d)*}/{topicId:TOPIC\\d*}/{topicId2:\\d+}.xml")
 public class WebDavTopicContent extends WebDavResource {
 
     private static final Logger LOGGER = Logger.getLogger(WebDavTopicContent.class.getName());
