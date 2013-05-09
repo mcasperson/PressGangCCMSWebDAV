@@ -166,14 +166,14 @@ echo '<!DOCTYPE article PUBLIC '"'"'-//OASIS//DTD DocBook XML V4.5//EN'"'"' '"'"
 <article><title>test</title><para>hi</para></article>' > "${TEMP_DOC}"
 echo '<!DOCTYPE article PUBLIC '"'"'-//OASIS//DTD DocBook XML V4.5//EN'"'"' '"'"'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'"'"'>
 <article><title>test</title><para>hi</para></article>' > "${TEST_DOC}"
-java -jar "${JING_JAR}" "${TEMP_DOC}" "${DOCBOOK_DTD}" > /tmp/jing1.html
-java -jar "${JING_JAR}" "${TEST_DOC}" "${DOCBOOK_DTD}" > /tmp/jing2.html
+java -jar "${JING_JAR}" "${TEMP_DOC}" "${DOCBOOK_DTD}" > /tmp/jing1.tmp
+java -jar "${JING_JAR}" "${TEST_DOC}" "${DOCBOOK_DTD}" > /tmp/jing2.tmp
 
 # The file names change
 sed -e 's/${TEMP_DOC}//g' /tmp/jing1.tmp > /tmp/jing1.tmp
 sed -e 's/${TEST_DOC}//g' /tmp/jing2.tmp > /tmp/jing2.tmp
 
-diff /tmp/jing1.html /tmp/jing2.html
+diff /tmp/jing1.tmp /tmp/jing2.tmp
 
 if [[ $? -ne 0 ]]
 then
