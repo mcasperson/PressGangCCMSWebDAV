@@ -133,8 +133,8 @@ xsltproc -o /tmp/docbook1.html "${DOCBOOK_HTML_XSL}" "${TEMP_DOC}"
 xsltproc -o /tmp/docbook2.html "${DOCBOOK_HTML_XSL}" "${TEST_DOC}" 
 
 # the name attributes change
-sed 's/name=".*?"//g' "${TEMP_DOC}" > "${TEMP_DOC}"
-sed 's/name=".*?"//g' "${TEST_DOC}" > "${TEST_DOC}"
+sed 's/name=\".*?\"//g' /tmp/docbook1.html > /tmp/docbook1.html
+sed 's/name=\".*?\"//g' /tmp/docbook2.html > /tmp/docbook2.html
 
 diff /tmp/docbook1.html /tmp/docbook2.html
 
