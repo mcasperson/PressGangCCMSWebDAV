@@ -89,6 +89,8 @@ public class WebDavTopicContent extends WebDavResource {
         try {
             LOGGER.info("ENTER WebDavTopicContent.put()");
 
+            final Integer topicId = Integer.parseInt(topicIdString.replaceFirst("TOPIC", ""));
+
             transactionManager = JNDIUtilities.lookupTransactionManager();
             transactionManager.begin();
 
@@ -141,6 +143,8 @@ public class WebDavTopicContent extends WebDavResource {
         LOGGER.info("ENTER WebDavTopic.propfind()");
 
         try {
+            final Integer topicId = Integer.parseInt(topicIdString.replaceFirst("TOPIC", ""));
+
             final EntityManager entityManager = WebDavUtils.getEntityManager(false);
 
             final Topic topic = entityManager.find(Topic.class, topicId);
