@@ -115,6 +115,20 @@ then
 	echo "************ sed test 1 failed ************"
 fi
 
+# hunspell test 1
+echo Starting hunspell test 1
+echo 'mispealled word' > "${TEMP_DOC}"
+echo 'mispealled word' > "${TEST_DOC}"
+hunspell -L "${TEMP_DOC}" > /tmp/hunspell1.tmp
+hunspell -L "${TEST_DOC}" > /tmp/hunspell2.tmp
+diff /tmp/hunspell1.tmp /tmp/hunspell2.tmp
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ hunspell test 1 failed ************"
+fi
+
+
 # saxon test 1
 echo Starting saxon test 1
 echo '<article><title>test</title><para>hi</para></article>' > "${TEMP_DOC}"
