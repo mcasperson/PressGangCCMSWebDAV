@@ -40,7 +40,7 @@ public class WebDavTopicContent extends WebDavResource {
 
     private static final Logger LOGGER = Logger.getLogger(WebDavTopicContent.class.getName());
 
-    @PathParam("topicId") private int topicId;
+    @PathParam("topicId") private String topicIdString;
     @PathParam("topicId2") private int topicId2;
 
     @Context private UriInfo uriInfo;
@@ -51,6 +51,8 @@ public class WebDavTopicContent extends WebDavResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public javax.ws.rs.core.Response get() {
         LOGGER.info("ENTER WebDavTopicContent.get()");
+
+        final Integer topicId = Integer.parseInt(topicIdString.replaceFirst("TOPIC", ""));
 
         /*
             The regex will allow two different ids, so check for that here.
