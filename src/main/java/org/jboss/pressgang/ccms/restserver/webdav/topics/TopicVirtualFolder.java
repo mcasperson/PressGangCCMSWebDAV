@@ -87,8 +87,12 @@ public class TopicVirtualFolder extends WebDavResource {
                     /* the response collection */
                     final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
 
-                    /* The only purpose of the directory /TOPICS/0 is to list TOPIC0 */
-                    if (lastPath == null || lastPath != 0) {
+                    /*
+                        The only purpose of the directory /TOPICS/0 is to list TOPIC0.
+                        Also don't list subdirectories when there is no way topics
+                        could live in them.
+                    */
+                    if (lastPath == null || (lastPath != 0 && thisPathZeros < zeros)) {
                         for (int i = 0; i < 10; ++i) {
                             responses.add(getFolderProperties(uriInfo, i + ""));
                         }
