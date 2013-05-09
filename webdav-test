@@ -147,12 +147,12 @@ fi
 
 # jing test 1
 echo Starting jing test 1
-echo '<!DOCTYPE article PUBLIC '-//OASIS//DTD DocBook XML V4.5//EN' 'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'>
+echo '<!DOCTYPE article PUBLIC '"'"'-//OASIS//DTD DocBook XML V4.5//EN'"'"' '"'"'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'"'"'>
 <article><title>test</title><para>hi</para></article>' > "${TEMP_DOC}"
-echo '<!DOCTYPE article PUBLIC '-//OASIS//DTD DocBook XML V4.5//EN' 'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'>
+echo '<!DOCTYPE article PUBLIC '"'"'-//OASIS//DTD DocBook XML V4.5//EN'"'"' '"'"'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'"'"'>
 <article><title>test</title><para>hi</para></article>' > "${TEST_DOC}"
-java -jar "${JING_JAR}" "${TEMP_DOC}" "${DOCBOOK_DTD}" > /tmp/jing1.tmp
-java -jar "${JING_JAR}" "${TEST_DOC}" "${DOCBOOK_DTD}" > /tmp/jing2.tmp
+java -jar "${JING_JAR}" "${TEMP_DOC}" "${DOCBOOK_DTD}" 2> /tmp/jing1.html
+java -jar "${JING_JAR}" "${TEST_DOC}" "${DOCBOOK_DTD}" 2> /tmp/jing2.html
 
 diff /tmp/jing1.html /tmp/jing2.html
 
