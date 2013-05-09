@@ -34,6 +34,7 @@ import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
 @Path("/TOPICS{var:(/\\d)*}")
 public class TopicVirtualFolder extends WebDavResource {
 
+    public static final String RESOURCE_NAME = "TOPICS";
     private static final Logger LOGGER = Logger.getLogger(TopicVirtualFolder.class.getName());
     @PathParam("var") private String var;
 
@@ -87,7 +88,9 @@ public class TopicVirtualFolder extends WebDavResource {
                     final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
 
                     for (int i = 0; i < 10; ++i) {
-                        responses.add(getFolderProperties(uriInfo, i + ""));
+                        if (i == 0 && lastPath != null) {
+                            responses.add(getFolderProperties(uriInfo, i + ""));
+                        }
                         responses.add(getFolderProperties(uriInfo, "TOPIC" + (lastPath == null ? "" : lastPath.toString()) + i));
                     }
 

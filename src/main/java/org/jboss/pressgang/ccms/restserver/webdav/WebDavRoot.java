@@ -3,6 +3,7 @@ package org.jboss.pressgang.ccms.restserver.webdav;
 import net.java.dev.webdav.jaxrs.methods.PROPFIND;
 import net.java.dev.webdav.jaxrs.xml.elements.*;
 import net.java.dev.webdav.jaxrs.xml.elements.Response;
+import org.jboss.pressgang.ccms.restserver.webdav.topics.TopicVirtualFolder;
 
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
@@ -19,8 +20,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
-import org.jboss.pressgang.ccms.restserver.webdav.topics.TopicGroupedVirtualFolder;
 
 /**
     The root of the WebDAV server.
@@ -51,7 +50,7 @@ public class WebDavRoot extends WebDavResource {
                 final List<Response> responses = new ArrayList<Response>();
 
                 /* The topic collection */
-                responses.add(getFolderProperties(uriInfo, TopicGroupedVirtualFolder.RESOURCE_NAME));
+                responses.add(getFolderProperties(uriInfo, TopicVirtualFolder.RESOURCE_NAME));
 
 
                 final MultiStatus st = new MultiStatus(responses.toArray(new Response[responses.size()]));
