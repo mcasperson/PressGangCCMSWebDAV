@@ -9,8 +9,8 @@ TEMP_DOC=${TEMP_DIR}/${TEST_FILENAME}
 DOCBOOK_HTML_XSL=/usr/share/sgml/docbook/xsl-stylesheets-1.78.1/html/docbook.xsl
 #DOCBOOK_DTD=/usr/share/sgml/docbook/xml-dtd-4.5-1.0-51.el6/docbookx.dtd
 DOCBOOK_DTD=/usr/share/sgml/docbook/xml-dtd-4.5/docbookx.dtd
-JING_JAR=/home/mcaspers/Applications/jing-20091111/bin/jing.jar
-XML_FORMAT_LOCATION=/home/mcaspers/Applications/xmlformat-1.04
+JING_JAR=/home/matthew/Applications/jing-20091111/bin/jing.jar
+XML_FORMAT_LOCATION=/home/matthew/Applications/xmlformat-1.04
 
 #sudo mount.davfs http://skynet-dev.usersys.redhat.com:8080/pressgang-ccms-webdav /mnt/pressgang -o uid=matthew
 
