@@ -199,6 +199,32 @@ then
 	echo "************ xmlformat test 1 failed ************"
 fi
 
+# publican test 1
+echo Starting publican test 1
+
+echo '<section><title>Test</title><para>hi</para></section>' > "${TEMP_DOC}"
+echo '<section><title>Test</title><para>hi</para></section>' > "${TEST_DOC}"
+
+cd /tmp
+rm -f book
+publican create --name=book
+echo '<?xml version="1.0" encoding="utf-8" ?><!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "book.ent">%BOOK_ENTITIES;]><chapter><title>Book</title><xi:include href="'${TEMP_DOC}'" xmlns:xi="http://www.w3.org/2001/XInclude"/></chapter>' > /tmp/book/en-US/Chapter.xml
+cd /tmp/book
+publican build --langs=en-US --formats=html-single
+
+rm -f bookwebdav
+publican create --name=bookwebdav
+echo '<?xml version="1.0" encoding="utf-8" ?><!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "book.ent">%BOOK_ENTITIES;]><chapter><title>Book</title><xi:include href="'${TEST_DOC}'" xmlns:xi="http://www.w3.org/2001/XInclude"/></chapter>' > /tmp/bookwebdav/en-US/Chapter.xml
+cd /tmp/bookwebdav
+publican build --langs=en-US --formats=html-single
+
+diff /tmp/book/tmp/en-US/html-single/index.html /tmp/bookwebdav/tmp/en-US/html-single/index.html
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ publican test 1 failed ************"
+fi
+
 # jing test 1
 echo Starting jing test 1
 echo '<!DOCTYPE article PUBLIC '"'"'-//OASIS//DTD DocBook XML V4.5//EN'"'"' '"'"'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'"'"'>
