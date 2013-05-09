@@ -87,7 +87,7 @@ public class TopicVirtualFolder extends WebDavResource {
                     /* the response collection */
                     final List<net.java.dev.webdav.jaxrs.xml.elements.Response> responses = new ArrayList<net.java.dev.webdav.jaxrs.xml.elements.Response>();
 
-                    if (lastPath != null & lastPath != 0) {
+                    if (lastPath != null && lastPath != 0) {
                         for (int i = 0; i < 10; ++i) {
                             responses.add(getFolderProperties(uriInfo, i + ""));
                         }
