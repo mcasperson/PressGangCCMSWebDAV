@@ -8,6 +8,7 @@ TEMP_DOC=${TEMP_DIR}/${TEST_FILENAME}
 DOCBOOK_HTML_XSL=/usr/share/sgml/docbook/xsl-stylesheets-1.75.2/html/docbook.xsl
 DOCBOOK_DTD=/usr/share/sgml/docbook/xml-dtd-4.5-1.0-51.el6/docbookx.dtd
 JING_JAR=/home/mcaspers/Applications/jing-20091111/bin/jing.jar
+XML_FORMAT_LOCATION=/home/mcaspers/Applications/xmlformat-1.04
 
 #sudo mount.davfs http://skynet-dev.usersys.redhat.com:8080/pressgang-ccms-webdav /mnt/pressgang -o uid=matthew
 
@@ -145,20 +146,45 @@ then
 	echo "************ xsltproc test 1 failed ************"
 fi
 
+# xmlformat test 1
+echo Starting xmlformat test 1
+echo '<article><title>test</title><para>hi</para></article>' > "${TEMP_DOC}"
+echo '<article><title>test</title><para>hi</para></article>' > "${TEST_DOC}"
+${XML_FORMAT_LOCATION}/xmlformat.pl -i "${TEMP_DOC}" 
+${XML_FORMAT_LOCATION}/xmlformat.pl -i "${TEST_DOC}" 
+
+diff "${TEMP_DOC}" "${TEST_DOC}"
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ xmlformat test 1 failed ************"
+fi
+
 # jing test 1
 echo Starting jing test 1
 echo '<!DOCTYPE article PUBLIC '"'"'-//OASIS//DTD DocBook XML V4.5//EN'"'"' '"'"'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'"'"'>
 <article><title>test</title><para>hi</para></article>' > "${TEMP_DOC}"
 echo '<!DOCTYPE article PUBLIC '"'"'-//OASIS//DTD DocBook XML V4.5//EN'"'"' '"'"'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'"'"'>
 <article><title>test</title><para>hi</para></article>' > "${TEST_DOC}"
-java -jar "${JING_JAR}" "${TEMP_DOC}" "${DOCBOOK_DTD}" 2> /tmp/jing1.html
-java -jar "${JING_JAR}" "${TEST_DOC}" "${DOCBOOK_DTD}" 2> /tmp/jing2.html
+java -jar "${JING_JAR}" "${TEMP_DOC}" "${DOCBOOK_DTD}" > /tmp/jing1.html
+java -jar "${JING_JAR}" "${TEST_DOC}" "${DOCBOOK_DTD}" > /tmp/jing2.html
+
+# The file names change
+sed -e 's/${TEMP_DOC}//g' /tmp/jing1.tmp > /tmp/jing1.tmp
+sed -e 's/${TEST_DOC}//g' /tmp/jing2.tmp > /tmp/jing2.tmp
 
 diff /tmp/jing1.html /tmp/jing2.html
 
 if [[ $? -ne 0 ]]
 then
 	echo "************ jing test 1 failed ************"
+fi
+
+
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ xsltproc test 1 failed ************"
 fi
 
 
