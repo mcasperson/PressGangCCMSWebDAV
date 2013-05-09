@@ -115,6 +115,29 @@ then
 	echo "************ sed test 1 failed ************"
 fi
 
+# vi test 1
+echo Starting vi test 1
+echo '<article><title>test</title><para>hi</para></article>' > "${TEMP_DOC}"
+echo '<article><title>test</title><para>hi</para></article>' > "${TEST_DOC}"
+vim -E -s "${TEMP_DOC}" <<-EOF
+   :%substitute/hi/there/
+   :update
+   :quit
+EOF 
+
+vim -E -s "${TEST_DOC}" <<-EOF
+   :%substitute/hi/there/
+   :update
+   :quit
+EOF 
+
+diff "${TEMP_DOC}" "${TEST_DOC}"
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ vi test 1 failed ************"
+fi
+
 # hunspell test 1
 echo Starting hunspell test 1
 echo 'mispealled word' > "${TEMP_DOC}"
