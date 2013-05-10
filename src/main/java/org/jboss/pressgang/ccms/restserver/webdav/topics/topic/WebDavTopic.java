@@ -13,6 +13,7 @@ import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.restserver.utils.EnversUtilities;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
+import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.InternalResourceTempTopicFile;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTempTopicFile;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTopicContent;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
@@ -76,7 +77,7 @@ public class WebDavTopic extends WebDavResource {
                 }
 
                 final File dir = new File(WebDavConstants.TEMP_LOCATION);
-                final String tempFileNamePrefix = WebDavTempTopicFile.buildTempFileName(uriInfo);
+                final String tempFileNamePrefix = InternalResourceTempTopicFile.buildTempFileName(uriInfo.getPath());
                 if (dir.exists() && dir.isDirectory()) {
                     for (final File child : dir.listFiles()) {
                         if (child.getPath().startsWith(tempFileNamePrefix)) {

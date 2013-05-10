@@ -54,7 +54,10 @@ import net.java.dev.webdav.jaxrs.methods.PROPPATCH;
 import net.java.dev.webdav.jaxrs.xml.elements.*;
 import net.java.dev.webdav.jaxrs.xml.properties.CreationDate;
 import net.java.dev.webdav.jaxrs.xml.properties.GetLastModified;
+import org.apache.batik.css.engine.value.StringValue;
 import org.jboss.pressgang.ccms.restserver.utils.JNDIUtilities;
+import org.jboss.pressgang.ccms.restserver.webdav.internal.InternalResource;
+import org.jboss.pressgang.ccms.restserver.webdav.internal.StringReturnValue;
 import org.jboss.resteasy.spi.InternalServerErrorException;
 
 public class WebDavResource {
@@ -64,17 +67,19 @@ public class WebDavResource {
 
     @GET
     @Produces("application/octet-stream")
-    public javax.ws.rs.core.Response get() {
-        LOGGER.info("ENTER WebDavResource.get()");
-        return javax.ws.rs.core.Response.serverError().build();
+    public javax.ws.rs.core.Response get(@Context final UriInfo uriInfo) {
+        final StringReturnValue stringValueReturn = InternalResource.get(uriInfo);
+        if (stringValueReturn.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
+            return javax.ws.rs.core.Response.status(stringValueReturn.getStatusCode()).build();
+        }
+
+        return javax.ws.rs.core.Response.ok().entity(stringValueReturn.getValue()).build();
     }
 
     @PUT
     @Consumes("*/*")
-    public javax.ws.rs.core.Response put(final InputStream entityStream)
-            throws IOException, URISyntaxException {
-        LOGGER.info("ENTER WebDavResource.put()");
-        return javax.ws.rs.core.Response.serverError().build();
+    public javax.ws.rs.core.Response put(@Context final UriInfo uriInfo, final InputStream entityStream) throws IOException, URISyntaxException {
+        return InternalResource.put(uriInfo, entityStream);
     }
 
     @MKCOL
@@ -99,9 +104,8 @@ public class WebDavResource {
     }
 
     @COPY
-    public javax.ws.rs.core.Response copy() {
-        LOGGER.info("ENTER WebDavResource.copy()");
-        return javax.ws.rs.core.Response.serverError().build();
+    public javax.ws.rs.core.Response copy(@Context final UriInfo uriInfo, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) {
+        return InternalResource.copy(uriInfo, overwriteStr, destination);
     }
 
     /*
@@ -115,14 +119,12 @@ public class WebDavResource {
      */
     @MOVE
     public javax.ws.rs.core.Response move(@Context final UriInfo uriInfo, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) throws URISyntaxException {
-        LOGGER.info("ENTER WebDavResource.move()");
-        return javax.ws.rs.core.Response.serverError().build();
+        return InternalResource.move(uriInfo, overwriteStr, destination);
     }
 
     @DELETE
-    public javax.ws.rs.core.Response delete() {
-        LOGGER.info("ENTER WebDavResource.delete()");
-        return javax.ws.rs.core.Response.serverError().build();
+    public javax.ws.rs.core.Response delete(@Context final UriInfo uriInfo) {
+        return InternalResource.delete(uriInfo);
     }
 
     @OPTIONS

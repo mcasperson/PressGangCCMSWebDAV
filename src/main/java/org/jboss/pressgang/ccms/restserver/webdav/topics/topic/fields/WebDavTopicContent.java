@@ -43,14 +43,27 @@ public class WebDavTopicContent extends WebDavResource {
     @PathParam("topicId") private String topicIdString;
     @PathParam("topicId2") private int topicId2;
 
-    @Context private UriInfo uriInfo;
-    @HeaderParam(CONTENT_LENGTH) private long contentLength;
-
     @Override
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public javax.ws.rs.core.Response get() {
-        LOGGER.info("ENTER WebDavTopicContent.get()");
+    public javax.ws.rs.core.Response get(@Context final UriInfo uriInfo) {
+        final Integer topicId = Integer.parseInt(topicIdString.replaceFirst("TOPIC", ""));
+
+        /*
+            The regex will allow two different ids, so check for that here.
+         */
+        if (topicId != topicId2) {
+            return javax.ws.rs.core.Response.status(404).build();
+        }
+
+        return super.get(uriInfo);
+    }
+
+    @Override
+    @PUT
+    @Consumes("*/*")
+    public javax.ws.rs.core.Response put(@Context final UriInfo uriInfo, final InputStream entityStream)
+            throws IOException, URISyntaxException {
 
         final Integer topicId = Integer.parseInt(topicIdString.replaceFirst("TOPIC", ""));
 
@@ -61,79 +74,7 @@ public class WebDavTopicContent extends WebDavResource {
             return javax.ws.rs.core.Response.status(404).build();
         }
 
-        try {
-            final EntityManager entityManager = WebDavUtils.getEntityManager(false);
-
-            final Topic topic = entityManager.find(Topic.class, topicId);
-
-            if (topic != null) {
-                return javax.ws.rs.core.Response.ok().entity(topic.getTopicXML()).build();
-            }
-
-        } catch (final Exception ex) {
-            return javax.ws.rs.core.Response.status(404).build();
-        }
-
-        return javax.ws.rs.core.Response.status(404).build();
-    }
-
-    @Override
-    @PUT
-    @Consumes("*/*")
-    public javax.ws.rs.core.Response put(final InputStream entityStream)
-            throws IOException, URISyntaxException {
-
-        EntityManager entityManager = null;
-        TransactionManager transactionManager = null;
-
-        try {
-            LOGGER.info("ENTER WebDavTopicContent.put()");
-
-            final Integer topicId = Integer.parseInt(topicIdString.replaceFirst("TOPIC", ""));
-
-            transactionManager = JNDIUtilities.lookupTransactionManager();
-            transactionManager.begin();
-
-            entityManager = WebDavUtils.getEntityManager(false);
-
-            if (contentLength == 0)
-                return javax.ws.rs.core.Response.ok().build();
-
-            final Topic topic = entityManager.find(Topic.class, topicId);
-
-            if (topic != null) {
-
-                final StringWriter writer = new StringWriter();
-                IOUtils.copy(entityStream, writer, "UTF-8");
-                final String newContents = writer.toString();
-
-                LOGGER.info(newContents);
-
-                topic.setTopicXML(newContents);
-
-                entityManager.persist(topic);
-                entityManager.flush();
-                transactionManager.commit();
-
-                return javax.ws.rs.core.Response.ok().build();
-            }
-        } catch (final Exception ex) {
-            if (transactionManager != null) {
-                try {
-                    transactionManager.rollback();
-                } catch (final Exception ex2) {
-                    LOGGER.severe("There was an error rolling back the transaction " + ex2.toString());
-                }
-            }
-
-            return javax.ws.rs.core.Response.status(404).build();
-        }  finally {
-            if (entityManager != null) {
-                entityManager.close();
-            }
-        }
-
-        return javax.ws.rs.core.Response.status(404).build();
+        return super.put(uriInfo, entityStream);
     }
 
     @Override
@@ -200,30 +141,5 @@ public class WebDavTopicContent extends WebDavResource {
         final Response davFile = new Response(hRef, null, null, null, propStat);
 
         return davFile;
-    }
-
-    /**
-     *  A lot of text editors try to move files around during their saving process. This simply tricks them into
-     *  believing that they have successfully performed a move.
-     */
-    @Override
-    @MOVE
-    public javax.ws.rs.core.Response move(@Context final UriInfo uriInfo, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) throws URISyntaxException {
-        LOGGER.info("ENTER WebDavResource.move()");
-        LOGGER.info("Source " + uriInfo.getPath().toString());
-        LOGGER.info("Destination " + destination);
-        return javax.ws.rs.core.Response.ok().build();
-    }
-
-    /**
-     *  A lot of text editors try to delete files around during their saving process. This simply tricks them into
-     *  believing that they have successfully performed a delete.
-     */
-    @Override
-    @DELETE
-    public javax.ws.rs.core.Response delete() {
-        LOGGER.info("ENTER WebDavResource.delete()");
-        LOGGER.info(uriInfo.getPath().toString());
-        return javax.ws.rs.core.Response.ok().build();
     }
 }
