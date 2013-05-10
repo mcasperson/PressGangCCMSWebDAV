@@ -81,6 +81,16 @@ then
 	echo "************ rm test 1 failed - item not deleted ************"
 fi
 
+# rm test 2
+echo Starting rm test 2
+echo '<!-- rm test 1 -->' > "${TEST_DOC}"
+rm "${TEST_DOC}"
+
+if [ ! -f "${TEST_DOC}" ]
+then
+	echo "************ rm test 1 failed - item was deleted ************"
+fi
+
 # cat test 1
 echo Starting cat test 1
 echo '<!-- cp test 1 -->' > "${TEST_DOC}".cat
