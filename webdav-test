@@ -222,10 +222,10 @@ publican build --langs=en-US --formats=html-single
 # the id and href attributes change, as well as the book title
 sed -i 's/id=\".*\"//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
 sed -i 's/href=\".*\"//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
-sed -i 's/<title>book</title>//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
+sed -i 's/<title>bookwebdav</title>//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
 sed -i 's/id=\".*\"//g' /tmp/book/tmp/en-US/html-single/index.html
 sed -i 's/href=\".*\"//g' /tmp/book/tmp/en-US/html-single/index.html
-sed -i 's/<title>bookwebdav</title>//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
+sed -i 's/<title>book</title>//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
 
 diff /tmp/book/tmp/en-US/html-single/index.html /tmp/bookwebdav/tmp/en-US/html-single/index.html
 
