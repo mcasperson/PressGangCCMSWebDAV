@@ -301,6 +301,18 @@ then
 	echo "************ publican test 1 failed ************"
 fi
 
+# find test 1
+echo starting find test 1
+cd /mnt/pressgang/TOPICS/3/7/3/7/TOPIC3737
+find . -n ${TEST_FILENAME} > find.tmp
+RESULT=$(head -1 find.tmp)
+EXPECTED=./3737.xml
+
+if [[ ! ${RESULT} == ${EXPECTED} ]]
+then
+	echo "find test 1 failed"
+fi
+
 # jing test 1
 echo Starting jing test 1
 echo '<!DOCTYPE article PUBLIC '"'"'-//OASIS//DTD DocBook XML V4.5//EN'"'"' '"'"'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'"'"'>
