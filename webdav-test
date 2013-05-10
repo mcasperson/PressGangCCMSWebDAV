@@ -46,14 +46,7 @@ then
 	echo "************ cp test 3 failed ************"
 fi
 
-# cat test 1
-echo Starting cat test 1
-echo '<!-- cp test 1 -->' > "${TEST_DOC}".cat
 
-if [ ! -f "${TEST_DOC}".cat ]
-then
-	echo "************ cat test 1 failed - item not exist ************"
-fi
 
 # mv test 1
 echo Starting mv test 1
@@ -88,17 +81,26 @@ then
 	echo "************ rm test 1 failed - item not deleted ************"
 fi
 
-# cat test 2
+# cat test 1
 echo Starting cat test 1
-echo '<!-- cat test 1 -->' > "${TEMP_DOC}"
-echo '<!-- cat test 1 -->' > "${TEST_DOC}"
+echo '<!-- cp test 1 -->' > "${TEST_DOC}".cat
+
+if [ ! -f "${TEST_DOC}".cat ]
+then
+	echo "************ cat test 1 failed - item not exist ************"
+fi
+
+# cat test 2
+echo Starting cat test 2
+echo '<!-- cat test 2 -->' > "${TEMP_DOC}"
+echo '<!-- cat test 2 -->' > "${TEST_DOC}"
 cat "${TEMP_DOC}" > /tmp/cattest1
 cat "${TEST_DOC}" > /tmp/cattest2
 diff /tmp/cattest1 /tmp/cattest2
 
 if [[ $? -ne 0 ]]
 then
-	echo "************ cat test 1 failed ************"
+	echo "************ cat test 2 failed ************"
 fi
 
 # redirect test 1
