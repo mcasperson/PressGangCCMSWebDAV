@@ -304,7 +304,7 @@ fi
 # find test 1
 echo starting find test 1
 cd /mnt/pressgang/TOPICS/3/7/3/7/TOPIC3737
-find . -n ${TEST_FILENAME} > find.tmp
+find . -name ${TEST_FILENAME} > find.tmp
 RESULT=$(head -1 find.tmp)
 EXPECTED=./3737.xml
 
