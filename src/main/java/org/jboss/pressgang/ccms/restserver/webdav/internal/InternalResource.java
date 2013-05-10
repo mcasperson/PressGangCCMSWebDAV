@@ -87,33 +87,34 @@ public abstract class InternalResource {
     }
 
     public static javax.ws.rs.core.Response move(final UriInfo uriInfo, final String overwriteStr, final String destination) {
-        try {
-            final HRef destHRef = new HRef(destination);
-            final URI destUriInfo = destHRef.getURI();
 
-            final InternalResource destinationResource = InternalResource.getInternalResource(destUriInfo.getPath());
-            final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo.getPath());
+        /*
+            We can't move outside of the filesystem
+         */
+        if (!destination.startsWith(uriInfo.getBaseUri().toString())) {
+            return javax.ws.rs.core.Response.status(Response.Status.NOT_FOUND).build();
+        }
 
-            if (destinationResource != null && sourceResource != null) {
-                final StringReturnValue stringReturnValue = sourceResource.get();
+        final InternalResource destinationResource = InternalResource.getInternalResource(destination.replaceFirst(uriInfo.getBaseUri().toString(), ""));
+        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo.getPath());
 
-                if (stringReturnValue.getStatusCode() != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
-                    return javax.ws.rs.core.Response.status(stringReturnValue.getStatusCode()).build();
-                }
+        if (destinationResource != null && sourceResource != null) {
+            final StringReturnValue stringReturnValue = sourceResource.get();
 
-                int statusCode;
-                if ((statusCode = destinationResource.write(stringReturnValue.getValue())) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
-                    return javax.ws.rs.core.Response.status(statusCode).build();
-                }
-
-                if ((statusCode = sourceResource.delete()) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
-                    return javax.ws.rs.core.Response.status(statusCode).build();
-                }
-
-                return javax.ws.rs.core.Response.ok().build();
-
+            if (stringReturnValue.getStatusCode() != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
+                return javax.ws.rs.core.Response.status(stringReturnValue.getStatusCode()).build();
             }
-        } catch (final URISyntaxException e) {
+
+            int statusCode;
+            if ((statusCode = destinationResource.write(stringReturnValue.getValue())) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
+                return javax.ws.rs.core.Response.status(statusCode).build();
+            }
+
+            if ((statusCode = sourceResource.delete()) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
+                return javax.ws.rs.core.Response.status(statusCode).build();
+            }
+
+            return javax.ws.rs.core.Response.ok().build();
 
         }
 
