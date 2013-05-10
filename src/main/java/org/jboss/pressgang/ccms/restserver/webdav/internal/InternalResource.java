@@ -27,7 +27,13 @@ import static net.java.dev.webdav.jaxrs.Headers.OVERWRITE;
  * All resources can potentially be written to, read and deleted. Copying and moving are just combinations of this
  * basic functionality.
  *
+ * Instances of the InternalResource class wrap the functionality needed to read, write and delete.
  *
+ * The InternalResource class is also a factory, matching url paths to the InternalResource instances that manage
+ * them. This provides a simple way for the JAX-RS interface to pass off the actual implementation of these underlying
+ * methods.
+ *
+ * This means that the WebDavResource class can defer functionality to InternalResource.
  */
 public abstract class InternalResource {
     private static final Pattern TOPIC_CONTENTS_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/(?<TopicID>\\d+).xml");
