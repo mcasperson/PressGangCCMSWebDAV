@@ -219,13 +219,15 @@ echo '<?xml version="1.0" encoding="utf-8" ?><!DOCTYPE bookinfo PUBLIC "-//OASIS
 cd /tmp/bookwebdav
 publican build --langs=en-US --formats=html-single
 
-# the id and href attributes change, as well as the book title
+# the id and href attributes change, as well as the book title and entity references
 sed -i 's/id=\".*\"//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
 sed -i 's/href=\".*\"//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
-sed -i 's/<title>bookwebdav</title>//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
+sed -i 's/<title>bookwebdav<\/title>//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
+sed -i 's/bookwebdav.ent//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
 sed -i 's/id=\".*\"//g' /tmp/book/tmp/en-US/html-single/index.html
 sed -i 's/href=\".*\"//g' /tmp/book/tmp/en-US/html-single/index.html
-sed -i 's/<title>book</title>//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
+sed -i 's/<title>book<\/title>//g' /tmp/book/tmp/en-US/html-single/index.html
+sed -i 's/book.ent//g' /tmp/book/tmp/en-US/html-single/index.html
 
 diff /tmp/book/tmp/en-US/html-single/index.html /tmp/bookwebdav/tmp/en-US/html-single/index.html
 
