@@ -8,7 +8,7 @@ package org.jboss.pressgang.ccms.restserver.webdav;
  * To change this template use File | Settings | File Templates.
  */
 public class WebDavConstants {
-    public static final int GROUP_SIZE = 10;
+    public static final String TEMP_LOCATION = "/tmp/pressgang-webdav-temp";
 
     private  WebDavConstants()  {
 

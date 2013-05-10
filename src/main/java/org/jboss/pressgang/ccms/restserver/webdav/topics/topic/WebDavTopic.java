@@ -13,6 +13,7 @@ import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.restserver.utils.EnversUtilities;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
+import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTempTopicFile;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTopicContent;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
 
@@ -25,6 +26,7 @@ import javax.ws.rs.core.*;
 
 import javax.persistence.EntityManager;
 import javax.ws.rs.ext.Providers;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -64,19 +66,28 @@ public class WebDavTopic extends WebDavResource {
                 final Integer topicId = Integer.parseInt(topicIdString.replaceFirst("TOPIC", ""));
                 final Topic topic = entityManager.find(Topic.class, topicId);
 
+                final List<Response> responses = new ArrayList<Response>();
+
                 if (topic != null) {
 
                     /* Fix the last modified date */
                     topic.setLastModifiedDate(EnversUtilities.getFixedLastModifiedDate(entityManager, topic));
-
-                    final List<Response> responses = new ArrayList<Response>();
                     responses.add(WebDavTopicContent.getProperties(uriInfo, topic, false));
-                    final MultiStatus st = new MultiStatus(responses.toArray(new Response[responses.size()]));
-                    return javax.ws.rs.core.Response.status(207).entity(st).type(MediaType.TEXT_XML).build();
-                } else {
-                    LOGGER.info("Could not find topic " + topicId);
-                    return javax.ws.rs.core.Response.status(404).build();
                 }
+
+                final File dir = new File(WebDavConstants.TEMP_LOCATION);
+                final String tempFileNamePrefix = WebDavTempTopicFile.buildTempFileName(uriInfo);
+                if (dir.exists() && dir.isDirectory()) {
+                    for (final File child : dir.listFiles()) {
+                        if (child.getPath().startsWith(tempFileNamePrefix)) {
+                            responses.add(WebDavTempTopicFile.getProperties(uriInfo, child, false));
+                        }
+                    }
+                }
+
+                final MultiStatus st = new MultiStatus(responses.toArray(new Response[responses.size()]));
+                return javax.ws.rs.core.Response.status(207).entity(st).type(MediaType.TEXT_XML).build();
+
             }
 
         } catch (final Exception ex) {

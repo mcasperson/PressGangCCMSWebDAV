@@ -210,6 +210,8 @@ public class WebDavTopicContent extends WebDavResource {
     @MOVE
     public javax.ws.rs.core.Response move(@Context final UriInfo uriInfo, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) throws URISyntaxException {
         LOGGER.info("ENTER WebDavResource.move()");
+        LOGGER.info("Source " + uriInfo.getPath().toString());
+        LOGGER.info("Destination " + destination);
         return javax.ws.rs.core.Response.ok().build();
     }
 
@@ -221,6 +223,7 @@ public class WebDavTopicContent extends WebDavResource {
     @DELETE
     public javax.ws.rs.core.Response delete() {
         LOGGER.info("ENTER WebDavResource.delete()");
+        LOGGER.info(uriInfo.getPath().toString());
         return javax.ws.rs.core.Response.ok().build();
     }
 }

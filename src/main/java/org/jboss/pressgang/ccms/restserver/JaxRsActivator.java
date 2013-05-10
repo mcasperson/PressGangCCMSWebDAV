@@ -5,6 +5,7 @@ import org.jboss.pressgang.ccms.restserver.webdav.system.FixedWebDavContextResol
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavRoot;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.TopicVirtualFolder;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.WebDavTopic;
+import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTempTopicFile;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTopicContent;
 
 import javax.ws.rs.ApplicationPath;
@@ -37,6 +38,7 @@ public class JaxRsActivator extends Application {
         /*->*/serviceClasses.add(TopicVirtualFolder.class);
         /*-->*/serviceClasses.add(WebDavTopic.class);
         /*--->*/serviceClasses.add(WebDavTopicContent.class);
+        /*--->*/serviceClasses.add(WebDavTempTopicFile.class);
     }
 
     @Override
