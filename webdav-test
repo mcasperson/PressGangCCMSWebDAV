@@ -35,6 +35,40 @@ then
 	echo "************ cp test 2 failed ************"
 fi
 
+# cp test 3
+echo Starting cp test 3
+echo '<!-- cp test 3 -->' > "${TEST_DOC}"
+cp "${TEST_DOC}" "${TEST_DOC}".copy
+diff "${TEST_DOC}" "${TEST_DOC}".copy
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ cp test 3 failed ************"
+fi
+
+# mv test 1
+echo Starting mv test 1
+echo '<!-- cp test 1 -->' > "${TEST_DOC}"
+mv "${TEST_DOC}" "${TEST_DOC}".move
+diff "${TEST_DOC}" "${TEST_DOC}".move
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ mv test 1 failed ************"
+fi
+
+# mv test 2
+echo Starting mv test 2
+echo '<!-- cp test 1 -->' > "${TEST_DOC}".move
+mv "${TEST_DOC}".move "${TEST_DOC}".move1
+
+if [ -f "${TEST_DOC}".move ]
+then
+	echo "************ mv test 2 failed - item not deleted ************"
+else if [ ! -f "${TEST_DOC}".move1 ]
+    echo "************ mv test 2 failed - item not exist ************"
+fi
+
 # cat test 2
 echo Starting cat test 1
 echo '<!-- cat test 1 -->' > "${TEMP_DOC}"
