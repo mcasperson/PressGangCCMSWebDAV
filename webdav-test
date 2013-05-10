@@ -108,8 +108,8 @@ fi
 echo Starting sed test 1
 echo '<!-- sed test -->' > "${TEMP_DOC}"
 echo '<!-- sed test -->' > "${TEST_DOC}"
-sed 's/test/sedreplaced/g' "${TEMP_DOC}" | sponge "${TEMP_DOC}"
-sed 's/test/sedreplaced/g' "${TEST_DOC}" | sponge "${TEST_DOC}"
+sed -i 's/test/sedreplaced/g' "${TEMP_DOC}"
+sed -i 's/test/sedreplaced/g' "${TEST_DOC}"
 diff "${TEST_DOC}" "${TEMP_DOC}"
 
 if [[ $? -ne 0 ]]
@@ -175,8 +175,8 @@ xsltproc -o /tmp/docbook1.html "${DOCBOOK_HTML_XSL}" "${TEMP_DOC}"
 xsltproc -o /tmp/docbook2.html "${DOCBOOK_HTML_XSL}" "${TEST_DOC}" 
 
 # the name attributes change
-sed 's/name=\".*\"//g' /tmp/docbook1.html | sponge /tmp/docbook1.html
-sed 's/name=\".*\"//g' /tmp/docbook2.html | sponge /tmp/docbook2.html
+sed -i 's/name=\".*\"//g' /tmp/docbook1.html
+sed -i 's/name=\".*\"//g' /tmp/docbook2.html
 
 diff /tmp/docbook1.html /tmp/docbook2.html
 
