@@ -67,7 +67,7 @@ public abstract class InternalResource {
             if (destinationResource != null && sourceResource != null) {
                 final StringReturnValue stringReturnValue = sourceResource.get();
 
-                if (stringReturnValue.getStatusCode() != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
+                if (stringReturnValue.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
                     return javax.ws.rs.core.Response.status(stringReturnValue.getStatusCode()).build();
                 }
 
@@ -125,12 +125,7 @@ public abstract class InternalResource {
         final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo.getPath());
 
         if (sourceResource != null) {
-            int statusCode;
-            if ((statusCode = sourceResource.delete()) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
-                return javax.ws.rs.core.Response.status(statusCode).build();
-            }
-
-            return javax.ws.rs.core.Response.ok().build();
+           return javax.ws.rs.core.Response.status(sourceResource.delete()).build();
         }
 
         return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND).build();
