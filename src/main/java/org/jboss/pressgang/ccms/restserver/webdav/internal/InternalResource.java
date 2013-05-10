@@ -95,13 +95,13 @@ public abstract class InternalResource {
             return javax.ws.rs.core.Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        final InternalResource destinationResource = InternalResource.getInternalResource(destination.replaceFirst(uriInfo.getBaseUri().toString(), ""));
+        final InternalResource destinationResource = InternalResource.getInternalResource("/" + destination.replaceFirst(uriInfo.getBaseUri().toString(), ""));
         final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo.getPath());
 
         if (destinationResource != null && sourceResource != null) {
             final StringReturnValue stringReturnValue = sourceResource.get();
 
-            if (stringReturnValue.getStatusCode() != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
+            if (stringReturnValue.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
                 return javax.ws.rs.core.Response.status(stringReturnValue.getStatusCode()).build();
             }
 
