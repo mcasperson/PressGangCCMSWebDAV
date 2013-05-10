@@ -21,11 +21,13 @@ import static net.java.dev.webdav.jaxrs.Headers.DESTINATION;
 import static net.java.dev.webdav.jaxrs.Headers.OVERWRITE;
 
 /**
- * Created with IntelliJ IDEA.
- * User: matthew
- * Date: 5/10/13
- * Time: 12:59 PM
- * To change this template use File | Settings | File Templates.
+ * The WebDAV server exposes resources from multiple locations. Some resources are found in a database, and some
+ * are saved as files.
+ *
+ * All resources can potentially be written to, read and deleted. Copying and moving are just combinations of this
+ * basic functionality.
+ *
+ *
  */
 public abstract class InternalResource {
     private static final Pattern TOPIC_CONTENTS_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/(?<TopicID>\\d+).xml");
