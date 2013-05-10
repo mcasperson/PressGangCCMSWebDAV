@@ -33,11 +33,12 @@ public class InternalResourceTopicContent extends InternalResource {
     @Override
     public int write(final String contents) {
 
+        LOGGER.info("ENTER InternalResourceTopicContent.write() " + intId);
+
         EntityManager entityManager = null;
         TransactionManager transactionManager = null;
 
         try {
-            LOGGER.info("ENTER WebDavTopicContent.put()");
 
             transactionManager = JNDIUtilities.lookupTransactionManager();
             transactionManager.begin();
@@ -54,7 +55,7 @@ public class InternalResourceTopicContent extends InternalResource {
                 entityManager.flush();
                 transactionManager.commit();
 
-                return Response.Status.CREATED.getStatusCode();
+                return Response.Status.NO_CONTENT.getStatusCode();
             }
 
             return Response.Status.NOT_FOUND.getStatusCode();
@@ -78,6 +79,8 @@ public class InternalResourceTopicContent extends InternalResource {
 
     @Override
     public StringReturnValue get() {
+
+        LOGGER.info("ENTER InternalResourceTopicContent.write() " + intId);
 
         EntityManager entityManager = null;
 
@@ -103,6 +106,8 @@ public class InternalResourceTopicContent extends InternalResource {
 
     @Override
     public int delete(){
+        LOGGER.info("ENTER InternalResourceTopicContent.write() " + intId);
+
         /* we pretend to delete these resources */
         return Response.Status.NO_CONTENT.getStatusCode();
     }

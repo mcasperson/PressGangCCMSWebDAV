@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +37,8 @@ import static net.java.dev.webdav.jaxrs.Headers.OVERWRITE;
  * This means that the WebDavResource class can defer functionality to InternalResource.
  */
 public abstract class InternalResource {
+    private static final Logger LOGGER = Logger.getLogger(InternalResource.class.getName());
+
     private static final Pattern TOPIC_CONTENTS_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/(?<TopicID>\\d+).xml");
     private static final Pattern TOPIC_TEMP_FILE_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/.*");
 
@@ -65,6 +68,8 @@ public abstract class InternalResource {
     }
 
     public static javax.ws.rs.core.Response copy(final UriInfo uriInfo, final String overwriteStr, final String destination) {
+        LOGGER.info("ENTER InternalResourceTopicContent.copy() " + uriInfo.getPath() + " " + destination);
+
         try {
             final HRef destHRef = new HRef(destination);
             final URI destUriInfo = destHRef.getURI();
@@ -95,6 +100,8 @@ public abstract class InternalResource {
     }
 
     public static javax.ws.rs.core.Response move(final UriInfo uriInfo, final String overwriteStr, final String destination) {
+
+        LOGGER.info("ENTER InternalResourceTopicContent.move() " + uriInfo.getPath() + " " + destination);
 
         /*
             We can't move outside of the filesystem

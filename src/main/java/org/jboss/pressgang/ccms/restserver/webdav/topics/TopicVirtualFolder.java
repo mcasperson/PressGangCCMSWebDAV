@@ -45,7 +45,6 @@ public class TopicVirtualFolder extends WebDavResource {
                                               @HeaderParam(CONTENT_LENGTH) final long contentLength, @Context final Providers providers,
                                               @Context final HttpHeaders httpHeaders) throws URISyntaxException, IOException {
         try {
-            LOGGER.info("ENTER TopicVirtualFolder.propfind()");
 
             if (depth == 0) {
                 /* A depth of zero means we are returning information about this item only */

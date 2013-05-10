@@ -14,6 +14,7 @@ import javax.transaction.TransactionManager;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.*;
+import java.util.logging.Logger;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,12 +25,16 @@ import java.io.*;
  */
 public class InternalResourceTempTopicFile extends InternalResource {
 
+    private static final Logger LOGGER = Logger.getLogger(InternalResourceTempTopicFile.class.getName());
+
     public InternalResourceTempTopicFile(final String path) {
         super(path);
     }
 
     @Override
     public int write(final String contents) {
+        LOGGER.info("ENTER InternalResourceTempTopicFile.write() " + stringId);
+
         try {
             final File directory = new java.io.File(WebDavConstants.TEMP_LOCATION);
             final String fileLocation = buildTempFileName(stringId);
@@ -60,6 +65,8 @@ public class InternalResourceTempTopicFile extends InternalResource {
     @Override
     public StringReturnValue get() {
 
+        LOGGER.info("ENTER InternalResourceTempTopicFile.get() " + stringId);
+
         final String fileLocation = buildTempFileName(stringId);
 
         try {
@@ -86,6 +93,8 @@ public class InternalResourceTempTopicFile extends InternalResource {
 
     @Override
     public int delete(){
+        LOGGER.info("ENTER InternalResourceTempTopicFile.delete() " + stringId);
+
         final String fileLocation = buildTempFileName(stringId);
 
         final File file = new File(fileLocation);

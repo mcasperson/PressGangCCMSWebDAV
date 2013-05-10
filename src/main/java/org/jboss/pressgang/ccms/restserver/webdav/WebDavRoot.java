@@ -36,16 +36,12 @@ public class WebDavRoot extends WebDavResource {
                                               final InputStream entityStream, @HeaderParam(CONTENT_LENGTH) final long contentLength,
                                               @Context final Providers providers, @Context final HttpHeaders httpHeaders) throws URISyntaxException, IOException {
         try {
-            LOGGER.info("ENTER WebDavRoot.propfind()");
-
             if (depth == 0) {
-                LOGGER.info("Depth == 0");
                 /* A depth of zero means we are returning information about this item only */
                 final Response folder = getFolderProperties(uriInfo);
 
                 return javax.ws.rs.core.Response.status(207).entity(new MultiStatus(folder)).type(MediaType.TEXT_XML).build();
             } else {
-                LOGGER.info("Depth != 0");
                 /* Otherwise we are retuning info on the children in this collection */
                 final List<Response> responses = new ArrayList<Response>();
 
