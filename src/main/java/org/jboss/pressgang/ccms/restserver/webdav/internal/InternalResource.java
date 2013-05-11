@@ -11,6 +11,7 @@ import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.InternalRe
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -49,60 +50,44 @@ public abstract class InternalResource {
     private static final Pattern ROOT_FOLDER_RE = Pattern.compile("/");
     private static final Pattern TOPIC_FOLDER_RE = Pattern.compile("/TOPICS(/\\d)*/?");
     private static final Pattern TOPIC_CONTENTS_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/(?<TopicID>\\d+).xml");
-    private static final Pattern TOPIC_TEMP_FILE_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/.*");
+    private static final Pattern TOPIC_TEMP_FILE_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/[^/]*");
 
-    /**
-     * The id of the entity that this resource represents. Usually a database primary key,
-     * but the context of the ID is up to the resource class.
-     */
     @Nullable
-    protected final Integer intId;
-    /**
-     * The id of the entity that this resource represents. Usually a file name,
-     * but the context of the ID is up to the resource class.
-     */
+    private final Integer intId;
     @Nullable
-    protected final String stringId;
-    /**
-     * The info about the request that was used to retrieve this object. This can be null
-     * when the initial request results in a second resource object being looked up (copy and move).
-     *
-     * All resource objects should check to make sure this is not null when doing a propfind (which is
-     * where the uriInfo is actually used). However, there should never be a case where a secondary
-     * resource object has its propfind method called.
-     */
+    private final String stringId;
     @Nullable
-    protected final UriInfo uriInfo;
+    private final UriInfo uriInfo;
 
-    protected InternalResource(final UriInfo uriInfo, final Integer intId) {
+    protected InternalResource(@Nullable final UriInfo uriInfo, @NotNull final Integer intId) {
         this.intId = intId;
         this.stringId = null;
         this.uriInfo = uriInfo;
     }
 
-    protected InternalResource(final UriInfo uriInfo, final String stringId) {
+    protected InternalResource(@Nullable final UriInfo uriInfo, @NotNull final String stringId) {
         this.intId = null;
         this.stringId = stringId;
         this.uriInfo = uriInfo;
     }
 
-    public int write(final DeleteManager deleteManager, final String contents) {
+    public int write(@NotNull final DeleteManager deleteManager, @NotNull final String contents) {
         throw new UnsupportedOperationException();
     }
 
-    public int delete(final DeleteManager deleteManager) {
+    public int delete(@NotNull final DeleteManager deleteManager) {
         throw new UnsupportedOperationException();
     }
 
-    public StringReturnValue get(final DeleteManager deleteManager) {
+    public StringReturnValue get(@NotNull final DeleteManager deleteManager) {
         throw new UnsupportedOperationException();
     }
 
-    public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
+    public MultiStatusReturnValue propfind(@NotNull final DeleteManager deleteManager, final int depth) {
         throw new UnsupportedOperationException();
     }
 
-    public static javax.ws.rs.core.Response propfind(final DeleteManager deleteManager, final UriInfo uriInfo, final int depth) {
+    public static javax.ws.rs.core.Response propfind(@NotNull final DeleteManager deleteManager, @NotNull final UriInfo uriInfo, final int depth) {
         LOGGER.info("ENTER InternalResource.propfind() " + uriInfo.getPath() + " " + depth);
 
         final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
@@ -120,7 +105,7 @@ public abstract class InternalResource {
         return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND).build();
     }
 
-    public static javax.ws.rs.core.Response copy(final DeleteManager deleteManager, final UriInfo uriInfo, final String overwriteStr, final String destination) {
+    public static javax.ws.rs.core.Response copy(@NotNull final DeleteManager deleteManager, @NotNull final UriInfo uriInfo, @NotNull final String overwriteStr, @NotNull final String destination) {
         LOGGER.info("ENTER InternalResource.copy() " + uriInfo.getPath() + " " + destination);
 
         try {
@@ -152,7 +137,7 @@ public abstract class InternalResource {
         return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND).build();
     }
 
-    public static javax.ws.rs.core.Response move(final DeleteManager deleteManager, final UriInfo uriInfo, final String overwriteStr, final String destination) {
+    public static javax.ws.rs.core.Response move(@NotNull final DeleteManager deleteManager, @NotNull final UriInfo uriInfo, @NotNull final String overwriteStr, @NotNull final String destination) {
 
         LOGGER.info("ENTER InternalResource.move() " + uriInfo.getPath() + " " + destination);
 
@@ -199,7 +184,7 @@ public abstract class InternalResource {
         return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND).build();
     }
 
-    public static StringReturnValue get(final DeleteManager deleteManager, final UriInfo uriInfo) {
+    public static StringReturnValue get(@NotNull final DeleteManager deleteManager, @NotNull final UriInfo uriInfo) {
         final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
 
         if (sourceResource != null) {
@@ -214,7 +199,7 @@ public abstract class InternalResource {
         return new StringReturnValue(javax.ws.rs.core.Response.Status.NOT_FOUND.getStatusCode(), null);
     }
 
-    public static javax.ws.rs.core.Response put(final DeleteManager deleteManager, final UriInfo uriInfo, final InputStream entityStream) {
+    public static javax.ws.rs.core.Response put(@NotNull final DeleteManager deleteManager, @NotNull final UriInfo uriInfo, @NotNull final InputStream entityStream) {
         try {
             final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
 
@@ -240,7 +225,7 @@ public abstract class InternalResource {
      * @param uri The request URI
      * @return  The object to handle the response, or null if the URL is invalid.
      */
-    public static InternalResource getInternalResource(final UriInfo uri, final String requestPath) {
+    public static InternalResource getInternalResource(@Nullable final UriInfo uri, @NotNull final String requestPath) {
 
         LOGGER.info("ENTER InternalResource.getInternalResource() " + requestPath);
 
@@ -294,7 +279,7 @@ public abstract class InternalResource {
      * @param resourceName The name of the child folder
      * @return The properties for a child folder
      */
-    public static net.java.dev.webdav.jaxrs.xml.elements.Response getFolderProperties(final UriInfo uriInfo, final String resourceName) {
+    public static net.java.dev.webdav.jaxrs.xml.elements.Response getFolderProperties(@NotNull final UriInfo uriInfo, @NotNull final String resourceName) {
         /*final Date lastModified = new Date(0);
         final CreationDate creationDate = new CreationDate(lastModified);
         final GetLastModified getLastModified = new GetLastModified(lastModified);
@@ -316,7 +301,7 @@ public abstract class InternalResource {
      * @param uriInfo The URI of the current request
      * @return The properties for the current folder
      */
-    public static net.java.dev.webdav.jaxrs.xml.elements.Response getFolderProperties(final UriInfo uriInfo) {
+    public static net.java.dev.webdav.jaxrs.xml.elements.Response getFolderProperties(@NotNull final UriInfo uriInfo) {
         /*final Date lastModified = new Date(0);
         final CreationDate creationDate = new CreationDate(lastModified);
         final GetLastModified getLastModified = new GetLastModified(lastModified);
@@ -332,5 +317,36 @@ public abstract class InternalResource {
         final net.java.dev.webdav.jaxrs.xml.elements.Response folder = new net.java.dev.webdav.jaxrs.xml.elements.Response(hRef, null, null, null, propStat);
 
         return folder;
+    }
+
+    /**
+     * The info about the request that was used to retrieve this object. This can be null
+     * when the initial request results in a second resource object being looked up (copy and move).
+     *
+     * All resource objects should check to make sure this is not null when doing a propfind (which is
+     * where the uriInfo is actually used). However, there should never be a case where a secondary
+     * resource object has its propfind method called.
+     */
+    @Nullable
+    public UriInfo getUriInfo() {
+        return uriInfo;
+    }
+
+    /**
+     * The id of the entity that this resource represents. Usually a database primary key,
+     * but the context of the ID is up to the resource class.
+     */
+    @Nullable
+    public Integer getIntId() {
+        return intId;
+    }
+
+    /**
+     * The id of the entity that this resource represents. Usually a file name,
+     * but the context of the ID is up to the resource class.
+     */
+    @Nullable
+    public String getStringId() {
+        return stringId;
     }
 }

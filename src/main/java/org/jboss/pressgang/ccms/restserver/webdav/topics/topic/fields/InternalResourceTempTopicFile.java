@@ -12,7 +12,6 @@ import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,12 +35,12 @@ public class InternalResourceTempTopicFile extends InternalResource {
 
     @Override
     public int write(final DeleteManager deleteManager, final String contents) {
-        LOGGER.info("ENTER InternalResourceTempTopicFile.write() " + stringId);
+        LOGGER.info("ENTER InternalResourceTempTopicFile.write() " + getStringId());
         LOGGER.info(contents);
 
         try {
             final File directory = new java.io.File(WebDavConstants.TEMP_LOCATION);
-            final String fileLocation = buildTempFileName(stringId);
+            final String fileLocation = buildTempFileName(getStringId());
 
             if (!directory.exists()) {
                 directory.mkdirs();
@@ -69,9 +68,9 @@ public class InternalResourceTempTopicFile extends InternalResource {
     @Override
     public StringReturnValue get(final DeleteManager deleteManager) {
 
-        LOGGER.info("ENTER InternalResourceTempTopicFile.get() " + stringId);
+        LOGGER.info("ENTER InternalResourceTempTopicFile.get() " + getStringId());
 
-        final String fileLocation = buildTempFileName(stringId);
+        final String fileLocation = buildTempFileName(getStringId());
 
         try {
             final FileInputStream inputStream = new FileInputStream(fileLocation);
@@ -97,9 +96,9 @@ public class InternalResourceTempTopicFile extends InternalResource {
 
     @Override
     public int delete(final DeleteManager deleteManager) {
-        LOGGER.info("ENTER InternalResourceTempTopicFile.delete() " + stringId);
+        LOGGER.info("ENTER InternalResourceTempTopicFile.delete() " + getStringId());
 
-        final String fileLocation = buildTempFileName(stringId);
+        final String fileLocation = buildTempFileName(getStringId());
 
         final File file = new File(fileLocation);
         if (file.exists()) {
@@ -113,17 +112,17 @@ public class InternalResourceTempTopicFile extends InternalResource {
     @Override
     public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
 
-        if (uriInfo == null) {
+        if (getUriInfo() == null) {
             throw new IllegalStateException("Can not perform propfind without uriInfo");
         }
 
         try {
-            final String fileLocation = InternalResourceTempTopicFile.buildTempFileName(uriInfo.getPath());
+            final String fileLocation = InternalResourceTempTopicFile.buildTempFileName(getUriInfo().getPath());
 
             final File file = new File(fileLocation);
 
             if (file.exists()) {
-                final net.java.dev.webdav.jaxrs.xml.elements.Response response = getProperties(uriInfo, file, true);
+                final net.java.dev.webdav.jaxrs.xml.elements.Response response = getProperties(getUriInfo(), file, true);
                 final MultiStatus st = new MultiStatus(response);
                 return new MultiStatusReturnValue(207, st);
             }

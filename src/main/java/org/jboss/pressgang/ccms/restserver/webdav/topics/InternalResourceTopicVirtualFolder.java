@@ -9,8 +9,6 @@ import org.jboss.pressgang.ccms.restserver.webdav.internal.MultiStatusReturnValu
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 
 import javax.persistence.EntityManager;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,21 +34,28 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
 
         LOGGER.info("ENTER InternalResourceTopicVirtualFolder.propfind() " + depth);
 
-        if (uriInfo == null) {
+        if (getUriInfo() == null) {
             throw new IllegalStateException("Can not perform propfind without uriInfo");
         }
 
         if (depth == 0) {
             /* A depth of zero means we are returning information about this item only */
-            return new MultiStatusReturnValue(207, new MultiStatus(getFolderProperties(uriInfo)));
+            return new MultiStatusReturnValue(207, new MultiStatus(getFolderProperties(getUriInfo())));
         } else {
             /* Otherwise we are retuning info on the children in this collection */
 
             EntityManager entityManager = null;
             try {
 
-                final Matcher matcher = PATH_REGEX.matcher(stringId);
-                final String var = matcher.group("var");
+                final Matcher matcher = PATH_REGEX.matcher(getStringId());
+
+                String var = null;
+
+                try {
+                    var = matcher.group("var");
+                } catch (final IllegalStateException ex) {
+                    var = null;
+                }
 
                 entityManager = WebDavUtils.getEntityManager(false);
 
@@ -90,12 +95,12 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
                     */
                 if (lastPath == null || (lastPath != 0 && thisPathZeros < zeros)) {
                     for (int i = 0; i < 10; ++i) {
-                        responses.add(getFolderProperties(uriInfo, i + ""));
+                        responses.add(getFolderProperties(getUriInfo(), i + ""));
                     }
                 }
 
                 if (lastPath != null) {
-                    responses.add(getFolderProperties(uriInfo, "TOPIC" + lastPath.toString()));
+                    responses.add(getFolderProperties(getUriInfo(), "TOPIC" + lastPath.toString()));
                 }
 
                 final MultiStatus st = new MultiStatus(responses.toArray(new net.java.dev.webdav.jaxrs.xml.elements.Response[responses.size()]));

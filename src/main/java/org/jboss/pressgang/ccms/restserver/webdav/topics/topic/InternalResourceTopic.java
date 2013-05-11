@@ -14,8 +14,6 @@ import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.InternalRe
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.InternalResourceTopicContent;
 
 import javax.persistence.EntityManager;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.io.File;
 import java.util.ArrayList;
@@ -32,19 +30,19 @@ public class InternalResourceTopic extends InternalResource {
     @Override
     public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
 
-        if (uriInfo == null) {
+        if (getUriInfo() == null) {
             throw new IllegalStateException("Can not perform propfind without uriInfo");
         }
 
         if (depth == 0) {
             /* A depth of zero means we are returning information about this item only */
 
-            return new MultiStatusReturnValue(207, new MultiStatus(getFolderProperties(uriInfo)));
+            return new MultiStatusReturnValue(207, new MultiStatus(getFolderProperties(getUriInfo())));
         } else {
             /* Otherwise we are retuning info on the children in this collection */
             final EntityManager entityManager = WebDavUtils.getEntityManager(false);
 
-            final Topic topic = entityManager.find(Topic.class, intId);
+            final Topic topic = entityManager.find(Topic.class, getIntId());
 
             final List<Response> responses = new ArrayList<Response>();
 
@@ -57,16 +55,16 @@ public class InternalResourceTopic extends InternalResource {
 
                 /* Don't list the contents if it is "deleted" */
                 if (!deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, topic.getId())) {
-                    responses.add(InternalResourceTopicContent.getProperties(uriInfo, topic, false));
+                    responses.add(InternalResourceTopicContent.getProperties(getUriInfo(), topic, false));
                 }
             }
 
             final File dir = new File(WebDavConstants.TEMP_LOCATION);
-            final String tempFileNamePrefix = InternalResourceTempTopicFile.buildTempFileName(uriInfo.getPath());
+            final String tempFileNamePrefix = InternalResourceTempTopicFile.buildTempFileName(getUriInfo().getPath());
             if (dir.exists() && dir.isDirectory()) {
                 for (final File child : dir.listFiles()) {
                     if (child.getPath().startsWith(tempFileNamePrefix)) {
-                        responses.add(InternalResourceTempTopicFile.getProperties(uriInfo, child, false));
+                        responses.add(InternalResourceTempTopicFile.getProperties(getUriInfo(), child, false));
                     }
                 }
             }

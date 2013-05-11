@@ -16,9 +16,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.TransactionManager;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -38,7 +36,7 @@ public class InternalResourceTopicContent extends InternalResource {
     @Override
     public int write(final DeleteManager deleteManager, final String contents) {
 
-        LOGGER.info("ENTER InternalResourceTopicContent.write() " + intId);
+        LOGGER.info("ENTER InternalResourceTopicContent.write() " + getIntId());
         LOGGER.info(contents);
 
         EntityManager entityManager = null;
@@ -51,7 +49,7 @@ public class InternalResourceTopicContent extends InternalResource {
 
             entityManager = WebDavUtils.getEntityManager(false);
 
-            final Topic topic = entityManager.find(Topic.class, intId);
+            final Topic topic = entityManager.find(Topic.class, getIntId());
 
             if (topic != null) {
 
@@ -61,7 +59,7 @@ public class InternalResourceTopicContent extends InternalResource {
                 entityManager.flush();
                 transactionManager.commit();
 
-                deleteManager.create(ResourceTypes.TOPIC_CONTENTS, intId);
+                deleteManager.create(ResourceTypes.TOPIC_CONTENTS, getIntId());
 
                 return Response.Status.NO_CONTENT.getStatusCode();
             }
@@ -88,9 +86,9 @@ public class InternalResourceTopicContent extends InternalResource {
     @Override
     public StringReturnValue get(final DeleteManager deleteManager) {
 
-        LOGGER.info("ENTER InternalResourceTopicContent.get() " + intId);
+        LOGGER.info("ENTER InternalResourceTopicContent.get() " + getIntId());
 
-        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, intId)) {
+        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getIntId())) {
             LOGGER.info("Deletion Manager says this file is deleted");
             return new StringReturnValue(Response.Status.NOT_FOUND.getStatusCode(), null);
         }
@@ -100,7 +98,7 @@ public class InternalResourceTopicContent extends InternalResource {
         try {
             entityManager = WebDavUtils.getEntityManager(false);
 
-            final Topic topic = entityManager.find(Topic.class, intId);
+            final Topic topic = entityManager.find(Topic.class, getIntId());
 
             if (topic != null) {
                 return new StringReturnValue(Response.Status.OK.getStatusCode(), topic.getTopicXML());
@@ -119,14 +117,14 @@ public class InternalResourceTopicContent extends InternalResource {
 
     @Override
     public int delete(final DeleteManager deleteManager) {
-        LOGGER.info("ENTER InternalResourceTopicContent.delete() " + intId);
+        LOGGER.info("ENTER InternalResourceTopicContent.delete() " + getIntId());
 
-        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, intId)) {
+        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getIntId())) {
             LOGGER.info("Deletion Manager says this file is already deleted");
             return Response.Status.NOT_FOUND.getStatusCode();
         }
 
-        deleteManager.delete(ResourceTypes.TOPIC_CONTENTS, intId);
+        deleteManager.delete(ResourceTypes.TOPIC_CONTENTS, getIntId());
 
         /* pretend to be deleted */
         return Response.Status.NO_CONTENT.getStatusCode();
@@ -135,7 +133,7 @@ public class InternalResourceTopicContent extends InternalResource {
     @Override
     public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
 
-        if (uriInfo == null) {
+        if (getUriInfo() == null) {
             throw new IllegalStateException("Can not perform propfind without uriInfo");
         }
 
@@ -144,10 +142,10 @@ public class InternalResourceTopicContent extends InternalResource {
         try {
             entityManager = WebDavUtils.getEntityManager(false);
 
-            final Topic topic = entityManager.find(Topic.class, intId);
+            final Topic topic = entityManager.find(Topic.class, getIntId());
 
             if (topic != null) {
-                final net.java.dev.webdav.jaxrs.xml.elements.Response response = getProperties(uriInfo, topic, true);
+                final net.java.dev.webdav.jaxrs.xml.elements.Response response = getProperties(getUriInfo(), topic, true);
                 final MultiStatus st = new MultiStatus(response);
                 return new MultiStatusReturnValue(207, st);
             }

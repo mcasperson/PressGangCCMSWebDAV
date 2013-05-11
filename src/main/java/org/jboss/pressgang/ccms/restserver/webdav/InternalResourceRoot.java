@@ -7,8 +7,6 @@ import org.jboss.pressgang.ccms.restserver.webdav.internal.MultiStatusReturnValu
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.InternalResourceTopicVirtualFolder;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +22,13 @@ public class InternalResourceRoot extends InternalResource {
     @Override
     public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
 
-        if (uriInfo == null) {
+        if (getUriInfo() == null) {
             throw new IllegalStateException("Can not perform propfind without uriInfo");
         }
 
         if (depth == 0) {
             /* A depth of zero means we are returning information about this item only */
-            final Response folder = getFolderProperties(uriInfo);
+            final Response folder = getFolderProperties(getUriInfo());
 
             return new MultiStatusReturnValue(207, new MultiStatus(folder));
         } else {
@@ -38,7 +36,7 @@ public class InternalResourceRoot extends InternalResource {
             final List<Response> responses = new ArrayList<Response>();
 
             /* The topic collection */
-            responses.add(getFolderProperties(uriInfo, InternalResourceTopicVirtualFolder.RESOURCE_NAME));
+            responses.add(getFolderProperties(getUriInfo(), InternalResourceTopicVirtualFolder.RESOURCE_NAME));
 
             final MultiStatus st = new MultiStatus(responses.toArray(new Response[responses.size()]));
             return new MultiStatusReturnValue(207, st);
