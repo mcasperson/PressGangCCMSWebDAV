@@ -228,6 +228,13 @@ public abstract class InternalResource {
 
         LOGGER.info("ENTER InternalResource.getInternalResource() " + requestPath);
 
+        /*
+            Order is important here, as the TOPIC_TEMP_FILE_RE will match everything the
+            TOPIC_CONTENTS_RE will. So we check TOPIC_TEMP_FILE_RE after TOPIC_CONTENTS_RE.
+
+            Other regexes are specific enough not to match each other.
+         */
+
         final Matcher topicContents = TOPIC_CONTENTS_RE.matcher(requestPath);
         if (topicContents.matches()) {
             LOGGER.info("Matched InternalResourceTopicContent");
