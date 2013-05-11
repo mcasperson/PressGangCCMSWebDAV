@@ -5,11 +5,7 @@ import net.java.dev.webdav.jaxrs.xml.elements.MultiStatus;
 import javax.annotation.Nullable;
 
 /**
- * Created with IntelliJ IDEA.
- * User: matthew
- * Date: 11/05/13
- * Time: 5:03 PM
- * To change this template use File | Settings | File Templates.
+ * A wrapper that contains the HTTP return code, and the returned MultiStatus.
  */
 public class MultiStatusReturnValue {
     private final int statusCode;

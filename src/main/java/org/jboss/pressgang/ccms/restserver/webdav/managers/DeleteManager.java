@@ -10,7 +10,8 @@ import java.util.Map;
 
 /**
  * Database fields can not be deleted, but when they are exposed as files, some applications expect to be able to delete
- * them. This manager simply keeps a track of delete requests, and shows a file as being deleted for a short period of time,
+ * them (e.g. Kate will delete the file it is editing, and then check to make sure it is deleted before saving any changes).
+ * This manager simply keeps a track of delete requests, and shows a file as being deleted for a short period of time,
  * or until it is "created" again.
  */
 @ApplicationScoped

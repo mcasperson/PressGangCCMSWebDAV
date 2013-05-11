@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
-
+    Represents a folder that can hold topics.
  */
 public class InternalResourceTopicVirtualFolder extends InternalResource {
 

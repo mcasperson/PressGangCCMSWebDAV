@@ -22,11 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: matthew
- * Date: 11/05/13
- * Time: 5:33 PM
- * To change this template use File | Settings | File Templates.
+ * Represents the available fields and temporary files associated with a topic.
  */
 public class InternalResourceTopic extends InternalResource {
     public InternalResourceTopic(final UriBuilder requestUriBuilder, final Integer intId) {

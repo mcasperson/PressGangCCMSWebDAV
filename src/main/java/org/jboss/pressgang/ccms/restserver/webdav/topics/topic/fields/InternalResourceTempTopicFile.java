@@ -24,11 +24,7 @@ import java.util.logging.Logger;
 import static javax.ws.rs.core.Response.Status.OK;
 
 /**
- * Created with IntelliJ IDEA.
- * User: matthew
- * Date: 5/10/13
- * Time: 2:04 PM
- * To change this template use File | Settings | File Templates.
+ * Handles access to temporary files.
  */
 public class InternalResourceTempTopicFile extends InternalResource {
 

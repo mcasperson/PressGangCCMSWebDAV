@@ -84,7 +84,7 @@ public abstract class InternalResource {
     }
 
     public static javax.ws.rs.core.Response propfind(final DeleteManager deleteManager, final UriInfo uriInfo, final int depth) {
-        LOGGER.info("ENTER InternalResourceTopicContent.propfind() " + uriInfo.getPath() + " " + depth);
+        LOGGER.info("ENTER InternalResource.propfind() " + uriInfo.getPath() + " " + depth);
 
         final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo.getRequestUriBuilder());
 
@@ -102,7 +102,7 @@ public abstract class InternalResource {
     }
 
     public static javax.ws.rs.core.Response copy(final DeleteManager deleteManager, final UriInfo uriInfo, final String overwriteStr, final String destination) {
-        LOGGER.info("ENTER InternalResourceTopicContent.copy() " + uriInfo.getPath() + " " + destination);
+        LOGGER.info("ENTER InternalResource.copy() " + uriInfo.getPath() + " " + destination);
 
         try {
             final HRef destHRef = new HRef(destination);
@@ -135,7 +135,7 @@ public abstract class InternalResource {
 
     public static javax.ws.rs.core.Response move(final DeleteManager deleteManager, final UriInfo uriInfo, final String overwriteStr, final String destination) {
 
-        LOGGER.info("ENTER InternalResourceTopicContent.move() " + uriInfo.getPath() + " " + destination);
+        LOGGER.info("ENTER InternalResource.move() " + uriInfo.getPath() + " " + destination);
 
         /*
             We can't move outside of the filesystem
@@ -224,7 +224,6 @@ public abstract class InternalResource {
     public static InternalResource getInternalResource(final UriBuilder uri) {
 
         final String requestPath = uri.build().getPath();
-
 
         final Matcher topicContents = TOPIC_CONTENTS_RE.matcher(requestPath);
         if (topicContents.matches()) {
