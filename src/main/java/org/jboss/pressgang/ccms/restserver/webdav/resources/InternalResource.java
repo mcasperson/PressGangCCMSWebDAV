@@ -46,7 +46,7 @@ public abstract class InternalResource {
 
     public static final Pattern TOPIC_RE = Pattern.compile("/TOPICS(?<var>(/\\d)*)/TOPIC(?<TopicID>\\d*)/?");
     public static final Pattern ROOT_FOLDER_RE = Pattern.compile("/");
-    public static final Pattern TOPIC_FOLDER_RE = Pattern.compile("(?<prefix>/TOPICS)(/\\d)*/?");
+    public static final Pattern TOPIC_FOLDER_RE = Pattern.compile("/TOPICS(?<var>(/\\d)*)/?");
     public static final Pattern TOPIC_CONTENTS_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/(?<TopicID>\\d+).xml");
     public static final Pattern TOPIC_TEMP_FILE_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/[^/]*");
 

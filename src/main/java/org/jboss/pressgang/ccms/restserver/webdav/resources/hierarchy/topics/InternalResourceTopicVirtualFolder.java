@@ -47,12 +47,12 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
 
                 final Matcher matcher = InternalResource.TOPIC_FOLDER_RE.matcher(getStringId());
 
-                /* var is everything after the initial TOPIC prefix */
-                String var = getStringId().replaceFirst(matcher.group("prefix"), "");
-                /* if all we have left is the last trailing slash, then get rid of it */
-                if (var.equals("/")) {
-                    var = "";
+                if (!matcher.matches()) {
+                    throw new IllegalStateException("This regex should always match");
                 }
+
+                /* var is an optional match */
+                final String var = matcher.group("var");
                 LOGGER.info("var: " + var);
 
                 entityManager = WebDavUtils.getEntityManager(false);
