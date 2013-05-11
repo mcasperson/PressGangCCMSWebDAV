@@ -44,7 +44,12 @@ import static javax.ws.rs.core.Response.Status.OK;
 import static net.java.dev.webdav.jaxrs.Headers.*;
 import static net.java.dev.webdav.jaxrs.xml.properties.ResourceType.COLLECTION;
 
+/**
+ * This JAX-RS endpoint captures all requests. It then relays them to the InternalResource class,
+ * which will build the objects that will actually respond to the requests.
+ */
 @RequestScoped
+@Path("{var:.*}")
 public class WebDavResource {
     public static final String WEBDAV_COMPLIANCE_LEVEL = "1";
 
@@ -78,11 +83,9 @@ public class WebDavResource {
 
     @Produces("application/xml")
     @PROPFIND
-    public javax.ws.rs.core.Response propfind(@Context final UriInfo uriInfo, @HeaderParam(DEPTH) final int depth, final InputStream entityStream,
-                                              @HeaderParam(CONTENT_LENGTH) final long contentLength, @Context final Providers providers,
-                                              @Context final HttpHeaders httpHeaders) throws URISyntaxException, IOException {
+    public javax.ws.rs.core.Response propfind(@Context final UriInfo uriInfo, @HeaderParam(DEPTH) final int depth) throws URISyntaxException, IOException {
         LOGGER.info("ENTER WebDavResource.propfind()");
-        return javax.ws.rs.core.Response.serverError().build();
+        return InternalResource.propfind(deleteManager, uriInfo, depth);
     }
 
     @PROPPATCH

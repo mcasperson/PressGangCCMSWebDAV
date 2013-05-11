@@ -1,12 +1,8 @@
 package org.jboss.pressgang.ccms.restserver;
 
 
-import org.jboss.pressgang.ccms.restserver.webdav.WebDavRoot;
+import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
 import org.jboss.pressgang.ccms.restserver.webdav.system.FixedWebDavContextResolver;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.TopicVirtualFolder;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.WebDavTopic;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTempTopicFile;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTopicContent;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -34,15 +30,7 @@ public class JaxRsActivator extends Application {
     public JaxRsActivator() {
         LOGGER.info("ENTER JaxRsActivator()");
 
-        serviceClasses.add(WebDavRoot.class);
-        /*->*/
-        serviceClasses.add(TopicVirtualFolder.class);
-        /*-->*/
-        serviceClasses.add(WebDavTopic.class);
-        /*--->*/
-        serviceClasses.add(WebDavTopicContent.class);
-        /*--->*/
-        serviceClasses.add(WebDavTempTopicFile.class);
+        serviceClasses.add(WebDavResource.class);
     }
 
     @Override
