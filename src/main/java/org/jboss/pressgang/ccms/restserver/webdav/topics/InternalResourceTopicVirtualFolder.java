@@ -27,14 +27,18 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
     private static final Logger LOGGER = Logger.getLogger(InternalResourceTopicVirtualFolder.class.getName());
     private final Pattern PATH_REGEX = Pattern.compile(".*?/TOPICS(?<var>(/\\d)*)");
 
-    public InternalResourceTopicVirtualFolder(final UriBuilder requestUriBuilder, final String stringId) {
-        super(requestUriBuilder, stringId);
+    public InternalResourceTopicVirtualFolder(final UriInfo uriInfo, final String stringId) {
+        super(uriInfo, stringId);
     }
 
     @Override
     public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
 
         LOGGER.info("ENTER InternalResourceTopicVirtualFolder.propfind() " + depth);
+
+        if (uriInfo == null) {
+            throw new IllegalStateException("Can not perform propfind without uriInfo");
+        }
 
         if (depth == 0) {
             /* A depth of zero means we are returning information about this item only */

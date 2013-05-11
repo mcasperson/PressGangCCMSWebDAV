@@ -25,12 +25,17 @@ import java.util.List;
  * Represents the available fields and temporary files associated with a topic.
  */
 public class InternalResourceTopic extends InternalResource {
-    public InternalResourceTopic(final UriBuilder requestUriBuilder, final Integer intId) {
-        super(requestUriBuilder, intId);
+    public InternalResourceTopic(final UriInfo uriInfo, final Integer intId) {
+        super(uriInfo, intId);
     }
 
     @Override
     public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
+
+        if (uriInfo == null) {
+            throw new IllegalStateException("Can not perform propfind without uriInfo");
+        }
+
         if (depth == 0) {
             /* A depth of zero means we are returning information about this item only */
 
@@ -57,7 +62,7 @@ public class InternalResourceTopic extends InternalResource {
             }
 
             final File dir = new File(WebDavConstants.TEMP_LOCATION);
-            final String tempFileNamePrefix = InternalResourceTempTopicFile.buildTempFileName(uriInfo.build().getPath());
+            final String tempFileNamePrefix = InternalResourceTempTopicFile.buildTempFileName(uriInfo.getPath());
             if (dir.exists() && dir.isDirectory()) {
                 for (final File child : dir.listFiles()) {
                     if (child.getPath().startsWith(tempFileNamePrefix)) {

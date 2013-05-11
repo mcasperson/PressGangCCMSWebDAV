@@ -1,13 +1,13 @@
 package org.jboss.pressgang.ccms.restserver.webdav;
 
 /**
- * Created with IntelliJ IDEA.
- * User: matthew
- * Date: 5/8/13
- * Time: 6:59 AM
- * To change this template use File | Settings | File Templates.
+ *  Some useful maths utility methods.
  */
 public class MathUtils {
+    /**
+     * @param number The number to check.
+     * @return The scale of the number (i.e. the number of zeros)
+     */
     public static int getScale(final int number) {
         int maxScale = Math.abs(number);
 

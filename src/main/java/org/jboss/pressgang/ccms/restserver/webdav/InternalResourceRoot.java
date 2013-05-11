@@ -14,19 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: matthew
- * Date: 11/05/13
- * Time: 5:22 PM
- * To change this template use File | Settings | File Templates.
+ * The root folder of the WebDAV hierarchy.
  */
 public class InternalResourceRoot extends InternalResource {
-    public InternalResourceRoot(final UriBuilder requestUriBuilder, final String stringId) {
-        super(requestUriBuilder, stringId);
+    public InternalResourceRoot(final UriInfo uriInfo, final String stringId) {
+        super(uriInfo, stringId);
     }
 
     @Override
     public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
+
+        if (uriInfo == null) {
+            throw new IllegalStateException("Can not perform propfind without uriInfo");
+        }
+
         if (depth == 0) {
             /* A depth of zero means we are returning information about this item only */
             final Response folder = getFolderProperties(uriInfo);

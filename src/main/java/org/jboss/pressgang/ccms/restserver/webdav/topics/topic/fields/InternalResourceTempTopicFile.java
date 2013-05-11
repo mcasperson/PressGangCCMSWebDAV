@@ -30,8 +30,8 @@ public class InternalResourceTempTopicFile extends InternalResource {
 
     private static final Logger LOGGER = Logger.getLogger(InternalResourceTempTopicFile.class.getName());
 
-    public InternalResourceTempTopicFile(final UriBuilder requestUriBuilder, final String path) {
-        super(requestUriBuilder, path);
+    public InternalResourceTempTopicFile(final UriInfo uriInfo, final String path) {
+        super(uriInfo, path);
     }
 
     @Override
@@ -112,8 +112,13 @@ public class InternalResourceTempTopicFile extends InternalResource {
 
     @Override
     public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
+
+        if (uriInfo == null) {
+            throw new IllegalStateException("Can not perform propfind without uriInfo");
+        }
+
         try {
-            final String fileLocation = InternalResourceTempTopicFile.buildTempFileName(uriInfo.build().getPath());
+            final String fileLocation = InternalResourceTempTopicFile.buildTempFileName(uriInfo.getPath());
 
             final File file = new File(fileLocation);
 
@@ -139,14 +144,14 @@ public class InternalResourceTempTopicFile extends InternalResource {
     }
 
     /**
-     * @param uriRequestBuilder The uri that was used to access this resource
+     * @param uriInfo The uri that was used to access this resource
      * @param file    The file that this content represents
      * @param local   true if we are building the properties for the resource at the given uri, and false if we are building
      *                properties for a child resource.
      * @return
      */
-    public static net.java.dev.webdav.jaxrs.xml.elements.Response getProperties(final UriBuilder uriRequestBuilder, final File file, final boolean local) {
-        final HRef hRef = local ? new HRef(uriRequestBuilder.build()) : new HRef(uriRequestBuilder.path(InternalResourceTempTopicFile.buildWebDavFileName(uriRequestBuilder.build().getPath(), file)).build());
+    public static net.java.dev.webdav.jaxrs.xml.elements.Response getProperties(final UriInfo uriInfo, final File file, final boolean local) {
+        final HRef hRef = local ? new HRef(uriInfo.getRequestUri()) : new HRef(uriInfo.getRequestUriBuilder().path(InternalResourceTempTopicFile.buildWebDavFileName(uriInfo.getPath(), file)).build());
         final GetLastModified getLastModified = new GetLastModified(new Date(file.lastModified()));
         final GetContentType getContentType = new GetContentType(MediaType.APPLICATION_OCTET_STREAM);
         final GetContentLength getContentLength = new GetContentLength(file.length());

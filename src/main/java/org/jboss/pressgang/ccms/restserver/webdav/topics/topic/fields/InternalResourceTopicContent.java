@@ -31,8 +31,8 @@ public class InternalResourceTopicContent extends InternalResource {
 
     private static final Logger LOGGER = Logger.getLogger(InternalResourceTopicContent.class.getName());
 
-    public InternalResourceTopicContent(final UriBuilder requestUriBuilder, final Integer intId) {
-        super(requestUriBuilder, intId);
+    public InternalResourceTopicContent(final UriInfo uriInfo, final Integer intId) {
+        super(uriInfo, intId);
     }
 
     @Override
@@ -135,6 +135,10 @@ public class InternalResourceTopicContent extends InternalResource {
     @Override
     public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
 
+        if (uriInfo == null) {
+            throw new IllegalStateException("Can not perform propfind without uriInfo");
+        }
+
         EntityManager entityManager = null;
 
         try {
@@ -160,14 +164,14 @@ public class InternalResourceTopicContent extends InternalResource {
     }
 
     /**
-     * @param requestUriBuilder The uri that was used to access this resource
+     * @param uriInfo The uri that was used to access this resource
      * @param topic   The topic that this content represents
      * @param local   true if we are building the properties for the resource at the given uri, and false if we are building
      *                properties for a child resource.
      * @return
      */
-    public static net.java.dev.webdav.jaxrs.xml.elements.Response getProperties(final UriBuilder requestUriBuilder, final Topic topic, final boolean local) {
-        final HRef hRef = local ? new HRef(requestUriBuilder.build()) : new HRef(requestUriBuilder.path(topic.getId() + ".xml").build());
+    public static net.java.dev.webdav.jaxrs.xml.elements.Response getProperties(final UriInfo uriInfo, final Topic topic, final boolean local) {
+        final HRef hRef = local ? new HRef(uriInfo.getRequestUri()) : new HRef(uriInfo.getRequestUriBuilder().path(topic.getId() + ".xml").build());
         final FixedCreationDate creationDate = new FixedCreationDate(topic.getTopicTimeStamp() == null ? new Date() : topic.getTopicTimeStamp());
         final GetLastModified getLastModified = new GetLastModified(topic.getLastModifiedDate() == null ? new Date() : topic.getLastModifiedDate());
         final GetContentType getContentType = new GetContentType(MediaType.APPLICATION_OCTET_STREAM);

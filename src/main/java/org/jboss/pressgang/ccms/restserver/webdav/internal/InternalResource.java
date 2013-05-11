@@ -53,15 +53,15 @@ public abstract class InternalResource {
 
     protected final Integer intId;
     protected final String stringId;
-    protected final UriBuilder uriInfo;
+    protected final UriInfo uriInfo;
 
-    protected InternalResource(final UriBuilder uriInfo, final Integer intId) {
+    protected InternalResource(final UriInfo uriInfo, final Integer intId) {
         this.intId = intId;
         this.stringId = null;
         this.uriInfo = uriInfo;
     }
 
-    protected InternalResource(final UriBuilder uriInfo, final String stringId) {
+    protected InternalResource(final UriInfo uriInfo, final String stringId) {
         this.intId = null;
         this.stringId = stringId;
         this.uriInfo = uriInfo;
@@ -86,7 +86,7 @@ public abstract class InternalResource {
     public static javax.ws.rs.core.Response propfind(final DeleteManager deleteManager, final UriInfo uriInfo, final int depth) {
         LOGGER.info("ENTER InternalResource.propfind() " + uriInfo.getPath() + " " + depth);
 
-        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo.getRequestUriBuilder());
+        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
 
         if (sourceResource != null) {
             final MultiStatusReturnValue multiStatusReturnValue = sourceResource.propfind(deleteManager, depth);
@@ -108,8 +108,8 @@ public abstract class InternalResource {
             final HRef destHRef = new HRef(destination);
             final URI destUriInfo = destHRef.getURI();
 
-            final InternalResource destinationResource = InternalResource.getInternalResource(UriBuilder.fromUri(destUriInfo));
-            final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo.getRequestUriBuilder());
+            final InternalResource destinationResource = InternalResource.getInternalResource(null, destUriInfo.getPath());
+            final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
 
             if (destinationResource != null && sourceResource != null) {
                 final StringReturnValue stringReturnValue = sourceResource.get(deleteManager);
@@ -144,8 +144,8 @@ public abstract class InternalResource {
             return javax.ws.rs.core.Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        final InternalResource destinationResource = InternalResource.getInternalResource(UriBuilder.fromUri("/" + destination.replaceFirst(uriInfo.getBaseUri().toString(), "")));
-        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo.getRequestUriBuilder());
+        final InternalResource destinationResource = InternalResource.getInternalResource(null, "/" + destination.replaceFirst(uriInfo.getBaseUri().toString(), ""));
+        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
 
         if (destinationResource != null && sourceResource != null) {
             final StringReturnValue stringReturnValue = sourceResource.get(deleteManager);
@@ -171,7 +171,7 @@ public abstract class InternalResource {
     }
 
     public static javax.ws.rs.core.Response delete(final DeleteManager deleteManager, final UriInfo uriInfo) {
-        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo.getRequestUriBuilder());
+        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
 
         if (sourceResource != null) {
             return javax.ws.rs.core.Response.status(sourceResource.delete(deleteManager)).build();
@@ -181,7 +181,7 @@ public abstract class InternalResource {
     }
 
     public static StringReturnValue get(final DeleteManager deleteManager, final UriInfo uriInfo) {
-        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo.getRequestUriBuilder());
+        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
 
         if (sourceResource != null) {
             StringReturnValue statusCode;
@@ -197,7 +197,7 @@ public abstract class InternalResource {
 
     public static javax.ws.rs.core.Response put(final DeleteManager deleteManager, final UriInfo uriInfo, final InputStream entityStream) {
         try {
-            final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo.getRequestUriBuilder());
+            final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
 
             if (sourceResource != null) {
                 final StringWriter writer = new StringWriter();
@@ -221,10 +221,7 @@ public abstract class InternalResource {
      * @param uri The request URI
      * @return  The object to handle the response, or null if the URL is invalid.
      */
-    public static InternalResource getInternalResource(final UriBuilder uri) {
-
-
-        final String requestPath = uri.build().getPath();
+    public static InternalResource getInternalResource(final UriInfo uri, final String requestPath) {
 
         LOGGER.info("ENTER InternalResource.getInternalResource() " + requestPath);
 
@@ -265,6 +262,7 @@ public abstract class InternalResource {
             return new InternalResourceTopic(uri, Integer.parseInt(topic.group("TopicID")));
         }
 
+        LOGGER.info("None matched");
         return null;
     }
 
@@ -273,11 +271,11 @@ public abstract class InternalResource {
      * This method populates the returned request with the information required to identify
      * a child folder.
      *
-     * @param requestUriBuilder      The URI of the current request
+     * @param uriInfo      The URI of the current request
      * @param resourceName The name of the child folder
      * @return The properties for a child folder
      */
-    public static net.java.dev.webdav.jaxrs.xml.elements.Response getFolderProperties(final UriBuilder requestUriBuilder, final String resourceName) {
+    public static net.java.dev.webdav.jaxrs.xml.elements.Response getFolderProperties(final UriInfo uriInfo, final String resourceName) {
         /*final Date lastModified = new Date(0);
         final CreationDate creationDate = new CreationDate(lastModified);
         final GetLastModified getLastModified = new GetLastModified(lastModified);
@@ -288,7 +286,7 @@ public abstract class InternalResource {
         final Status status = new Status((javax.ws.rs.core.Response.StatusType) OK);
         final PropStat propStat = new PropStat(prop, status);
 
-        final URI uri = requestUriBuilder.path(resourceName).build();
+        final URI uri = uriInfo.getRequestUriBuilder().path(resourceName).build();
         final HRef hRef = new HRef(uri);
         final net.java.dev.webdav.jaxrs.xml.elements.Response folder = new net.java.dev.webdav.jaxrs.xml.elements.Response(hRef, null, null, null, propStat);
 
@@ -299,7 +297,7 @@ public abstract class InternalResource {
      * @param uriInfo The URI of the current request
      * @return The properties for the current folder
      */
-    public static net.java.dev.webdav.jaxrs.xml.elements.Response getFolderProperties(final UriBuilder uriInfo) {
+    public static net.java.dev.webdav.jaxrs.xml.elements.Response getFolderProperties(final UriInfo uriInfo) {
         /*final Date lastModified = new Date(0);
         final CreationDate creationDate = new CreationDate(lastModified);
         final GetLastModified getLastModified = new GetLastModified(lastModified);
@@ -310,7 +308,7 @@ public abstract class InternalResource {
         final Status status = new Status((javax.ws.rs.core.Response.StatusType) OK);
         final PropStat propStat = new PropStat(prop, status);
 
-        final URI uri = uriInfo.build();
+        final URI uri = uriInfo.getRequestUri();
         final HRef hRef = new HRef(uri);
         final net.java.dev.webdav.jaxrs.xml.elements.Response folder = new net.java.dev.webdav.jaxrs.xml.elements.Response(hRef, null, null, null, propStat);
 
