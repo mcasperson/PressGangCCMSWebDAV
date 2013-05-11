@@ -223,30 +223,38 @@ public abstract class InternalResource {
      */
     public static InternalResource getInternalResource(final UriBuilder uri) {
 
+
         final String requestPath = uri.build().getPath();
+
+        LOGGER.info("ENTER InternalResource.getInternalResource() " + requestPath);
 
         final Matcher topicContents = TOPIC_CONTENTS_RE.matcher(requestPath);
         if (topicContents.matches()) {
+            LOGGER.info("Matched InternalResourceTopicContent");
             return new InternalResourceTopicContent(uri, Integer.parseInt(topicContents.group("TopicID")));
         }
 
         final Matcher topicTemp = TOPIC_TEMP_FILE_RE.matcher(requestPath);
         if (topicTemp.matches()) {
+            LOGGER.info("Matched InternalResourceTempTopicFile");
             return new InternalResourceTempTopicFile(uri, requestPath);
         }
 
         final Matcher topicFolder = TOPIC_FOLDER_RE.matcher(requestPath);
         if (topicFolder.matches()) {
+            LOGGER.info("Matched InternalResourceTopicVirtualFolder");
             return new InternalResourceTopicVirtualFolder(uri, requestPath);
         }
 
         final Matcher rootFolder = ROOT_FOLDER_RE.matcher(requestPath);
-        if (topicFolder.matches()) {
+        if (rootFolder.matches()) {
+            LOGGER.info("Matched InternalResourceRoot");
             return new InternalResourceRoot(uri, requestPath);
         }
 
         final Matcher topic = TOPIC_RE.matcher(requestPath);
         if (topic.matches()) {
+            LOGGER.info("Matched InternalResourceTopic");
             return new InternalResourceTopic(uri, Integer.parseInt(topic.group("TopicID")));
         }
 

@@ -14,6 +14,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 public class InternalResourceTopicVirtualFolder extends InternalResource {
 
     public static final String RESOURCE_NAME = "TOPICS";
+    private static final Logger LOGGER = Logger.getLogger(InternalResourceTopicVirtualFolder.class.getName());
     private final Pattern PATH_REGEX = Pattern.compile(".*?/TOPICS(?<var>(/\\d)*)");
 
     public InternalResourceTopicVirtualFolder(final UriBuilder requestUriBuilder, final String stringId) {
@@ -31,6 +33,9 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
 
     @Override
     public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
+
+        LOGGER.info("ENTER InternalResourceTopicVirtualFolder.propfind() " + depth);
+
         if (depth == 0) {
             /* A depth of zero means we are returning information about this item only */
             return new MultiStatusReturnValue(207, new MultiStatus(getFolderProperties(uriInfo)));
