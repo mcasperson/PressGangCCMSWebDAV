@@ -581,11 +581,14 @@
                                 <configuration>
                                     <target>
                                         <touch datetime="now">
-                                            <fileset file="${project.build.directory}/test-classes/test-authserver-import.sql"/>
+                                            <fileset
+                                                    file="${project.build.directory}/test-classes/test-authserver-import.sql"/>
                                         </touch>
-                                        <war destfile="${project.build.directory}/${oauth2authserver.project.name}.war" update="true">
-                                            <zipfileset file="${project.build.directory}/test-classes/test-authserver-import.sql"
-                                                        fullpath="WEB-INF/classes/import.sql"/>
+                                        <war destfile="${project.build.directory}/${oauth2authserver.project.name}.war"
+                                             update="true">
+                                            <zipfileset
+                                                    file="${project.build.directory}/test-classes/test-authserver-import.sql"
+                                                    fullpath="WEB-INF/classes/import.sql"/>
                                         </war>
                                     </target>
                                 </configuration>

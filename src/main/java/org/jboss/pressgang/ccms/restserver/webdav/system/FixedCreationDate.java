@@ -19,25 +19,22 @@
 
 package org.jboss.pressgang.ccms.restserver.webdav.system;
 
+import net.java.dev.webdav.jaxrs.NullArgumentException;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlValue;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlValue;
-
-import net.java.dev.webdav.jaxrs.NullArgumentException;
-import net.java.dev.webdav.jaxrs.xml.elements.Rfc3339DateTimeFormat;
-
 /**
  * WebDAV creationdate Property.
- *
+ * <p/>
  * This version of the creation date uses a different format to the standard one supplied by the jax-rs webdav
  * extension. The original format caused errors in XML Mind.
  *
  * @author Markus KARG (mkarg@users.dev.java.net)
- *
  * @see <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_creationdate">Chapter 15.1 "creationdate Property" of RFC 4918 "HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)"</a>
  */
 @XmlRootElement(name = "creationdate")

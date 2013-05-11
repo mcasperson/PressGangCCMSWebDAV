@@ -11,7 +11,8 @@ import javax.annotation.Nullable;
  */
 public class StringReturnValue {
     private final int statusCode;
-    @Nullable private final String value;
+    @Nullable
+    private final String value;
 
     public StringReturnValue(final int statusCode, @Nullable final String value) {
         this.statusCode = statusCode;

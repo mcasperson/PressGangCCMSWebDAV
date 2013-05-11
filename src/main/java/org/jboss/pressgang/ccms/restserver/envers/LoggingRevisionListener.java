@@ -1,16 +1,16 @@
 package org.jboss.pressgang.ccms.restserver.envers;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.naming.NamingException;
-import java.util.Set;
-
 import org.hibernate.envers.RevisionListener;
 import org.jboss.pressgang.ccms.restserver.ejb.EnversLoggingBean;
 import org.jboss.pressgang.ccms.restserver.utils.JNDIUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.naming.NamingException;
+import java.util.Set;
 
 /**
  * A Envers Revision Listener that will add content to a Envers Revision Entity when new data is persisted. It will pull the

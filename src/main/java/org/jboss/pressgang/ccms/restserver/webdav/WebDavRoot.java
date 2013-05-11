@@ -1,18 +1,17 @@
 package org.jboss.pressgang.ccms.restserver.webdav;
 
 import net.java.dev.webdav.jaxrs.methods.PROPFIND;
-import net.java.dev.webdav.jaxrs.xml.elements.*;
+import net.java.dev.webdav.jaxrs.xml.elements.MultiStatus;
 import net.java.dev.webdav.jaxrs.xml.elements.Response;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.TopicVirtualFolder;
-
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
-
-import javax.ws.rs.core.*;
 
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,8 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
+import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
+
 /**
-    The root of the WebDAV server.
+ * The root of the WebDAV server.
  */
 @Path("/")
 public class WebDavRoot extends WebDavResource {

@@ -1,11 +1,9 @@
 package org.jboss.pressgang.ccms.restserver.servlet.filter;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,9 +14,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A Servlet Filter to Compress the response of a HTTP Request using the GZIP compression algorithm.
  * <p/>
@@ -26,17 +21,17 @@ import org.slf4j.LoggerFactory;
  * <br><br>
  * Sample web.xml config:
  * <pre>{@code<filter>
-    <filter-name>compression</filter-name>
-    <filter-class>org.jboss.pressgang.ccms.restserver.servlet.filter.GZIPCompressionFilter</filter-class>
-    <init-param>
-        <param-name>mime-types</param-name>
-        <param-value>application/json, application/svg+xml, text/*</param-value>
-    </init-param>
-</filter>
-<filter-mapping>
-    <filter-name>compression</filter-name>
-    <url-pattern>/*</url-pattern>
-</filter-mapping>}</pre>
+ * <filter-name>compression</filter-name>
+ * <filter-class>org.jboss.pressgang.ccms.restserver.servlet.filter.GZIPCompressionFilter</filter-class>
+ * <init-param>
+ * <param-name>mime-types</param-name>
+ * <param-value>application/json, application/svg+xml, text/*</param-value>
+ * </init-param>
+ * </filter>
+ * <filter-mapping>
+ * <filter-name>compression</filter-name>
+ * <url-pattern>/*</url-pattern>
+ * </filter-mapping>}</pre>
  */
 @WebFilter(urlPatterns = "/webdav/*")
 public class GZIPCompressionFilter implements Filter {

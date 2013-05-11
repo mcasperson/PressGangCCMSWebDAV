@@ -1,10 +1,10 @@
 package org.jboss.pressgang.ccms.restserver.ejb;
 
+import org.jboss.pressgang.ccms.restserver.envers.LoggingRevisionEntity;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 import java.io.Serializable;
-
-import org.jboss.pressgang.ccms.restserver.envers.LoggingRevisionEntity;
 
 /**
  * This java bean provides a mechanism to provide information to a

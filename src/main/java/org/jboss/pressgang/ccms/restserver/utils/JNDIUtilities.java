@@ -5,7 +5,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
 
 /**
  * A class that holds a set of utility methods for looking up objects from JNDI.
@@ -32,7 +31,7 @@ public class JNDIUtilities {
      * A generic method provided to lookup any object bound to JNDI.
      *
      * @param clazz The class type of the expected return.
-     * @param name The JNDI name of the object. eg "java:comp/BeanManager"
+     * @param name  The JNDI name of the object. eg "java:comp/BeanManager"
      * @return The requested lookup object.
      * @throws NamingException Thrown if a name based error occurs looking up the Object.
      */

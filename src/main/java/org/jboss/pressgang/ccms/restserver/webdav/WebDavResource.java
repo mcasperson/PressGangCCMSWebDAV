@@ -18,57 +18,42 @@
  */
 package org.jboss.pressgang.ccms.restserver.webdav;
 
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static javax.ws.rs.core.Response.Status.OK;
-import static net.java.dev.webdav.jaxrs.Headers.*;
-import static net.java.dev.webdav.jaxrs.xml.properties.ResourceType.COLLECTION;
+import net.java.dev.webdav.jaxrs.methods.*;
+import net.java.dev.webdav.jaxrs.xml.elements.*;
+import org.jboss.pressgang.ccms.restserver.webdav.internal.InternalResource;
+import org.jboss.pressgang.ccms.restserver.webdav.internal.StringReturnValue;
+import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Date;
-import java.util.logging.Logger;
-
-import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
+import javax.inject.Inject;
+import javax.ws.rs.*;
 import javax.ws.rs.OPTIONS;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.logging.Logger;
 
-import net.java.dev.webdav.jaxrs.methods.COPY;
-import net.java.dev.webdav.jaxrs.methods.MKCOL;
-import net.java.dev.webdav.jaxrs.methods.MOVE;
-import net.java.dev.webdav.jaxrs.methods.PROPFIND;
-import net.java.dev.webdav.jaxrs.methods.PROPPATCH;
-import net.java.dev.webdav.jaxrs.xml.elements.*;
-import net.java.dev.webdav.jaxrs.xml.properties.CreationDate;
-import net.java.dev.webdav.jaxrs.xml.properties.GetLastModified;
-import org.apache.batik.css.engine.value.StringValue;
-import org.jboss.pressgang.ccms.restserver.utils.JNDIUtilities;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.InternalResource;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.StringReturnValue;
-import org.jboss.resteasy.spi.InternalServerErrorException;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
+import static javax.ws.rs.core.Response.Status.OK;
+import static net.java.dev.webdav.jaxrs.Headers.*;
+import static net.java.dev.webdav.jaxrs.xml.properties.ResourceType.COLLECTION;
 
 public class WebDavResource {
     public static final String WEBDAV_COMPLIANCE_LEVEL = "1";
 
     private static final Logger LOGGER = Logger.getLogger(WebDavResource.class.getName());
 
+    @Inject
+    private DeleteManager deleteManager;
+
     @GET
     @Produces("application/octet-stream")
     public javax.ws.rs.core.Response get(@Context final UriInfo uriInfo) {
-        final StringReturnValue stringValueReturn = InternalResource.get(uriInfo);
+        final StringReturnValue stringValueReturn = InternalResource.get(deleteManager, uriInfo);
         if (stringValueReturn.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
             return javax.ws.rs.core.Response.status(stringValueReturn.getStatusCode()).build();
         }
@@ -79,7 +64,7 @@ public class WebDavResource {
     @PUT
     @Consumes("*/*")
     public javax.ws.rs.core.Response put(@Context final UriInfo uriInfo, final InputStream entityStream) throws IOException, URISyntaxException {
-        return InternalResource.put(uriInfo, entityStream);
+        return InternalResource.put(deleteManager, uriInfo, entityStream);
     }
 
     @MKCOL
@@ -91,8 +76,8 @@ public class WebDavResource {
     @Produces("application/xml")
     @PROPFIND
     public javax.ws.rs.core.Response propfind(@Context final UriInfo uriInfo, @HeaderParam(DEPTH) final int depth, final InputStream entityStream,
-                                       @HeaderParam(CONTENT_LENGTH) final long contentLength, @Context final Providers providers,
-                                       @Context final HttpHeaders httpHeaders) throws URISyntaxException, IOException {
+                                              @HeaderParam(CONTENT_LENGTH) final long contentLength, @Context final Providers providers,
+                                              @Context final HttpHeaders httpHeaders) throws URISyntaxException, IOException {
         LOGGER.info("ENTER WebDavResource.propfind()");
         return javax.ws.rs.core.Response.serverError().build();
     }
@@ -105,7 +90,7 @@ public class WebDavResource {
 
     @COPY
     public javax.ws.rs.core.Response copy(@Context final UriInfo uriInfo, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) {
-        return InternalResource.copy(uriInfo, overwriteStr, destination);
+        return InternalResource.copy(deleteManager, uriInfo, overwriteStr, destination);
     }
 
     /*
@@ -119,12 +104,12 @@ public class WebDavResource {
      */
     @MOVE
     public javax.ws.rs.core.Response move(@Context final UriInfo uriInfo, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) throws URISyntaxException {
-        return InternalResource.move(uriInfo, overwriteStr, destination);
+        return InternalResource.move(deleteManager, uriInfo, overwriteStr, destination);
     }
 
     @DELETE
     public javax.ws.rs.core.Response delete(@Context final UriInfo uriInfo) {
-        return InternalResource.delete(uriInfo);
+        return InternalResource.delete(deleteManager, uriInfo);
     }
 
     @OPTIONS
@@ -141,7 +126,7 @@ public class WebDavResource {
      * This method populates the returned request with the information required to identify
      * a child folder.
      *
-     * @param uriInfo The URI of the current request
+     * @param uriInfo      The URI of the current request
      * @param resourceName The name of the child folder
      * @return The properties for a child folder
      */
@@ -164,7 +149,6 @@ public class WebDavResource {
     }
 
     /**
-     *
      * @param uriInfo The URI of the current request
      * @return The properties for the current folder
      */

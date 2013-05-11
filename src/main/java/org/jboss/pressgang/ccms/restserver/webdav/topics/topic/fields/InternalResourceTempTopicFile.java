@@ -2,18 +2,16 @@ package org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.jboss.pressgang.ccms.model.Topic;
-import org.jboss.pressgang.ccms.restserver.utils.JNDIUtilities;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
-import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
 import org.jboss.pressgang.ccms.restserver.webdav.internal.InternalResource;
 import org.jboss.pressgang.ccms.restserver.webdav.internal.StringReturnValue;
+import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 
-import javax.persistence.EntityManager;
-import javax.transaction.TransactionManager;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
@@ -32,8 +30,9 @@ public class InternalResourceTempTopicFile extends InternalResource {
     }
 
     @Override
-    public int write(final String contents) {
+    public int write(final DeleteManager deleteManager, final String contents) {
         LOGGER.info("ENTER InternalResourceTempTopicFile.write() " + stringId);
+        LOGGER.info(contents);
 
         try {
             final File directory = new java.io.File(WebDavConstants.TEMP_LOCATION);
@@ -63,7 +62,7 @@ public class InternalResourceTempTopicFile extends InternalResource {
     }
 
     @Override
-    public StringReturnValue get() {
+    public StringReturnValue get(final DeleteManager deleteManager) {
 
         LOGGER.info("ENTER InternalResourceTempTopicFile.get() " + stringId);
 
@@ -92,7 +91,7 @@ public class InternalResourceTempTopicFile extends InternalResource {
     }
 
     @Override
-    public int delete(){
+    public int delete(final DeleteManager deleteManager) {
         LOGGER.info("ENTER InternalResourceTempTopicFile.delete() " + stringId);
 
         final String fileLocation = buildTempFileName(stringId);

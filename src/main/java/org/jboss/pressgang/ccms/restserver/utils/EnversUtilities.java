@@ -10,7 +10,7 @@ import javax.persistence.EntityManager;
 public class EnversUtilities extends org.jboss.pressgang.ccms.model.utils.EnversUtilities {
 
     public static <T extends AuditedEntity> LoggingRevisionEntity getRevisionEntity(final EntityManager entityManager, final T entity,
-            final Number revision) {
+                                                                                    final Number revision) {
         final AuditReader reader = AuditReaderFactory.get(entityManager);
         if (revision == null) {
             return reader.findRevision(LoggingRevisionEntity.class, getLatestRevision(entityManager, entity));
@@ -30,7 +30,7 @@ public class EnversUtilities extends org.jboss.pressgang.ccms.model.utils.Envers
     }
 
     public static <T extends AuditedEntity> String getLogUsername(final EntityManager entityManager, final T entity,
-            final Number revision) {
+                                                                  final Number revision) {
         final LoggingRevisionEntity revEntity = getRevisionEntity(entityManager, entity, revision);
         return revEntity == null ? null : revEntity.getUserName();
     }

@@ -1,18 +1,17 @@
 package org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields;
 
-import org.apache.commons.io.IOUtils;
 import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.restserver.utils.JNDIUtilities;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
 import org.jboss.pressgang.ccms.restserver.webdav.internal.InternalResource;
 import org.jboss.pressgang.ccms.restserver.webdav.internal.StringReturnValue;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
+import org.jboss.pressgang.ccms.restserver.webdav.managers.ResourceTypes;
 
-import javax.annotation.Nullable;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.TransactionManager;
 import javax.ws.rs.core.Response;
-import java.io.StringWriter;
 import java.util.logging.Logger;
 
 /**
@@ -31,9 +30,10 @@ public class InternalResourceTopicContent extends InternalResource {
     }
 
     @Override
-    public int write(final String contents) {
+    public int write(final DeleteManager deleteManager, final String contents) {
 
         LOGGER.info("ENTER InternalResourceTopicContent.write() " + intId);
+        LOGGER.info(contents);
 
         EntityManager entityManager = null;
         TransactionManager transactionManager = null;
@@ -55,6 +55,8 @@ public class InternalResourceTopicContent extends InternalResource {
                 entityManager.flush();
                 transactionManager.commit();
 
+                deleteManager.create(ResourceTypes.TOPIC, intId);
+
                 return Response.Status.NO_CONTENT.getStatusCode();
             }
 
@@ -69,7 +71,7 @@ public class InternalResourceTopicContent extends InternalResource {
             }
 
             return Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
-        }  finally {
+        } finally {
             if (entityManager != null) {
                 entityManager.close();
             }
@@ -78,9 +80,13 @@ public class InternalResourceTopicContent extends InternalResource {
     }
 
     @Override
-    public StringReturnValue get() {
+    public StringReturnValue get(final DeleteManager deleteManager) {
 
-        LOGGER.info("ENTER InternalResourceTopicContent.write() " + intId);
+        LOGGER.info("ENTER InternalResourceTopicContent.get() " + intId);
+
+        if (deleteManager.isDeleted(ResourceTypes.TOPIC, intId)) {
+            return new StringReturnValue(Response.Status.NOT_FOUND.getStatusCode(), null);
+        }
 
         EntityManager entityManager = null;
 
@@ -105,10 +111,16 @@ public class InternalResourceTopicContent extends InternalResource {
     }
 
     @Override
-    public int delete(){
-        LOGGER.info("ENTER InternalResourceTopicContent.write() " + intId);
+    public int delete(final DeleteManager deleteManager) {
+        LOGGER.info("ENTER InternalResourceTopicContent.delete() " + intId);
 
-        /* we pretend to delete these resources */
+        if (deleteManager.isDeleted(ResourceTypes.TOPIC, intId)) {
+            return Response.Status.NOT_FOUND.getStatusCode();
+        }
+
+        deleteManager.delete(ResourceTypes.TOPIC, intId);
+
+        /* pretend to be deleted */
         return Response.Status.NO_CONTENT.getStatusCode();
     }
 }

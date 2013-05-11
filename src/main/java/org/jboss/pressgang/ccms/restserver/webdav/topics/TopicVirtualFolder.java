@@ -2,9 +2,7 @@ package org.jboss.pressgang.ccms.restserver.webdav.topics;
 
 import net.java.dev.webdav.jaxrs.methods.PROPFIND;
 import net.java.dev.webdav.jaxrs.xml.elements.MultiStatus;
-import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.restserver.webdav.MathUtils;
-import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
 
@@ -36,7 +34,8 @@ public class TopicVirtualFolder extends WebDavResource {
 
     public static final String RESOURCE_NAME = "TOPICS";
     private static final Logger LOGGER = Logger.getLogger(TopicVirtualFolder.class.getName());
-    @PathParam("var") private String var;
+    @PathParam("var")
+    private String var;
 
     @Override
     @Produces(MediaType.APPLICATION_XML)
@@ -79,7 +78,7 @@ public class TopicVirtualFolder extends WebDavResource {
                     final int thisPathZeros = lastPath == null ? 0 : MathUtils.getScale(lastPath);
 
                     /* we've gone too deep */
-                    if (thisPathZeros > zeros)  {
+                    if (thisPathZeros > zeros) {
                         return javax.ws.rs.core.Response.status(404).build();
                     }
 

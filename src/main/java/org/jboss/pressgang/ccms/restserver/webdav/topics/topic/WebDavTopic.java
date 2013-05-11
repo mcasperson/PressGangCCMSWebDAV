@@ -1,51 +1,48 @@
 package org.jboss.pressgang.ccms.restserver.webdav.topics.topic;
 
-import net.java.dev.webdav.jaxrs.methods.MOVE;
 import net.java.dev.webdav.jaxrs.methods.PROPFIND;
-
-import static net.java.dev.webdav.jaxrs.Headers.DESTINATION;
-import static net.java.dev.webdav.jaxrs.Headers.OVERWRITE;
-import static net.java.dev.webdav.jaxrs.xml.properties.ResourceType.COLLECTION;
-import net.java.dev.webdav.jaxrs.xml.elements.*;
+import net.java.dev.webdav.jaxrs.xml.elements.MultiStatus;
 import net.java.dev.webdav.jaxrs.xml.elements.Response;
-import net.java.dev.webdav.jaxrs.xml.properties.*;
 import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.restserver.utils.EnversUtilities;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
+import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.InternalResourceTempTopicFile;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTempTopicFile;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTopicContent;
-import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
-
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
-import static javax.ws.rs.core.Response.Status.OK;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
 
 import javax.persistence.EntityManager;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
+import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
+
 /**
-    The virtual folder that holds all the topic's details
+ * The virtual folder that holds all the topic's details
  */
 @Path("/TOPICS{var:(/\\d)*}/{topicId:TOPIC\\d*}")
 public class WebDavTopic extends WebDavResource {
 
     private static final Logger LOGGER = Logger.getLogger(WebDavTopic.class.getName());
 
-    @PathParam("topicId") String topicIdString;
+    @PathParam("topicId")
+    String topicIdString;
 
     @Override
     @Produces(MediaType.APPLICATION_XML)

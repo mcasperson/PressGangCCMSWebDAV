@@ -1,29 +1,21 @@
 package org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields;
 
-import net.java.dev.webdav.jaxrs.methods.COPY;
-import net.java.dev.webdav.jaxrs.methods.MOVE;
 import net.java.dev.webdav.jaxrs.methods.PROPFIND;
-import net.java.dev.webdav.jaxrs.methods.PROPPATCH;
 import net.java.dev.webdav.jaxrs.xml.elements.*;
-import net.java.dev.webdav.jaxrs.xml.elements.Response;
 import net.java.dev.webdav.jaxrs.xml.properties.*;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.jboss.pressgang.ccms.model.Topic;
-import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
-import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.InternalResource;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.StringReturnValue;
-import org.jboss.pressgang.ccms.restserver.webdav.system.FixedCreationDate;
 
-import javax.persistence.EntityManager;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
-import java.io.*;
-import java.lang.annotation.Annotation;
-import java.net.URI;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -31,8 +23,6 @@ import java.util.logging.Logger;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static javax.ws.rs.core.Response.Status.OK;
 import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
-import static net.java.dev.webdav.jaxrs.Headers.DESTINATION;
-import static net.java.dev.webdav.jaxrs.Headers.OVERWRITE;
 
 /**
 
@@ -56,7 +46,7 @@ public class WebDavTempTopicFile extends WebDavResource {
 
             final File file = new File(fileLocation);
 
-            if (file.exists())  {
+            if (file.exists()) {
                 final Response response = getProperties(uriInfo, file, true);
                 final MultiStatus st = new MultiStatus(response);
                 return javax.ws.rs.core.Response.status(207).entity(st).type(MediaType.TEXT_XML).build();
@@ -70,11 +60,10 @@ public class WebDavTempTopicFile extends WebDavResource {
     }
 
     /**
-     *
      * @param uriInfo The uri that was used to access this resource
-     * @param file The file that this content represents
-     * @param local true if we are building the properties for the resource at the given uri, and false if we are building
-     *              properties for a child resource.
+     * @param file    The file that this content represents
+     * @param local   true if we are building the properties for the resource at the given uri, and false if we are building
+     *                properties for a child resource.
      * @return
      */
     public static Response getProperties(final UriInfo uriInfo, final File file, final boolean local) {

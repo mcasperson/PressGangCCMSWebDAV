@@ -62,7 +62,8 @@
         <class>org.jboss.pressgang.belay.oauth2.resourceserver.data.model.OAuth2RSEndpoint</class>-->
 
         <properties>
-            <property name="hibernate.dialect" value="org.jboss.pressgang.ccms.restserver.entity.dialect.MySql5BitBooleanDialect"/>
+            <property name="hibernate.dialect"
+                      value="org.jboss.pressgang.ccms.restserver.entity.dialect.MySql5BitBooleanDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="none"/>
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="false"/>
@@ -73,7 +74,8 @@
             <property name="hibernate.cache.use_minimal_puts" value="true"/>
 
             <!-- Envers events -->
-            <property name="org.hibernate.envers.audit_strategy" value="org.hibernate.envers.strategy.ValidityAuditStrategy"/>
+            <property name="org.hibernate.envers.audit_strategy"
+                      value="org.hibernate.envers.strategy.ValidityAuditStrategy"/>
         </properties>
     </persistence-unit>
 
