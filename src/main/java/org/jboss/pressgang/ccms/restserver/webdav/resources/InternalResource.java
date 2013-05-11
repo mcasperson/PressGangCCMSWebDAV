@@ -48,7 +48,7 @@ public abstract class InternalResource {
     public static final Pattern ROOT_FOLDER_RE = Pattern.compile("/");
     public static final Pattern TOPIC_FOLDER_RE = Pattern.compile("/TOPICS(?<var>(/\\d)*)/?");
     public static final Pattern TOPIC_CONTENTS_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/(?<TopicID>\\d+).xml");
-    public static final Pattern TOPIC_TEMP_FILE_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/[^/]*");
+    public static final Pattern TOPIC_TEMP_FILE_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/[^/]+");
 
     @Nullable
     private final Integer intId;
@@ -240,12 +240,6 @@ public abstract class InternalResource {
             return new InternalResourceTopicContent(uri, Integer.parseInt(topicContents.group("TopicID")));
         }
 
-        final Matcher topicTemp = TOPIC_TEMP_FILE_RE.matcher(requestPath);
-        if (topicTemp.matches()) {
-            LOGGER.info("Matched InternalResourceTempTopicFile");
-            return new InternalResourceTempTopicFile(uri, requestPath);
-        }
-
         final Matcher topicFolder = TOPIC_FOLDER_RE.matcher(requestPath);
         if (topicFolder.matches()) {
             LOGGER.info("Matched InternalResourceTopicVirtualFolder");
@@ -262,6 +256,12 @@ public abstract class InternalResource {
         if (topic.matches()) {
             LOGGER.info("Matched InternalResourceTopic");
             return new InternalResourceTopic(uri, Integer.parseInt(topic.group("TopicID")));
+        }
+
+        final Matcher topicTemp = TOPIC_TEMP_FILE_RE.matcher(requestPath);
+        if (topicTemp.matches()) {
+            LOGGER.info("Matched InternalResourceTempTopicFile");
+            return new InternalResourceTempTopicFile(uri, requestPath);
         }
 
         LOGGER.info("None matched");
