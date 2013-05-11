@@ -51,6 +51,8 @@ public class WebDavTopic extends WebDavResource {
     public javax.ws.rs.core.Response propfind(@Context final UriInfo uriInfo, @HeaderParam(DEPTH) final int depth, final InputStream entityStream,
                                               @HeaderParam(CONTENT_LENGTH) final long contentLength, @Context final Providers providers,
                                               @Context final HttpHeaders httpHeaders) throws URISyntaxException, IOException {
+        LOGGER.info("ENTER WebDavTopic.propfind() ");
+
         try {
 
             if (depth == 0) {
