@@ -1,4 +1,4 @@
-package org.jboss.pressgang.ccms.restserver.webdav;
+package org.jboss.pressgang.ccms.restserver.webdav.constants;
 
 /**
  * Created with IntelliJ IDEA.

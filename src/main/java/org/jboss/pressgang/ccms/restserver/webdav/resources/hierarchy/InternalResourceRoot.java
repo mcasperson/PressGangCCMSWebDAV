@@ -1,11 +1,11 @@
-package org.jboss.pressgang.ccms.restserver.webdav;
+package org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy;
 
 import net.java.dev.webdav.jaxrs.xml.elements.MultiStatus;
 import net.java.dev.webdav.jaxrs.xml.elements.Response;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.InternalResource;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.MultiStatusReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.InternalResourceTopicVirtualFolder;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.InternalResource;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.MultiStatusReturnValue;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.InternalResourceTopicVirtualFolder;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;

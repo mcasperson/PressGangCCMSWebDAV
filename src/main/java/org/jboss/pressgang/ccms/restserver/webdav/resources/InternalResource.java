@@ -1,20 +1,18 @@
-package org.jboss.pressgang.ccms.restserver.webdav.internal;
+package org.jboss.pressgang.ccms.restserver.webdav.resources;
 
 import net.java.dev.webdav.jaxrs.xml.elements.*;
 import org.apache.commons.io.IOUtils;
-import org.jboss.pressgang.ccms.restserver.webdav.InternalResourceRoot;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.InternalResourceTopicVirtualFolder;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.InternalResourceTopic;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.InternalResourceTempTopicFile;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.InternalResourceTopicContent;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.InternalResourceRoot;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.InternalResourceTopicVirtualFolder;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.topic.InternalResourceTopic;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.topic.fields.InternalResourceTempTopicFile;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.topic.fields.InternalResourceTopicContent;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +46,7 @@ public abstract class InternalResource {
 
     public static final Pattern TOPIC_RE = Pattern.compile("/TOPICS(?<var>(/\\d)*)/TOPIC(?<TopicID>\\d*)/?");
     public static final Pattern ROOT_FOLDER_RE = Pattern.compile("/");
-    public static final Pattern TOPIC_FOLDER_RE = Pattern.compile("/TOPICS(?<var>(/\\d)*)/?");
+    public static final Pattern TOPIC_FOLDER_RE = Pattern.compile("(?<prefix>/TOPICS)(/\\d)*/?");
     public static final Pattern TOPIC_CONTENTS_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/(?<TopicID>\\d+).xml");
     public static final Pattern TOPIC_TEMP_FILE_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/[^/]*");
 

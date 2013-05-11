@@ -1,17 +1,17 @@
-package org.jboss.pressgang.ccms.restserver.webdav.topics.topic;
+package org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.topic;
 
 import net.java.dev.webdav.jaxrs.xml.elements.MultiStatus;
 import net.java.dev.webdav.jaxrs.xml.elements.Response;
 import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.restserver.utils.EnversUtilities;
-import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
-import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.InternalResource;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.MultiStatusReturnValue;
+import org.jboss.pressgang.ccms.restserver.webdav.constants.WebDavConstants;
+import org.jboss.pressgang.ccms.restserver.webdav.utils.WebDavUtils;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.InternalResource;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.MultiStatusReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.ResourceTypes;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.InternalResourceTempTopicFile;
-import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.InternalResourceTopicContent;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.topic.fields.InternalResourceTempTopicFile;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.topic.fields.InternalResourceTopicContent;
 
 import javax.persistence.EntityManager;
 import javax.ws.rs.core.UriInfo;

@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with webdav-jaxrs.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jboss.pressgang.ccms.restserver.webdav;
+package org.jboss.pressgang.ccms.restserver.webdav.jaxrs;
 
 import net.java.dev.webdav.jaxrs.methods.*;
-import net.java.dev.webdav.jaxrs.xml.elements.*;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.InternalResource;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.StringReturnValue;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.InternalResource;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.StringReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 
-import javax.annotation.ManagedBean;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -35,14 +33,10 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static javax.ws.rs.core.Response.Status.OK;
 import static net.java.dev.webdav.jaxrs.Headers.*;
-import static net.java.dev.webdav.jaxrs.xml.properties.ResourceType.COLLECTION;
 
 /**
  * This JAX-RS endpoint captures all requests. It then relays them to the InternalResource class,

@@ -1,4 +1,4 @@
-package org.jboss.pressgang.ccms.restserver.webdav;
+package org.jboss.pressgang.ccms.restserver.webdav.utils;
 
 import org.jboss.pressgang.ccms.restserver.utils.JNDIUtilities;
 import org.jboss.resteasy.spi.InternalServerErrorException;

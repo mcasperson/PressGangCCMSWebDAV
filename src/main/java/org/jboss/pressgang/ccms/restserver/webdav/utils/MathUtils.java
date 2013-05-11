@@ -1,4 +1,4 @@
-package org.jboss.pressgang.ccms.restserver.webdav;
+package org.jboss.pressgang.ccms.restserver.webdav.utils;
 
 /**
  *  Some useful maths utility methods.

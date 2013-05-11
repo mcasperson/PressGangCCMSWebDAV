@@ -1,4 +1,4 @@
-package org.jboss.pressgang.ccms.restserver.webdav.internal;
+package org.jboss.pressgang.ccms.restserver.webdav.resources;
 
 import net.java.dev.webdav.jaxrs.xml.elements.MultiStatus;
 

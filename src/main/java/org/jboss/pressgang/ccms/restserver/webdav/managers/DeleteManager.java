@@ -1,10 +1,9 @@
 package org.jboss.pressgang.ccms.restserver.webdav.managers;
 
-import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
+import org.jboss.pressgang.ccms.restserver.webdav.constants.WebDavConstants;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 

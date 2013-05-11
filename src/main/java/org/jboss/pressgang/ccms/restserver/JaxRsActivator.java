@@ -1,7 +1,7 @@
 package org.jboss.pressgang.ccms.restserver;
 
 
-import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
+import org.jboss.pressgang.ccms.restserver.webdav.jaxrs.WebDavResource;
 import org.jboss.pressgang.ccms.restserver.webdav.system.FixedWebDavContextResolver;
 
 import javax.ws.rs.ApplicationPath;

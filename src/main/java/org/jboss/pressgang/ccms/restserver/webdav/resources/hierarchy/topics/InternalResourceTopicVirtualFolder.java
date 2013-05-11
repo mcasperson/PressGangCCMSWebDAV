@@ -1,11 +1,11 @@
-package org.jboss.pressgang.ccms.restserver.webdav.topics;
+package org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics;
 
 import net.java.dev.webdav.jaxrs.xml.elements.MultiStatus;
 import net.java.dev.webdav.jaxrs.xml.elements.Response;
-import org.jboss.pressgang.ccms.restserver.webdav.MathUtils;
-import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.InternalResource;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.MultiStatusReturnValue;
+import org.jboss.pressgang.ccms.restserver.webdav.utils.MathUtils;
+import org.jboss.pressgang.ccms.restserver.webdav.utils.WebDavUtils;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.InternalResource;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.MultiStatusReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 
 import javax.persistence.EntityManager;
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
     Represents a folder that can hold topics.
@@ -48,14 +47,13 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
 
                 final Matcher matcher = InternalResource.TOPIC_FOLDER_RE.matcher(getStringId());
 
-                /* var is an optional match */
-                String var = null;
-                try {
-                    var = matcher.group("var");
-                    LOGGER.info("var: " + var);
-                } catch (final IllegalStateException ex) {
-                    var = null;
+                /* var is everything after the initial TOPIC prefix */
+                String var = getStringId().replaceFirst(matcher.group("prefix"), "");
+                /* if all we have left is the last trailing slash, then get rid of it */
+                if (var.equals("/")) {
+                    var = "";
                 }
+                LOGGER.info("var: " + var);
 
                 entityManager = WebDavUtils.getEntityManager(false);
 
@@ -77,6 +75,8 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
                     }
                     lastPath = Integer.parseInt(path.toString());
                 }
+
+                LOGGER.info("lastPath: " + lastPath);
 
                 final int thisPathZeros = lastPath == null ? 0 : MathUtils.getScale(lastPath);
 

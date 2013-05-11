@@ -1,13 +1,13 @@
-package org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields;
+package org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.topic.fields;
 
 import net.java.dev.webdav.jaxrs.xml.elements.*;
 import net.java.dev.webdav.jaxrs.xml.properties.*;
 import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.restserver.utils.JNDIUtilities;
-import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.InternalResource;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.MultiStatusReturnValue;
-import org.jboss.pressgang.ccms.restserver.webdav.internal.StringReturnValue;
+import org.jboss.pressgang.ccms.restserver.webdav.utils.WebDavUtils;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.InternalResource;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.MultiStatusReturnValue;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.StringReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.ResourceTypes;
 import org.jboss.pressgang.ccms.restserver.webdav.system.FixedCreationDate;
