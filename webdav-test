@@ -6,11 +6,13 @@ TEST_DOC=${TEST_DIR}/${TEST_FILENAME}
 TEMP_DIR=/tmp
 TEMP_DOC=${TEMP_DIR}/${TEST_FILENAME}
 #DOCBOOK_HTML_XSL=/usr/share/sgml/docbook/xsl-stylesheets-1.75.2/html/docbook.xsl
-DOCBOOK_HTML_XSL=/usr/share/sgml/docbook/xsl-stylesheets-1.78.1/html/docbook.xsl
+#DOCBOOK_HTML_XSL=/usr/share/sgml/docbook/xsl-stylesheets-1.78.1/html/docbook.xsl
+DOCBOOK_HTML_XSL=/usr/share/xml/docbook/stylesheet/docbook-xsl/html/docbook.xsl
 #DOCBOOK_DTD=/usr/share/sgml/docbook/xml-dtd-4.5-1.0-51.el6/docbookx.dtd
-DOCBOOK_DTD=/usr/share/sgml/docbook/xml-dtd-4.5/docbookx.dtd
-JING_JAR=/home/matthew/Applications/jing-20091111/bin/jing.jar
-XML_FORMAT_LOCATION=/home/matthew/Applications/xmlformat-1.04
+#DOCBOOK_DTD=/usr/share/sgml/docbook/xml-dtd-4.5/docbookx.dtd
+DOCBOOK_DTD=/usr/share/xml/docbook/schema/dtd/4.5/docbookx.dtd
+JING_JAR=/opt/jing-20091111/bin/jing.jar
+XML_FORMAT_LOCATION=/opt/xmlformat-1.04
 
 #sudo mount.davfs http://skynet-dev.usersys.redhat.com:8080/pressgang-ccms-webdav /mnt/pressgang -o uid=matthew
 
@@ -46,13 +48,12 @@ then
 	echo "************ cp test 3 failed ************"
 fi
 
-
-
 # mv test 1
 echo Starting mv test 1
 echo '<!-- cp test 1 -->' > "${TEST_DOC}"
+cp "${TEST_DOC}" "${TEST_DOC}".copy
 mv "${TEST_DOC}" "${TEST_DOC}".move
-diff "${TEST_DOC}" "${TEST_DOC}".move
+diff "${TEST_DOC}".copy "${TEST_DOC}".move
 
 if [[ $? -ne 0 ]]
 then
@@ -86,9 +87,9 @@ echo Starting rm test 2
 echo '<!-- rm test 1 -->' > "${TEST_DOC}"
 rm "${TEST_DOC}"
 
-if [ ! -f "${TEST_DOC}" ]
+if [ -f "${TEST_DOC}" ]
 then
-	echo "************ rm test 1 failed - item was deleted ************"
+	echo "************ rm test 1 failed  ************"
 fi
 
 # cat test 1
@@ -122,6 +123,46 @@ diff "${TEST_DOC}" "${TEMP_DOC}"
 if [[ $? -ne 0 ]]
 then
 	echo "************ redirect test 1 failed ************"
+fi
+
+# rsync test 1
+echo Starting rsync test 1
+rm -rf /tmp/rsynctmp
+mkdir /tmp/rsynctmp
+dd if=/dev/urandom of=/tmp/rsynctmp/a1.log bs=1K count=50
+dd if=/dev/urandom of=/tmp/rsynctmp/a2.log bs=1K count=75
+dd if=/dev/urandom of=/tmp/rsynctmp/a3.log bs=1K count=100
+echo -e "I love rsync\nrsync is the best" > /tmp/rsynctmp/3737.xml
+rsync -vr /tmp/rsynctmp/ /mnt/pressgang/TOPICS/3/7/3/7/TOPIC3737
+
+sleep 5
+
+diff /tmp/rsynctmp/3737.xml /mnt/pressgang/TOPICS/3/7/3/7/TOPIC3737/3737.xml
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ rsync test 1 failed ************"
+fi
+
+diff /tmp/rsynctmp/a1.log /mnt/pressgang/TOPICS/3/7/3/7/TOPIC3737/a1.log
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ rsync test 1 failed ************"
+fi
+
+diff /tmp/rsynctmp/a2.log /mnt/pressgang/TOPICS/3/7/3/7/TOPIC3737/a2.log
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ rsync test 1 failed ************"
+fi
+
+diff /tmp/rsynctmp/a3.log /mnt/pressgang/TOPICS/3/7/3/7/TOPIC3737/a3.log
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ rsync test 1 failed ************"
 fi
 
 # grep test 1
