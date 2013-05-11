@@ -9,6 +9,7 @@ import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.InternalResourceT
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.InternalResourceTempTopicFile;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.InternalResourceTopicContent;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -44,15 +45,33 @@ import static net.java.dev.webdav.jaxrs.xml.properties.ResourceType.COLLECTION;
 public abstract class InternalResource {
     private static final Logger LOGGER = Logger.getLogger(InternalResource.class.getName());
 
-    private static final Pattern TOPIC_RE = Pattern.compile("/TOPICS(?<var>(/\\d)*)/TOPIC(?<TopicID>\\d*)");
+    private static final Pattern TOPIC_RE = Pattern.compile("/TOPICS(?<var>(/\\d)*)/TOPIC(?<TopicID>\\d*)/?");
     private static final Pattern ROOT_FOLDER_RE = Pattern.compile("/");
-    private static final Pattern TOPIC_FOLDER_RE = Pattern.compile("/TOPICS(/\\d)*");
+    private static final Pattern TOPIC_FOLDER_RE = Pattern.compile("/TOPICS(/\\d)*/?");
     private static final Pattern TOPIC_CONTENTS_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/(?<TopicID>\\d+).xml");
     private static final Pattern TOPIC_TEMP_FILE_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/.*");
 
-
+    /**
+     * The id of the entity that this resource represents. Usually a database primary key,
+     * but the context of the ID is up to the resource class.
+     */
+    @Nullable
     protected final Integer intId;
+    /**
+     * The id of the entity that this resource represents. Usually a file name,
+     * but the context of the ID is up to the resource class.
+     */
+    @Nullable
     protected final String stringId;
+    /**
+     * The info about the request that was used to retrieve this object. This can be null
+     * when the initial request results in a second resource object being looked up (copy and move).
+     *
+     * All resource objects should check to make sure this is not null when doing a propfind (which is
+     * where the uriInfo is actually used). However, there should never be a case where a secondary
+     * resource object has its propfind method called.
+     */
+    @Nullable
     protected final UriInfo uriInfo;
 
     protected InternalResource(final UriInfo uriInfo, final Integer intId) {
