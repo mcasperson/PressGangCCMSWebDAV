@@ -49,8 +49,8 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
 
                 final Matcher matcher = PATH_REGEX.matcher(getStringId());
 
+                /* var is an optional match */
                 String var = null;
-
                 try {
                     var = matcher.group("var");
                 } catch (final IllegalStateException ex) {
