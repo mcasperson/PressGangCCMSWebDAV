@@ -46,11 +46,11 @@ import static net.java.dev.webdav.jaxrs.xml.properties.ResourceType.COLLECTION;
 public abstract class InternalResource {
     private static final Logger LOGGER = Logger.getLogger(InternalResource.class.getName());
 
-    private static final Pattern TOPIC_RE = Pattern.compile("/TOPICS(?<var>(/\\d)*)/TOPIC(?<TopicID>\\d*)/?");
-    private static final Pattern ROOT_FOLDER_RE = Pattern.compile("/");
-    private static final Pattern TOPIC_FOLDER_RE = Pattern.compile("/TOPICS(/\\d)*/?");
-    private static final Pattern TOPIC_CONTENTS_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/(?<TopicID>\\d+).xml");
-    private static final Pattern TOPIC_TEMP_FILE_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/[^/]*");
+    public static final Pattern TOPIC_RE = Pattern.compile("/TOPICS(?<var>(/\\d)*)/TOPIC(?<TopicID>\\d*)/?");
+    public static final Pattern ROOT_FOLDER_RE = Pattern.compile("/");
+    public static final Pattern TOPIC_FOLDER_RE = Pattern.compile("/TOPICS(?<var>(/\\d)*)/?");
+    public static final Pattern TOPIC_CONTENTS_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/(?<TopicID>\\d+).xml");
+    public static final Pattern TOPIC_TEMP_FILE_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/[^/]*");
 
     @Nullable
     private final Integer intId;

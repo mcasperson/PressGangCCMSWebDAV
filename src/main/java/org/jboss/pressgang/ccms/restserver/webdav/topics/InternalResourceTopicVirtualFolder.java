@@ -23,7 +23,6 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
 
     public static final String RESOURCE_NAME = "TOPICS";
     private static final Logger LOGGER = Logger.getLogger(InternalResourceTopicVirtualFolder.class.getName());
-    private final Pattern PATH_REGEX = Pattern.compile(".*?/TOPICS(?<var>(/\\d)*)");
 
     public InternalResourceTopicVirtualFolder(final UriInfo uriInfo, final String stringId) {
         super(uriInfo, stringId);
@@ -32,7 +31,7 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
     @Override
     public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
 
-        LOGGER.info("ENTER InternalResourceTopicVirtualFolder.propfind() " + depth);
+        LOGGER.info("ENTER InternalResourceTopicVirtualFolder.propfind() " + depth + " " + getStringId());
 
         if (getUriInfo() == null) {
             throw new IllegalStateException("Can not perform propfind without uriInfo");
@@ -47,12 +46,13 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
             EntityManager entityManager = null;
             try {
 
-                final Matcher matcher = PATH_REGEX.matcher(getStringId());
+                final Matcher matcher = InternalResource.TOPIC_FOLDER_RE.matcher(getStringId());
 
                 /* var is an optional match */
                 String var = null;
                 try {
                     var = matcher.group("var");
+                    LOGGER.info("var: " + var);
                 } catch (final IllegalStateException ex) {
                     var = null;
                 }
@@ -64,7 +64,7 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
 
                 int maxScale = Math.abs(minId) > maxId ? Math.abs(minId) : maxId;
 
-                    /* find out how large is the largest (or smallest) topic id, logarithmicaly speaking */
+                /* find out how large is the largest (or smallest) topic id, logarithmicaly speaking */
                 final int zeros = MathUtils.getScale(maxScale);
 
                 Integer lastPath = null;
@@ -85,20 +85,21 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
                     return new MultiStatusReturnValue(javax.ws.rs.core.Response.Status.NOT_FOUND.getStatusCode());
                 }
 
-                    /* the response collection */
+                /* the response collection */
                 final List<Response> responses = new ArrayList<Response>();
 
-                    /*
-                        The only purpose of the directory /TOPICS/0 is to list TOPIC0.
-                        Also don't list subdirectories when there is no way topics
-                        could live in them.
-                    */
+                /*
+                    The only purpose of the directory /TOPICS/0 is to list TOPIC0.
+                    Also don't list subdirectories when there is no way topics
+                    could live in them.
+                */
                 if (lastPath == null || (lastPath != 0 && thisPathZeros < zeros)) {
                     for (int i = 0; i < 10; ++i) {
                         responses.add(getFolderProperties(getUriInfo(), i + ""));
                     }
                 }
 
+                /* The top level of the directory structure just lists digits, not an actual topic */
                 if (lastPath != null) {
                     responses.add(getFolderProperties(getUriInfo(), "TOPIC" + lastPath.toString()));
                 }
