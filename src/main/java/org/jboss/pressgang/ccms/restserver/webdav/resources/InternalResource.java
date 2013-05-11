@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
@@ -74,7 +73,7 @@ public abstract class InternalResource {
         this.uriInfo = uriInfo;
     }
 
-    public int write(@NotNull final DeleteManager deleteManager, @NotNull final String contents) {
+    public int write(@NotNull final DeleteManager deleteManager, @NotNull final byte[] contents) {
         throw new UnsupportedOperationException();
     }
 
@@ -82,7 +81,7 @@ public abstract class InternalResource {
         throw new UnsupportedOperationException();
     }
 
-    public StringReturnValue get(@NotNull final DeleteManager deleteManager) {
+    public ByteArrayReturnValue get(@NotNull final DeleteManager deleteManager) {
         throw new UnsupportedOperationException();
     }
 
@@ -119,14 +118,14 @@ public abstract class InternalResource {
             final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
 
             if (destinationResource != null && sourceResource != null) {
-                final StringReturnValue stringReturnValue = sourceResource.get(deleteManager);
+                final ByteArrayReturnValue byteArrayReturnValue = sourceResource.get(deleteManager);
 
-                if (stringReturnValue.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
-                    return javax.ws.rs.core.Response.status(stringReturnValue.getStatusCode()).build();
+                if (byteArrayReturnValue.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
+                    return javax.ws.rs.core.Response.status(byteArrayReturnValue.getStatusCode()).build();
                 }
 
                 int statusCode;
-                if ((statusCode = destinationResource.write(deleteManager, stringReturnValue.getValue())) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
+                if ((statusCode = destinationResource.write(deleteManager, byteArrayReturnValue.getValue())) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
                     return javax.ws.rs.core.Response.status(statusCode).build();
                 }
 
@@ -155,14 +154,14 @@ public abstract class InternalResource {
         final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
 
         if (destinationResource != null && sourceResource != null) {
-            final StringReturnValue stringReturnValue = sourceResource.get(deleteManager);
+            final ByteArrayReturnValue byteArrayReturnValue = sourceResource.get(deleteManager);
 
-            if (stringReturnValue.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
-                return javax.ws.rs.core.Response.status(stringReturnValue.getStatusCode()).build();
+            if (byteArrayReturnValue.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
+                return javax.ws.rs.core.Response.status(byteArrayReturnValue.getStatusCode()).build();
             }
 
             int statusCode;
-            if ((statusCode = destinationResource.write(deleteManager, stringReturnValue.getValue())) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
+            if ((statusCode = destinationResource.write(deleteManager, byteArrayReturnValue.getValue())) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
                 return javax.ws.rs.core.Response.status(statusCode).build();
             }
 
@@ -187,11 +186,11 @@ public abstract class InternalResource {
         return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND).build();
     }
 
-    public static StringReturnValue get(@NotNull final DeleteManager deleteManager, @NotNull final UriInfo uriInfo) {
+    public static ByteArrayReturnValue get(@NotNull final DeleteManager deleteManager, @NotNull final UriInfo uriInfo) {
         final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
 
         if (sourceResource != null) {
-            StringReturnValue statusCode;
+            ByteArrayReturnValue statusCode;
             if ((statusCode = sourceResource.get(deleteManager)).getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
                 return statusCode;
             }
@@ -199,7 +198,7 @@ public abstract class InternalResource {
             return statusCode;
         }
 
-        return new StringReturnValue(javax.ws.rs.core.Response.Status.NOT_FOUND.getStatusCode(), null);
+        return new ByteArrayReturnValue(javax.ws.rs.core.Response.Status.NOT_FOUND.getStatusCode(), null);
     }
 
     public static javax.ws.rs.core.Response put(@NotNull final DeleteManager deleteManager, @NotNull final UriInfo uriInfo, @NotNull final InputStream entityStream) {
@@ -207,11 +206,9 @@ public abstract class InternalResource {
             final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
 
             if (sourceResource != null) {
-                final StringWriter writer = new StringWriter();
-                IOUtils.copy(entityStream, writer, "UTF-8");
-                final String newContents = writer.toString();
+                final byte[] data = IOUtils.toByteArray(entityStream);
 
-                int statusCode = sourceResource.write(deleteManager, newContents);
+                int statusCode = sourceResource.write(deleteManager, data);
                 return javax.ws.rs.core.Response.status(statusCode).build();
             }
 

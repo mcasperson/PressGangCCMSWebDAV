@@ -3,19 +3,19 @@ package org.jboss.pressgang.ccms.restserver.webdav.resources;
 import javax.annotation.Nullable;
 
 /**
- * A wrapper that contains the HTTP return code, and the returned string.
+ * A wrapper that contains the HTTP return code, and the returned byte array.
  */
-public class StringReturnValue {
+public class ByteArrayReturnValue {
     private final int statusCode;
     @Nullable
-    private final String value;
+    private final byte[] value;
 
-    public StringReturnValue(final int statusCode, @Nullable final String value) {
+    public ByteArrayReturnValue(final int statusCode, @Nullable final byte[] value) {
         this.statusCode = statusCode;
         this.value = value;
     }
 
-    public StringReturnValue(final int statusCode) {
+    public ByteArrayReturnValue(final int statusCode) {
         this.statusCode = statusCode;
         this.value = null;
     }
@@ -25,7 +25,7 @@ public class StringReturnValue {
     }
 
     @Nullable
-    public String getValue() {
+    public byte[] getValue() {
         return value;
     }
 }

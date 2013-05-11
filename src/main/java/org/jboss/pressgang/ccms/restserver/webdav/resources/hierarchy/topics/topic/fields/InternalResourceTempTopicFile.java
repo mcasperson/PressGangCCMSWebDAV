@@ -7,7 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.jboss.pressgang.ccms.restserver.webdav.constants.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.resources.InternalResource;
 import org.jboss.pressgang.ccms.restserver.webdav.resources.MultiStatusReturnValue;
-import org.jboss.pressgang.ccms.restserver.webdav.resources.StringReturnValue;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.ByteArrayReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 
 import javax.ws.rs.core.MediaType;
@@ -34,9 +34,9 @@ public class InternalResourceTempTopicFile extends InternalResource {
     }
 
     @Override
-    public int write(final DeleteManager deleteManager, final String contents) {
+    public int write(final DeleteManager deleteManager, final byte[] contents) {
         LOGGER.info("ENTER InternalResourceTempTopicFile.write() " + getStringId());
-        LOGGER.info(contents);
+        LOGGER.info(new String(contents));
 
         try {
             final File directory = new java.io.File(WebDavConstants.TEMP_LOCATION);
@@ -55,7 +55,7 @@ public class InternalResourceTempTopicFile extends InternalResource {
                 file.createNewFile();
             }
 
-            FileUtils.writeStringToFile(file, contents);
+            FileUtils.writeByteArrayToFile(file, contents);
 
             return Response.Status.NO_CONTENT.getStatusCode();
         } catch (final IOException e) {
@@ -66,7 +66,7 @@ public class InternalResourceTempTopicFile extends InternalResource {
     }
 
     @Override
-    public StringReturnValue get(final DeleteManager deleteManager) {
+    public ByteArrayReturnValue get(final DeleteManager deleteManager) {
 
         LOGGER.info("ENTER InternalResourceTempTopicFile.get() " + getStringId());
 
@@ -75,8 +75,8 @@ public class InternalResourceTempTopicFile extends InternalResource {
         try {
             final FileInputStream inputStream = new FileInputStream(fileLocation);
             try {
-                final String fileContents = IOUtils.toString(inputStream);
-                return new StringReturnValue(Response.Status.OK.getStatusCode(), fileContents);
+                final byte[] fileContents = IOUtils.toByteArray(inputStream);
+                return new ByteArrayReturnValue(Response.Status.OK.getStatusCode(), fileContents);
 
             } catch (final Exception ex) {
 
@@ -88,10 +88,10 @@ public class InternalResourceTempTopicFile extends InternalResource {
                 }
             }
         } catch (final FileNotFoundException e) {
-            return new StringReturnValue(Response.Status.NOT_FOUND.getStatusCode(), null);
+            return new ByteArrayReturnValue(Response.Status.NOT_FOUND.getStatusCode(), null);
         }
 
-        return new StringReturnValue(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null);
+        return new ByteArrayReturnValue(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null);
     }
 
     @Override

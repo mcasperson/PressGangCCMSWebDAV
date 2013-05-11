@@ -7,7 +7,7 @@ import org.jboss.pressgang.ccms.restserver.utils.JNDIUtilities;
 import org.jboss.pressgang.ccms.restserver.webdav.utils.WebDavUtils;
 import org.jboss.pressgang.ccms.restserver.webdav.resources.InternalResource;
 import org.jboss.pressgang.ccms.restserver.webdav.resources.MultiStatusReturnValue;
-import org.jboss.pressgang.ccms.restserver.webdav.resources.StringReturnValue;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.ByteArrayReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.ResourceTypes;
 import org.jboss.pressgang.ccms.restserver.webdav.system.FixedCreationDate;
@@ -34,10 +34,12 @@ public class InternalResourceTopicContent extends InternalResource {
     }
 
     @Override
-    public int write(final DeleteManager deleteManager, final String contents) {
+    public int write(final DeleteManager deleteManager, final byte[] contents) {
+
+        final String stringContents = new String(contents);
 
         LOGGER.info("ENTER InternalResourceTopicContent.write() " + getIntId());
-        LOGGER.info(contents);
+        LOGGER.info(stringContents);
 
         EntityManager entityManager = null;
         TransactionManager transactionManager = null;
@@ -53,7 +55,7 @@ public class InternalResourceTopicContent extends InternalResource {
 
             if (topic != null) {
 
-                topic.setTopicXML(contents);
+                topic.setTopicXML(stringContents);
 
                 entityManager.persist(topic);
                 entityManager.flush();
@@ -84,13 +86,13 @@ public class InternalResourceTopicContent extends InternalResource {
     }
 
     @Override
-    public StringReturnValue get(final DeleteManager deleteManager) {
+    public ByteArrayReturnValue get(final DeleteManager deleteManager) {
 
         LOGGER.info("ENTER InternalResourceTopicContent.get() " + getIntId());
 
         if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getIntId())) {
             LOGGER.info("Deletion Manager says this file is deleted");
-            return new StringReturnValue(Response.Status.NOT_FOUND.getStatusCode(), null);
+            return new ByteArrayReturnValue(Response.Status.NOT_FOUND.getStatusCode(), null);
         }
 
         EntityManager entityManager = null;
@@ -101,18 +103,18 @@ public class InternalResourceTopicContent extends InternalResource {
             final Topic topic = entityManager.find(Topic.class, getIntId());
 
             if (topic != null) {
-                return new StringReturnValue(Response.Status.OK.getStatusCode(), topic.getTopicXML());
+                return new ByteArrayReturnValue(Response.Status.OK.getStatusCode(), topic.getTopicXML().getBytes());
             }
 
         } catch (final Exception ex) {
-            return new StringReturnValue(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null);
+            return new ByteArrayReturnValue(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null);
         } finally {
             if (entityManager != null) {
                 entityManager.close();
             }
         }
 
-        return new StringReturnValue(Response.Status.NOT_FOUND.getStatusCode(), null);
+        return new ByteArrayReturnValue(Response.Status.NOT_FOUND.getStatusCode(), null);
     }
 
     @Override

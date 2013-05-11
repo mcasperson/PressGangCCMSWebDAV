@@ -135,7 +135,8 @@ dd if=/dev/urandom of=/tmp/rsynctmp/a3.log bs=1K count=100
 echo -e "I love rsync\nrsync is the best" > /tmp/rsynctmp/3737.xml
 rsync -vr /tmp/rsynctmp/ /mnt/pressgang/TOPICS/3/7/3/7/TOPIC3737
 
-sleep 5
+# give the filesystem a chance to upload the changes
+sleep 10
 
 diff /tmp/rsynctmp/3737.xml /mnt/pressgang/TOPICS/3/7/3/7/TOPIC3737/3737.xml
 

@@ -20,7 +20,7 @@ package org.jboss.pressgang.ccms.restserver.webdav.jaxrs;
 
 import net.java.dev.webdav.jaxrs.methods.*;
 import org.jboss.pressgang.ccms.restserver.webdav.resources.InternalResource;
-import org.jboss.pressgang.ccms.restserver.webdav.resources.StringReturnValue;
+import org.jboss.pressgang.ccms.restserver.webdav.resources.ByteArrayReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 
 import javax.enterprise.context.RequestScoped;
@@ -55,7 +55,7 @@ public class WebDavResource {
     @GET
     @Produces("application/octet-stream")
     public javax.ws.rs.core.Response get(@Context final UriInfo uriInfo) {
-        final StringReturnValue stringValueReturn = InternalResource.get(deleteManager, uriInfo);
+        final ByteArrayReturnValue stringValueReturn = InternalResource.get(deleteManager, uriInfo);
         if (stringValueReturn.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
             return javax.ws.rs.core.Response.status(stringValueReturn.getStatusCode()).build();
         }
