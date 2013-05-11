@@ -44,10 +44,15 @@ import static net.java.dev.webdav.jaxrs.xml.properties.ResourceType.COLLECTION;
 public abstract class InternalResource {
     private static final Logger LOGGER = Logger.getLogger(InternalResource.class.getName());
 
+    /** Matches something like /TOPICS/3/4/5/6/TOPIC3456/ */
     public static final Pattern TOPIC_RE = Pattern.compile("/TOPICS(?<var>(/\\d)*)/TOPIC(?<TopicID>\\d*)/?");
+    /** Matches the root directory */
     public static final Pattern ROOT_FOLDER_RE = Pattern.compile("/");
+    /** Matches something like /TOPICS/3/4/5/6/ or /TOPICS */
     public static final Pattern TOPIC_FOLDER_RE = Pattern.compile("/TOPICS(?<var>(/\\d)*)/?");
+    /** Matches something like /TOPICS/3/4/5/6/TOPIC3456/3456.xml */
     public static final Pattern TOPIC_CONTENTS_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/(?<TopicID>\\d+).xml");
+    /** Matches something like /TOPICS/3/4/5/6/TOPIC3456/3456.xml~ */
     public static final Pattern TOPIC_TEMP_FILE_RE = Pattern.compile("/TOPICS(/\\d)*/TOPIC\\d+/[^/]+");
 
     @Nullable
