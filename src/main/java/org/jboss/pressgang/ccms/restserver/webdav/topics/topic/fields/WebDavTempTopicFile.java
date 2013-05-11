@@ -27,7 +27,7 @@ import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
 /**
 
  */
-@Path("/TOPICS{var:(/\\d)*}/{topicId:TOPIC_CONTENTS\\d*}/{filename:.+}")
+@Path("/TOPICS{var:(/\\d)*}/{topicId:TOPIC\\d*}/{filename:.+}")
 public class WebDavTempTopicFile extends WebDavResource {
 
     private static final Logger LOGGER = Logger.getLogger(WebDavTempTopicFile.class.getName());

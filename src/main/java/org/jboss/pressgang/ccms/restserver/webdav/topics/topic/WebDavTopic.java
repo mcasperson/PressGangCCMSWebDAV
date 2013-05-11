@@ -37,7 +37,7 @@ import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
 /**
  * The virtual folder that holds all the topic's details
  */
-@Path("/TOPICS{var:(/\\d)*}/{topicId:TOPIC_CONTENTS\\d*}")
+@Path("/TOPICS{var:(/\\d)*}/{topicId:TOPIC\\d*}")
 public class WebDavTopic extends WebDavResource {
 
     private static final Logger LOGGER = Logger.getLogger(WebDavTopic.class.getName());
