@@ -24,6 +24,8 @@ import org.jboss.pressgang.ccms.restserver.webdav.internal.InternalResource;
 import org.jboss.pressgang.ccms.restserver.webdav.internal.StringReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 
+import javax.annotation.ManagedBean;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.OPTIONS;
@@ -42,13 +44,14 @@ import static javax.ws.rs.core.Response.Status.OK;
 import static net.java.dev.webdav.jaxrs.Headers.*;
 import static net.java.dev.webdav.jaxrs.xml.properties.ResourceType.COLLECTION;
 
+@RequestScoped
 public class WebDavResource {
     public static final String WEBDAV_COMPLIANCE_LEVEL = "1";
 
     private static final Logger LOGGER = Logger.getLogger(WebDavResource.class.getName());
 
     @Inject
-    private DeleteManager deleteManager;
+    protected DeleteManager deleteManager;
 
     @GET
     @Produces("application/octet-stream")

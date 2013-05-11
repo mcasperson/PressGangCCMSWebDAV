@@ -97,7 +97,7 @@ public class TopicVirtualFolder extends WebDavResource {
                     }
 
                     if (lastPath != null) {
-                        responses.add(getFolderProperties(uriInfo, "TOPIC" + lastPath.toString()));
+                        responses.add(getFolderProperties(uriInfo, "TOPIC_CONTENTS" + lastPath.toString()));
                     }
 
                     final MultiStatus st = new MultiStatus(responses.toArray(new net.java.dev.webdav.jaxrs.xml.elements.Response[responses.size()]));

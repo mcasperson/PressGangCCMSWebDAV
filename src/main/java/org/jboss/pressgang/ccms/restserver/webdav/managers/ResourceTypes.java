@@ -8,6 +8,6 @@ package org.jboss.pressgang.ccms.restserver.webdav.managers;
  * To change this template use File | Settings | File Templates.
  */
 public enum ResourceTypes {
-    TOPIC,
+    TOPIC_CONTENTS,
     TAG
 }

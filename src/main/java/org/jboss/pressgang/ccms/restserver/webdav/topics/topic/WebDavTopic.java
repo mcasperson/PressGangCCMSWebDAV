@@ -8,6 +8,7 @@ import org.jboss.pressgang.ccms.restserver.utils.EnversUtilities;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavResource;
 import org.jboss.pressgang.ccms.restserver.webdav.WebDavUtils;
+import org.jboss.pressgang.ccms.restserver.webdav.managers.ResourceTypes;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.InternalResourceTempTopicFile;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTempTopicFile;
 import org.jboss.pressgang.ccms.restserver.webdav.topics.topic.fields.WebDavTopicContent;
@@ -36,7 +37,7 @@ import static net.java.dev.webdav.jaxrs.Headers.DEPTH;
 /**
  * The virtual folder that holds all the topic's details
  */
-@Path("/TOPICS{var:(/\\d)*}/{topicId:TOPIC\\d*}")
+@Path("/TOPICS{var:(/\\d)*}/{topicId:TOPIC_CONTENTS\\d*}")
 public class WebDavTopic extends WebDavResource {
 
     private static final Logger LOGGER = Logger.getLogger(WebDavTopic.class.getName());
@@ -65,11 +66,17 @@ public class WebDavTopic extends WebDavResource {
 
                 final List<Response> responses = new ArrayList<Response>();
 
+                /*
+                    List the field of the topic
+                 */
                 if (topic != null) {
-
                     /* Fix the last modified date */
                     topic.setLastModifiedDate(EnversUtilities.getFixedLastModifiedDate(entityManager, topic));
-                    responses.add(WebDavTopicContent.getProperties(uriInfo, topic, false));
+
+                    /* Don't list the contents if it is "deleted" */
+                    if (!deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, topic.getId())) {
+                        responses.add(WebDavTopicContent.getProperties(uriInfo, topic, false));
+                    }
                 }
 
                 final File dir = new File(WebDavConstants.TEMP_LOCATION);

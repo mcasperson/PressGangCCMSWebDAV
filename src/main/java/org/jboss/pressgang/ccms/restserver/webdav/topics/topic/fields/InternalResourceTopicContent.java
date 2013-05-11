@@ -8,7 +8,6 @@ import org.jboss.pressgang.ccms.restserver.webdav.internal.StringReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.ResourceTypes;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.TransactionManager;
 import javax.ws.rs.core.Response;
@@ -55,7 +54,7 @@ public class InternalResourceTopicContent extends InternalResource {
                 entityManager.flush();
                 transactionManager.commit();
 
-                deleteManager.create(ResourceTypes.TOPIC, intId);
+                deleteManager.create(ResourceTypes.TOPIC_CONTENTS, intId);
 
                 return Response.Status.NO_CONTENT.getStatusCode();
             }
@@ -84,7 +83,8 @@ public class InternalResourceTopicContent extends InternalResource {
 
         LOGGER.info("ENTER InternalResourceTopicContent.get() " + intId);
 
-        if (deleteManager.isDeleted(ResourceTypes.TOPIC, intId)) {
+        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, intId)) {
+            LOGGER.info("Deletion Manager says this file is deleted");
             return new StringReturnValue(Response.Status.NOT_FOUND.getStatusCode(), null);
         }
 
@@ -114,11 +114,12 @@ public class InternalResourceTopicContent extends InternalResource {
     public int delete(final DeleteManager deleteManager) {
         LOGGER.info("ENTER InternalResourceTopicContent.delete() " + intId);
 
-        if (deleteManager.isDeleted(ResourceTypes.TOPIC, intId)) {
+        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, intId)) {
+            LOGGER.info("Deletion Manager says this file is already deleted");
             return Response.Status.NOT_FOUND.getStatusCode();
         }
 
-        deleteManager.delete(ResourceTypes.TOPIC, intId);
+        deleteManager.delete(ResourceTypes.TOPIC_CONTENTS, intId);
 
         /* pretend to be deleted */
         return Response.Status.NO_CONTENT.getStatusCode();
