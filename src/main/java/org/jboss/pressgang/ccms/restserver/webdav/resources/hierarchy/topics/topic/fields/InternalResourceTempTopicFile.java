@@ -36,7 +36,6 @@ public class InternalResourceTempTopicFile extends InternalResource {
     @Override
     public int write(final DeleteManager deleteManager, final byte[] contents) {
         LOGGER.info("ENTER InternalResourceTempTopicFile.write() " + getStringId());
-        LOGGER.info(new String(contents));
 
         try {
             final File directory = new java.io.File(WebDavConstants.TEMP_LOCATION);
