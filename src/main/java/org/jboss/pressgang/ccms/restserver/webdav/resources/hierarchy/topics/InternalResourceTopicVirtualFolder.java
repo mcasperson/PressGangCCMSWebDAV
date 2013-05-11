@@ -53,7 +53,6 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
 
                 /* var is an optional match */
                 final String var = matcher.group("var");
-                LOGGER.info("var: " + var);
 
                 entityManager = WebDavUtils.getEntityManager(false);
 
@@ -75,8 +74,6 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
                     }
                     lastPath = Integer.parseInt(path.toString());
                 }
-
-                LOGGER.info("lastPath: " + lastPath);
 
                 final int thisPathZeros = lastPath == null ? 0 : MathUtils.getScale(lastPath);
 
