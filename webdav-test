@@ -247,23 +247,6 @@ then
 	echo "************ python test 1 failed ************"
 fi
 
-# python test 2
-echo Starting python test 2
-echo -e '#!/usr/bin/python\nprint "Hello WebDAV"' > "${TEMP_DOC}"
-echo -e '#!/usr/bin/python\nprint "Hello WebDAV"' > "${TEST_DOC}"
-chmod +x "${TEMP_DOC}"
-chmod +x "${TEST_DOC}"
-"${TEMP_DOC}" > /tmp/python1.tmp
-"${TEST_DOC}" > /tmp/python2.tmp
-chmod -x "${TEMP_DOC}"
-chmod -x "${TEST_DOC}"
-diff /tmp/python1.tmp /tmp/python2.tmp
-
-if [[ $? -ne 0 ]]
-then
-	echo "************ python test 2 failed ************"
-fi
-
 # vi test 1
 echo Starting vi test 1
 echo '<article><title>test</title><para>hi</para></article>' > "${TEMP_DOC}"
