@@ -225,13 +225,13 @@ fi
 echo Starting vi test 1
 echo '<article><title>test</title><para>hi</para></article>' > "${TEMP_DOC}"
 echo '<article><title>test</title><para>hi</para></article>' > "${TEST_DOC}"
-vim -E -s "${TEMP_DOC}" << EOF
+vi -E -s "${TEMP_DOC}" << EOF
    :%substitute/hi/there/
    :update
    :quit
 EOF
 
-vim -E -s "${TEST_DOC}" << EOF
+vi -E -s "${TEST_DOC}" << EOF
    :%substitute/hi/there/
    :update
    :quit
