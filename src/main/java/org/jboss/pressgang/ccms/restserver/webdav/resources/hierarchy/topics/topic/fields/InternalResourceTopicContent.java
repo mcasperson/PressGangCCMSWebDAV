@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.TransactionManager;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -31,7 +32,7 @@ public class InternalResourceTopicContent extends InternalResource {
 
     private static final Logger LOGGER = Logger.getLogger(InternalResourceTopicContent.class.getName());
 
-    public InternalResourceTopicContent(final UriInfo uriInfo, @Nullable final HttpServletRequest req, final Integer intId) {
+    public InternalResourceTopicContent(final UriInfo uriInfo, @NotNull final HttpServletRequest req, final Integer intId) {
         super(uriInfo, req, intId);
     }
 
@@ -121,7 +122,7 @@ public class InternalResourceTopicContent extends InternalResource {
 
     @Override
     public int delete(final DeleteManager deleteManager) {
-        LOGGER.info("ENTER InternalResourceTopicContent.delete() " + getIntId());
+        LOGGER.info("ENTER InternalResourceTopicContent.delete() " + getIntId() + " " + getReq().getRemoteAddr());
 
         if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteAddr(), getIntId())) {
             LOGGER.info("Deletion Manager says this file is already deleted");

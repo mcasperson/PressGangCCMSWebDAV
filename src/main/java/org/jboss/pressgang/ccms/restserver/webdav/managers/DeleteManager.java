@@ -50,7 +50,7 @@ public class DeleteManager {
             deletedResources.put(resourceType, new HashMap<String, HashMap<Integer, Calendar>>());
         }
 
-        if (deletedResources.get(resourceType).containsKey(remoteAddress))  {
+        if (!deletedResources.get(resourceType).containsKey(remoteAddress))  {
             deletedResources.get(resourceType).put(remoteAddress, new HashMap<Integer, Calendar>());
         }
 
