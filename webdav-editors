@@ -1,0 +1,15 @@
+#!/bin/bash
+
+TEST_FILENAME=3737.xml
+TEST_DIR="/mnt/pressgang/TOPICS/3/7/3/7/TOPIC3737"
+TEST_DOC=${TEST_DIR}/${TEST_FILENAME}
+
+jedit "${TEST_DOC}"
+vi "${TEST_DOC}"
+gedit "${TEST_DOC}"
+geany "${TEST_DOC}"
+emacs "${TEST_DOC}"
+kate "${TEST_DOC}"
+kwrite "${TEST_DOC}"
+textadept "${TEST_DOC}"
+"/opt/Sublime Text 2/sublime_test" "${TEST_DOC}"
