@@ -225,13 +225,26 @@ fi
 echo Starting tar test 1
 echo '<!-- sed test -->' > "${TEMP_DOC}"
 echo '<!-- sed test -->' > "${TEST_DOC}"
-tar -C "${TEMP_DIR}" -cjf /tmp/tar1.tar.bz2 "${TEMP_DOC}"
-tar -C "${TEST_DIR}" -cjf /tmp/tar2.tar.bz2 "${TEST_DOC}"
+tar -C "${TEMP_DIR}" -cjf /tmp/tar1.tar.bz2 "${TEST_FILENAME}"
+tar -C "${TEST_DIR}" -cjf /tmp/tar2.tar.bz2 "${TEST_FILENAME}"
 diff /tmp/tar1.tar.bz2 /tmp/tar2.tar.bz2
 
 if [[ $? -ne 0 ]]
 then
 	echo "************ tar test 1 failed ************"
+fi
+
+# python test 1
+echo Starting python test 1
+echo 'print "Hello WebDAV"' > "${TEMP_DOC}"
+echo 'print "Hello WebDAV"' > "${TEST_DOC}"
+python "${TEMP_DOC}" > /tmp/python1.tmp
+python "${TEST_DOC}" > /tmp/python2.tmp
+diff /tmp/python1.tmp /tmp/python2.tmp
+
+if [[ $? -ne 0 ]]
+then
+	echo "************ python test 1 failed ************"
 fi
 
 # vi test 1
