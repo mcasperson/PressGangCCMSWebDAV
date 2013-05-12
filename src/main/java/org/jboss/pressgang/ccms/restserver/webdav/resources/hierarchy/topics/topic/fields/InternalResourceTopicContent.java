@@ -32,8 +32,8 @@ public class InternalResourceTopicContent extends InternalResource {
 
     private static final Logger LOGGER = Logger.getLogger(InternalResourceTopicContent.class.getName());
 
-    public InternalResourceTopicContent(final UriInfo uriInfo, @NotNull final DeleteManager deleteManager, @NotNull final HttpServletRequest req, final Integer intId) {
-        super(uriInfo, deleteManager, req, intId);
+    public InternalResourceTopicContent(final UriInfo uriInfo, @NotNull final DeleteManager deleteManager, @NotNull final String remoteAddress, final Integer intId) {
+        super(uriInfo, deleteManager, remoteAddress, intId);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class InternalResourceTopicContent extends InternalResource {
             If we are not actually saving any content, just mark the file as visible and return.
          */
         if (contents.length == 0) {
-            getDeleteManager().create(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteHost(), getIntId());
+            getDeleteManager().create(ResourceTypes.TOPIC_CONTENTS, getRemoteAddress(), getIntId());
             return Response.Status.NO_CONTENT.getStatusCode();
         }
 
@@ -72,7 +72,7 @@ public class InternalResourceTopicContent extends InternalResource {
                 entityManager.flush();
                 transactionManager.commit();
 
-                getDeleteManager().create(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteHost(), getIntId());
+                getDeleteManager().create(ResourceTypes.TOPIC_CONTENTS, getRemoteAddress(), getIntId());
 
                 return Response.Status.NO_CONTENT.getStatusCode();
             }
@@ -101,7 +101,7 @@ public class InternalResourceTopicContent extends InternalResource {
 
         LOGGER.info("ENTER InternalResourceTopicContent.get() " + getIntId());
 
-        if (getDeleteManager().isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteHost(), getIntId())) {
+        if (getDeleteManager().isDeleted(ResourceTypes.TOPIC_CONTENTS, getRemoteAddress(), getIntId())) {
             LOGGER.info("Deletion Manager says this file is deleted");
             return new ByteArrayReturnValue(Response.Status.NOT_FOUND.getStatusCode(), null);
         }
@@ -130,14 +130,14 @@ public class InternalResourceTopicContent extends InternalResource {
 
     @Override
     public int delete() {
-        LOGGER.info("ENTER InternalResourceTopicContent.delete() " + getIntId() + " " + getReq().getRemoteHost());
+        LOGGER.info("ENTER InternalResourceTopicContent.delete() " + getIntId() + " " + getRemoteAddress());
 
-        if (getDeleteManager().isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteHost(), getIntId())) {
+        if (getDeleteManager().isDeleted(ResourceTypes.TOPIC_CONTENTS, getRemoteAddress(), getIntId())) {
             LOGGER.info("Deletion Manager says this file is already deleted");
             return Response.Status.NOT_FOUND.getStatusCode();
         }
 
-        getDeleteManager().delete(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteHost(), getIntId());
+        getDeleteManager().delete(ResourceTypes.TOPIC_CONTENTS, getRemoteAddress(), getIntId());
 
         /* pretend to be deleted */
         return Response.Status.NO_CONTENT.getStatusCode();

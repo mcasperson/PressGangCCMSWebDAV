@@ -26,8 +26,8 @@ import java.util.List;
  * Represents the available fields and temporary files associated with a topic.
  */
 public class InternalResourceTopic extends InternalResource {
-    public InternalResourceTopic(final UriInfo uriInfo, @NotNull final DeleteManager deleteManager, @Nullable final HttpServletRequest req, final Integer intId) {
-        super(uriInfo, deleteManager, req, intId);
+    public InternalResourceTopic(final UriInfo uriInfo, @NotNull final DeleteManager deleteManager, @Nullable final String remoteAddress, final Integer intId) {
+        super(uriInfo, deleteManager, remoteAddress, intId);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class InternalResourceTopic extends InternalResource {
                 topic.setLastModifiedDate(EnversUtilities.getFixedLastModifiedDate(entityManager, topic));
 
                 /* Don't list the contents if it is "deleted" */
-                if (!getDeleteManager().isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteHost(), topic.getId())) {
+                if (!getDeleteManager().isDeleted(ResourceTypes.TOPIC_CONTENTS, getRemoteAddress(), topic.getId())) {
                     responses.add(InternalResourceTopicContent.getProperties(getUriInfo(), topic, false));
                 }
             }

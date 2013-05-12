@@ -32,8 +32,8 @@ public class InternalResourceTempTopicFile extends InternalResource {
 
     private static final Logger LOGGER = Logger.getLogger(InternalResourceTempTopicFile.class.getName());
 
-    public InternalResourceTempTopicFile(final UriInfo uriInfo, @NotNull final DeleteManager deleteManager, @Nullable final HttpServletRequest req, final String path) {
-        super(uriInfo, deleteManager, req, path);
+    public InternalResourceTempTopicFile(final UriInfo uriInfo, @NotNull final DeleteManager deleteManager, @Nullable final String remoteAddress, final String path) {
+        super(uriInfo, deleteManager, remoteAddress, path);
     }
 
     @Override

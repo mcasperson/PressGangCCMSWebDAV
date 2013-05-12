@@ -19,9 +19,11 @@
 package org.jboss.pressgang.ccms.restserver.webdav.jaxrs;
 
 import net.java.dev.webdav.jaxrs.methods.*;
+import org.jboss.pressgang.ccms.restserver.webdav.constants.WebDavConstants;
 import org.jboss.pressgang.ccms.restserver.webdav.resources.InternalResource;
 import org.jboss.pressgang.ccms.restserver.webdav.resources.ByteArrayReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
+import org.jboss.pressgang.ccms.restserver.webdav.utils.WebDavUtils;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -56,8 +58,8 @@ public class WebDavResource {
 
     @GET
     @Produces("application/octet-stream")
-    public javax.ws.rs.core.Response get(@Context final UriInfo uriInfo, @Context final HttpServletRequest req) {
-        final ByteArrayReturnValue stringValueReturn = InternalResource.get(deleteManager, req, uriInfo);
+    public javax.ws.rs.core.Response get(@Context final UriInfo uriInfo, @Context final HttpServletRequest req, @HeaderParam(WebDavConstants.X_FORWARD_FOR_HEADER) final String xForwardForHeader) {
+        final ByteArrayReturnValue stringValueReturn = InternalResource.get(deleteManager, WebDavUtils.getRemoteAddress(req, xForwardForHeader), uriInfo);
         if (stringValueReturn.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
             return javax.ws.rs.core.Response.status(stringValueReturn.getStatusCode()).build();
         }
@@ -67,8 +69,8 @@ public class WebDavResource {
 
     @PUT
     @Consumes("*/*")
-    public javax.ws.rs.core.Response put(@Context final UriInfo uriInfo, @Context final HttpServletRequest req, final InputStream entityStream) throws IOException, URISyntaxException {
-        return InternalResource.put(deleteManager, req, uriInfo, entityStream);
+    public javax.ws.rs.core.Response put(@Context final UriInfo uriInfo, @Context final HttpServletRequest req, @HeaderParam(WebDavConstants.X_FORWARD_FOR_HEADER) final String xForwardForHeader, final InputStream entityStream) throws IOException, URISyntaxException {
+        return InternalResource.put(deleteManager, WebDavUtils.getRemoteAddress(req, xForwardForHeader), uriInfo, entityStream);
     }
 
     @MKCOL
@@ -79,9 +81,9 @@ public class WebDavResource {
 
     @Produces("application/xml")
     @PROPFIND
-    public javax.ws.rs.core.Response propfind(@Context final UriInfo uriInfo, @Context final HttpServletRequest req, @HeaderParam(DEPTH) final int depth) throws URISyntaxException, IOException {
+    public javax.ws.rs.core.Response propfind(@Context final UriInfo uriInfo, @Context final HttpServletRequest req, @HeaderParam(WebDavConstants.X_FORWARD_FOR_HEADER) final String xForwardForHeader, @HeaderParam(DEPTH) final int depth) throws URISyntaxException, IOException {
         LOGGER.info("ENTER WebDavResource.propfind()");
-        return InternalResource.propfind(deleteManager, req, uriInfo, depth);
+        return InternalResource.propfind(deleteManager, WebDavUtils.getRemoteAddress(req, xForwardForHeader), uriInfo, depth);
     }
 
     @PROPPATCH
@@ -91,8 +93,8 @@ public class WebDavResource {
     }
 
     @COPY
-    public javax.ws.rs.core.Response copy(@Context final UriInfo uriInfo, @Context final HttpServletRequest req, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) {
-        return InternalResource.copy(deleteManager, req, uriInfo, overwriteStr, destination);
+    public javax.ws.rs.core.Response copy(@Context final UriInfo uriInfo, @Context final HttpServletRequest req, @HeaderParam(WebDavConstants.X_FORWARD_FOR_HEADER) final String xForwardForHeader, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) {
+        return InternalResource.copy(deleteManager, WebDavUtils.getRemoteAddress(req, xForwardForHeader), uriInfo, overwriteStr, destination);
     }
 
     /*
@@ -105,13 +107,13 @@ public class WebDavResource {
         502 (Bad Gateway)	The destination URI is located on a different server, which refuses to accept the resource.
      */
     @MOVE
-    public javax.ws.rs.core.Response move(@Context final UriInfo uriInfo, @Context final HttpServletRequest req, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) throws URISyntaxException {
-        return InternalResource.move(deleteManager, req, uriInfo, overwriteStr, destination);
+    public javax.ws.rs.core.Response move(@Context final UriInfo uriInfo, @Context final HttpServletRequest req, @HeaderParam(WebDavConstants.X_FORWARD_FOR_HEADER) final String xForwardForHeader, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) throws URISyntaxException {
+        return InternalResource.move(deleteManager, WebDavUtils.getRemoteAddress(req, xForwardForHeader), uriInfo, overwriteStr, destination);
     }
 
     @DELETE
-    public javax.ws.rs.core.Response delete(@Context final UriInfo uriInfo, @Context final HttpServletRequest req) {
-        return InternalResource.delete(deleteManager, req, uriInfo);
+    public javax.ws.rs.core.Response delete(@Context final UriInfo uriInfo, @HeaderParam(WebDavConstants.X_FORWARD_FOR_HEADER) final String xForwardForHeader, @Context final HttpServletRequest req) {
+        return InternalResource.delete(deleteManager, WebDavUtils.getRemoteAddress(req, xForwardForHeader), uriInfo);
     }
 
     @OPTIONS

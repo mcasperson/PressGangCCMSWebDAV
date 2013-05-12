@@ -26,8 +26,8 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
     public static final String RESOURCE_NAME = "TOPICS";
     private static final Logger LOGGER = Logger.getLogger(InternalResourceTopicVirtualFolder.class.getName());
 
-    public InternalResourceTopicVirtualFolder(final UriInfo uriInfo, @NotNull final DeleteManager deleteManager, @Nullable final HttpServletRequest req, final String stringId) {
-        super(uriInfo, deleteManager, req, stringId);
+    public InternalResourceTopicVirtualFolder(final UriInfo uriInfo, @NotNull final DeleteManager deleteManager, @Nullable final String remoteAddress, final String stringId) {
+        super(uriInfo, deleteManager, remoteAddress, stringId);
     }
 
     @Override
