@@ -64,7 +64,7 @@ public class InternalResourceTopicContent extends InternalResource {
                 entityManager.flush();
                 transactionManager.commit();
 
-                deleteManager.create(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteAddr(), getIntId());
+                deleteManager.create(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteHost(), getIntId());
 
                 return Response.Status.NO_CONTENT.getStatusCode();
             }
@@ -93,7 +93,7 @@ public class InternalResourceTopicContent extends InternalResource {
 
         LOGGER.info("ENTER InternalResourceTopicContent.get() " + getIntId());
 
-        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteAddr(), getIntId())) {
+        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteHost(), getIntId())) {
             LOGGER.info("Deletion Manager says this file is deleted");
             return new ByteArrayReturnValue(Response.Status.NOT_FOUND.getStatusCode(), null);
         }
@@ -122,14 +122,14 @@ public class InternalResourceTopicContent extends InternalResource {
 
     @Override
     public int delete(final DeleteManager deleteManager) {
-        LOGGER.info("ENTER InternalResourceTopicContent.delete() " + getIntId() + " " + getReq().getRemoteAddr());
+        LOGGER.info("ENTER InternalResourceTopicContent.delete() " + getIntId() + " " + getReq().getRemoteHost());
 
-        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteAddr(), getIntId())) {
+        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteHost(), getIntId())) {
             LOGGER.info("Deletion Manager says this file is already deleted");
             return Response.Status.NOT_FOUND.getStatusCode();
         }
 
-        deleteManager.delete(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteAddr(), getIntId());
+        deleteManager.delete(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteHost(), getIntId());
 
         /* pretend to be deleted */
         return Response.Status.NO_CONTENT.getStatusCode();

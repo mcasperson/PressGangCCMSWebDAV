@@ -56,7 +56,7 @@ public class InternalResourceTopic extends InternalResource {
                 topic.setLastModifiedDate(EnversUtilities.getFixedLastModifiedDate(entityManager, topic));
 
                 /* Don't list the contents if it is "deleted" */
-                if (!deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteAddr(), topic.getId())) {
+                if (!deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteHost(), topic.getId())) {
                     responses.add(InternalResourceTopicContent.getProperties(getUriInfo(), topic, false));
                 }
             }

@@ -95,7 +95,7 @@ public abstract class InternalResource {
     }
 
     public static javax.ws.rs.core.Response propfind(@NotNull final DeleteManager deleteManager, @NotNull final HttpServletRequest req, @NotNull final UriInfo uriInfo, final int depth) {
-        LOGGER.info("ENTER InternalResource.propfind() " + uriInfo.getPath() + " " + depth + " " + req.getRemoteAddr());
+        LOGGER.info("ENTER InternalResource.propfind() " + uriInfo.getPath() + " " + depth + " " + req.getRemoteHost());
 
         final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
 
@@ -113,7 +113,7 @@ public abstract class InternalResource {
     }
 
     public static javax.ws.rs.core.Response copy(@NotNull final DeleteManager deleteManager, @NotNull final HttpServletRequest req, @NotNull final UriInfo uriInfo, @NotNull final String overwriteStr, @NotNull final String destination) {
-        LOGGER.info("ENTER InternalResource.copy() " + uriInfo.getPath() + " " + destination + " " + req.getRemoteAddr());
+        LOGGER.info("ENTER InternalResource.copy() " + uriInfo.getPath() + " " + destination + " " + req.getRemoteHost());
 
         try {
             final HRef destHRef = new HRef(destination);
@@ -146,7 +146,7 @@ public abstract class InternalResource {
 
     public static javax.ws.rs.core.Response move(@NotNull final DeleteManager deleteManager, @NotNull final HttpServletRequest req, @NotNull final UriInfo uriInfo, @NotNull final String overwriteStr, @NotNull final String destination) {
 
-        LOGGER.info("ENTER InternalResource.move() " + uriInfo.getPath() + " " + destination + " " + req.getRemoteAddr());
+        LOGGER.info("ENTER InternalResource.move() " + uriInfo.getPath() + " " + destination + " " + req.getRemoteHost());
 
         /*
             We can't move outside of the filesystem
@@ -182,7 +182,7 @@ public abstract class InternalResource {
     }
 
     public static javax.ws.rs.core.Response delete(@NotNull final DeleteManager deleteManager, @NotNull final HttpServletRequest req, @NotNull final UriInfo uriInfo) {
-        LOGGER.info("ENTER InternalResource.delete() " + uriInfo.getPath() + " " + req.getRemoteAddr());
+        LOGGER.info("ENTER InternalResource.delete() " + uriInfo.getPath() + " " + req.getRemoteHost());
 
         final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
 
@@ -194,7 +194,7 @@ public abstract class InternalResource {
     }
 
     public static ByteArrayReturnValue get(@NotNull final DeleteManager deleteManager, @NotNull final HttpServletRequest req, @NotNull final UriInfo uriInfo) {
-        LOGGER.info("ENTER InternalResource.get() " + uriInfo.getPath() + " " + req.getRemoteAddr());
+        LOGGER.info("ENTER InternalResource.get() " + uriInfo.getPath() + " " + req.getRemoteHost());
 
         final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
 
@@ -211,7 +211,7 @@ public abstract class InternalResource {
     }
 
     public static javax.ws.rs.core.Response put(@NotNull final DeleteManager deleteManager, @NotNull final HttpServletRequest req, @NotNull final UriInfo uriInfo, @NotNull final InputStream entityStream) {
-        LOGGER.info("ENTER InternalResource.put() " + uriInfo.getPath() + " " + req.getRemoteAddr());
+        LOGGER.info("ENTER InternalResource.put() " + uriInfo.getPath() + " " + req.getRemoteHost());
 
         try {
             final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
