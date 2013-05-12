@@ -262,8 +262,8 @@ fi
 echo Starting saxon test 1
 echo '<article><title>test</title><para>hi</para></article>' > "${TEMP_DOC}"
 echo '<article><title>test</title><para>hi</para></article>' > "${TEST_DOC}"
-saxon -o:/tmp/docbook1.html "${TEMP_DOC}" "${DOCBOOK_HTML_XSL}" 2> /dev/null
-saxon -o:/tmp/docbook2.html "${TEST_DOC}" "${DOCBOOK_HTML_XSL}" 2> /dev/null
+saxon-xslt -o:/tmp/docbook1.html "${TEMP_DOC}" "${DOCBOOK_HTML_XSL}" 2> /dev/null
+saxon-xslt -o:/tmp/docbook2.html "${TEST_DOC}" "${DOCBOOK_HTML_XSL}" 2> /dev/null
 diff /tmp/docbook1.html /tmp/docbook2.html
 
 if [[ $? -ne 0 ]]
