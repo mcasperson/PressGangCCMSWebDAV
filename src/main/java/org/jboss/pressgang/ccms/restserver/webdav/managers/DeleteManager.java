@@ -62,7 +62,7 @@ public class DeleteManager {
             deletedResources.get(resourceType).containsKey(remoteAddress) &&
             deletedResources.get(resourceType).get(remoteAddress).containsKey(id)) {
                 deletedResources.get(resourceType).get(remoteAddress).remove(id);
-            }
         }
     }
+
 }
