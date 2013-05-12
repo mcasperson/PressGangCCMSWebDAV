@@ -13,7 +13,9 @@ import org.jboss.pressgang.ccms.restserver.webdav.managers.ResourceTypes;
 import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.topic.fields.InternalResourceTempTopicFile;
 import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.topic.fields.InternalResourceTopicContent;
 
+import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriInfo;
 import java.io.File;
 import java.util.ArrayList;
@@ -23,8 +25,8 @@ import java.util.List;
  * Represents the available fields and temporary files associated with a topic.
  */
 public class InternalResourceTopic extends InternalResource {
-    public InternalResourceTopic(final UriInfo uriInfo, final Integer intId) {
-        super(uriInfo, intId);
+    public InternalResourceTopic(final UriInfo uriInfo, @Nullable final HttpServletRequest req, final Integer intId) {
+        super(uriInfo, req, intId);
     }
 
     @Override
@@ -54,7 +56,7 @@ public class InternalResourceTopic extends InternalResource {
                 topic.setLastModifiedDate(EnversUtilities.getFixedLastModifiedDate(entityManager, topic));
 
                 /* Don't list the contents if it is "deleted" */
-                if (!deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, topic.getId())) {
+                if (!deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteAddr(), topic.getId())) {
                     responses.add(InternalResourceTopicContent.getProperties(getUriInfo(), topic, false));
                 }
             }

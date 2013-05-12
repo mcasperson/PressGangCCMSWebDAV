@@ -16,43 +16,52 @@ import java.util.Map;
 @ApplicationScoped
 public class DeleteManager {
 
-    final Map<ResourceTypes, HashMap<Integer, Calendar>> deletedResources = new HashMap<ResourceTypes, HashMap<Integer, Calendar>>();
+    /**
+     * TODO: make an object to represent a delete request
+     * A resource type mapped to a remote address mapped to an id mapped to a deletion time.
+     */
+    final Map<ResourceTypes, HashMap<String, HashMap<Integer, Calendar>>> deletedResources = new HashMap<ResourceTypes, HashMap<String, HashMap<Integer, Calendar>>>();
 
-    synchronized public boolean isDeleted(final ResourceTypes resourceType, final Integer id) {
+    synchronized public boolean isDeleted(final ResourceTypes resourceType, final String remoteAddress, final Integer id) {
         if (deletedResources.containsKey(resourceType)) {
-            final HashMap<Integer, Calendar> specificDeletedResources = deletedResources.get(resourceType);
-            if (specificDeletedResources.containsKey(id)) {
-                final Calendar deletionDate = specificDeletedResources.get(id);
-                final Calendar window = Calendar.getInstance();
-                window.add(Calendar.SECOND, -WebDavConstants.DELETE_WINDOW);
+            final HashMap<String, HashMap<Integer, Calendar>> specificDeletedResources = deletedResources.get(resourceType);
 
-                if (deletionDate.before(window)) {
-                    specificDeletedResources.remove(id);
-                    return false;
+            if (specificDeletedResources.containsKey(remoteAddress)) {
+                if (specificDeletedResources.get(remoteAddress).containsKey(id)) {
+                    final Calendar deletionDate = specificDeletedResources.get(remoteAddress).get(id);
+                    final Calendar window = Calendar.getInstance();
+                    window.add(Calendar.SECOND, -WebDavConstants.DELETE_WINDOW);
+
+                    if (deletionDate.before(window)) {
+                        specificDeletedResources.remove(id);
+                        return false;
+                    }
+
+                    return true;
                 }
-
-                return true;
             }
         }
 
         return false;
     }
 
-    synchronized public void delete(final ResourceTypes resourceType, final Integer id) {
+    synchronized public void delete(final ResourceTypes resourceType, final String remoteAddress, final Integer id) {
         if (!deletedResources.containsKey(resourceType)) {
-            deletedResources.put(resourceType, new HashMap<Integer, Calendar>());
+            deletedResources.put(resourceType, new HashMap<String, HashMap<Integer, Calendar>>());
         }
 
-        deletedResources.get(resourceType).put(id, Calendar.getInstance());
+        if (deletedResources.get(resourceType).containsKey(remoteAddress))  {
+            deletedResources.get(resourceType).put(remoteAddress, new HashMap<Integer, Calendar>());
+        }
+
+        deletedResources.get(resourceType).get(remoteAddress).put(id, Calendar.getInstance());
     }
 
-    synchronized public void create(final ResourceTypes resourceType, final Integer id) {
-        if (!deletedResources.containsKey(resourceType)) {
-            deletedResources.put(resourceType, new HashMap<Integer, Calendar>());
-        }
-
-        if (deletedResources.get(resourceType).containsKey(id)) {
-            deletedResources.get(resourceType).remove(id);
+    synchronized public void create(final ResourceTypes resourceType, final String remoteAddress, final Integer id) {
+        if (deletedResources.containsKey(resourceType) && deletedResources.get(resourceType).containsKey(remoteAddress)) {
+            if (deletedResources.get(resourceType).get(remoteAddress).containsKey(id)) {
+                deletedResources.get(resourceType).remove(id);
+            }
         }
     }
 }

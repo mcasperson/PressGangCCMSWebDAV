@@ -9,7 +9,7 @@ package org.jboss.pressgang.ccms.restserver.webdav.constants;
  */
 public class WebDavConstants {
     public static final String TEMP_LOCATION = "/tmp/pressgang-webdav-temp";
-    public static final int DELETE_WINDOW = 5;
+    public static final int DELETE_WINDOW = 10 * 60;
 
     private WebDavConstants() {
 

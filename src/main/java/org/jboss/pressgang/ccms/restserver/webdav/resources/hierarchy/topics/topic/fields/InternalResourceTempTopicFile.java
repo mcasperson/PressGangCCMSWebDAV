@@ -10,6 +10,8 @@ import org.jboss.pressgang.ccms.restserver.webdav.resources.MultiStatusReturnVal
 import org.jboss.pressgang.ccms.restserver.webdav.resources.ByteArrayReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 
+import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -29,8 +31,8 @@ public class InternalResourceTempTopicFile extends InternalResource {
 
     private static final Logger LOGGER = Logger.getLogger(InternalResourceTempTopicFile.class.getName());
 
-    public InternalResourceTempTopicFile(final UriInfo uriInfo, final String path) {
-        super(uriInfo, path);
+    public InternalResourceTempTopicFile(final UriInfo uriInfo, @Nullable final HttpServletRequest req, final String path) {
+        super(uriInfo, req, path);
     }
 
     @Override

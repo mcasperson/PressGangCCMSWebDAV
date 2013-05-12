@@ -7,6 +7,8 @@ import org.jboss.pressgang.ccms.restserver.webdav.resources.InternalResource;
 import org.jboss.pressgang.ccms.restserver.webdav.resources.MultiStatusReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.InternalResourceTopicVirtualFolder;
 
+import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +17,8 @@ import java.util.List;
  * The root folder of the WebDAV hierarchy.
  */
 public class InternalResourceRoot extends InternalResource {
-    public InternalResourceRoot(final UriInfo uriInfo, final String stringId) {
-        super(uriInfo, stringId);
+    public InternalResourceRoot(final UriInfo uriInfo, @Nullable final HttpServletRequest req, final String stringId) {
+        super(uriInfo, req, stringId);
     }
 
     @Override

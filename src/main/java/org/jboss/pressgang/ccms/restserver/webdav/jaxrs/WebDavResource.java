@@ -25,6 +25,7 @@ import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.core.Context;
@@ -52,10 +53,12 @@ public class WebDavResource {
     @Inject
     protected DeleteManager deleteManager;
 
+    @Context private HttpServletRequest req;
+
     @GET
     @Produces("application/octet-stream")
     public javax.ws.rs.core.Response get(@Context final UriInfo uriInfo) {
-        final ByteArrayReturnValue stringValueReturn = InternalResource.get(deleteManager, uriInfo);
+        final ByteArrayReturnValue stringValueReturn = InternalResource.get(deleteManager, req, uriInfo);
         if (stringValueReturn.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
             return javax.ws.rs.core.Response.status(stringValueReturn.getStatusCode()).build();
         }
@@ -66,7 +69,7 @@ public class WebDavResource {
     @PUT
     @Consumes("*/*")
     public javax.ws.rs.core.Response put(@Context final UriInfo uriInfo, final InputStream entityStream) throws IOException, URISyntaxException {
-        return InternalResource.put(deleteManager, uriInfo, entityStream);
+        return InternalResource.put(deleteManager, req, uriInfo, entityStream);
     }
 
     @MKCOL
@@ -79,7 +82,7 @@ public class WebDavResource {
     @PROPFIND
     public javax.ws.rs.core.Response propfind(@Context final UriInfo uriInfo, @HeaderParam(DEPTH) final int depth) throws URISyntaxException, IOException {
         LOGGER.info("ENTER WebDavResource.propfind()");
-        return InternalResource.propfind(deleteManager, uriInfo, depth);
+        return InternalResource.propfind(deleteManager, req, uriInfo, depth);
     }
 
     @PROPPATCH
@@ -90,7 +93,7 @@ public class WebDavResource {
 
     @COPY
     public javax.ws.rs.core.Response copy(@Context final UriInfo uriInfo, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) {
-        return InternalResource.copy(deleteManager, uriInfo, overwriteStr, destination);
+        return InternalResource.copy(deleteManager, req, uriInfo, overwriteStr, destination);
     }
 
     /*
@@ -104,12 +107,12 @@ public class WebDavResource {
      */
     @MOVE
     public javax.ws.rs.core.Response move(@Context final UriInfo uriInfo, @HeaderParam(OVERWRITE) final String overwriteStr, @HeaderParam(DESTINATION) final String destination) throws URISyntaxException {
-        return InternalResource.move(deleteManager, uriInfo, overwriteStr, destination);
+        return InternalResource.move(deleteManager, req, uriInfo, overwriteStr, destination);
     }
 
     @DELETE
     public javax.ws.rs.core.Response delete(@Context final UriInfo uriInfo) {
-        return InternalResource.delete(deleteManager, uriInfo);
+        return InternalResource.delete(deleteManager, req, uriInfo);
     }
 
     @OPTIONS

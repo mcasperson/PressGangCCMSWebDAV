@@ -12,7 +12,9 @@ import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.ResourceTypes;
 import org.jboss.pressgang.ccms.restserver.webdav.system.FixedCreationDate;
 
+import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.TransactionManager;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -29,8 +31,8 @@ public class InternalResourceTopicContent extends InternalResource {
 
     private static final Logger LOGGER = Logger.getLogger(InternalResourceTopicContent.class.getName());
 
-    public InternalResourceTopicContent(final UriInfo uriInfo, final Integer intId) {
-        super(uriInfo, intId);
+    public InternalResourceTopicContent(final UriInfo uriInfo, @Nullable final HttpServletRequest req, final Integer intId) {
+        super(uriInfo, req, intId);
     }
 
     @Override
@@ -61,7 +63,7 @@ public class InternalResourceTopicContent extends InternalResource {
                 entityManager.flush();
                 transactionManager.commit();
 
-                deleteManager.create(ResourceTypes.TOPIC_CONTENTS, getIntId());
+                deleteManager.create(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteAddr(), getIntId());
 
                 return Response.Status.NO_CONTENT.getStatusCode();
             }
@@ -90,7 +92,7 @@ public class InternalResourceTopicContent extends InternalResource {
 
         LOGGER.info("ENTER InternalResourceTopicContent.get() " + getIntId());
 
-        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getIntId())) {
+        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteAddr(), getIntId())) {
             LOGGER.info("Deletion Manager says this file is deleted");
             return new ByteArrayReturnValue(Response.Status.NOT_FOUND.getStatusCode(), null);
         }
@@ -121,12 +123,12 @@ public class InternalResourceTopicContent extends InternalResource {
     public int delete(final DeleteManager deleteManager) {
         LOGGER.info("ENTER InternalResourceTopicContent.delete() " + getIntId());
 
-        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getIntId())) {
+        if (deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteAddr(), getIntId())) {
             LOGGER.info("Deletion Manager says this file is already deleted");
             return Response.Status.NOT_FOUND.getStatusCode();
         }
 
-        deleteManager.delete(ResourceTypes.TOPIC_CONTENTS, getIntId());
+        deleteManager.delete(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteAddr(), getIntId());
 
         /* pretend to be deleted */
         return Response.Status.NO_CONTENT.getStatusCode();

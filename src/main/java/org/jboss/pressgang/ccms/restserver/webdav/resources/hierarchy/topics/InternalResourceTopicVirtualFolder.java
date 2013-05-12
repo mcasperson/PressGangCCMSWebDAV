@@ -8,7 +8,9 @@ import org.jboss.pressgang.ccms.restserver.webdav.resources.InternalResource;
 import org.jboss.pressgang.ccms.restserver.webdav.resources.MultiStatusReturnValue;
 import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 
+import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +25,8 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
     public static final String RESOURCE_NAME = "TOPICS";
     private static final Logger LOGGER = Logger.getLogger(InternalResourceTopicVirtualFolder.class.getName());
 
-    public InternalResourceTopicVirtualFolder(final UriInfo uriInfo, final String stringId) {
-        super(uriInfo, stringId);
+    public InternalResourceTopicVirtualFolder(final UriInfo uriInfo, @Nullable final HttpServletRequest req, final String stringId) {
+        super(uriInfo, req, stringId);
     }
 
     @Override

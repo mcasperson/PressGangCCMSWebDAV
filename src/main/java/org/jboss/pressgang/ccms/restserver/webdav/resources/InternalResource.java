@@ -10,6 +10,7 @@ import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.top
 import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.topic.fields.InternalResourceTopicContent;
 
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -60,17 +61,21 @@ public abstract class InternalResource {
     private final String stringId;
     @Nullable
     private final UriInfo uriInfo;
+    @Nullable
+    private final HttpServletRequest req;
 
-    protected InternalResource(@Nullable final UriInfo uriInfo, @NotNull final Integer intId) {
+    protected InternalResource(@Nullable final UriInfo uriInfo, @Nullable HttpServletRequest req, @NotNull final Integer intId) {
         this.intId = intId;
         this.stringId = null;
         this.uriInfo = uriInfo;
+        this.req = req;
     }
 
-    protected InternalResource(@Nullable final UriInfo uriInfo, @NotNull final String stringId) {
+    protected InternalResource(@Nullable final UriInfo uriInfo, @Nullable HttpServletRequest req, @NotNull final String stringId) {
         this.intId = null;
         this.stringId = stringId;
         this.uriInfo = uriInfo;
+        this.req = req;
     }
 
     public int write(@NotNull final DeleteManager deleteManager, @NotNull final byte[] contents) {
@@ -89,10 +94,10 @@ public abstract class InternalResource {
         throw new UnsupportedOperationException();
     }
 
-    public static javax.ws.rs.core.Response propfind(@NotNull final DeleteManager deleteManager, @NotNull final UriInfo uriInfo, final int depth) {
+    public static javax.ws.rs.core.Response propfind(@NotNull final DeleteManager deleteManager, @NotNull HttpServletRequest req, @NotNull final UriInfo uriInfo, final int depth) {
         LOGGER.info("ENTER InternalResource.propfind() " + uriInfo.getPath() + " " + depth);
 
-        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
+        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
 
         if (sourceResource != null) {
             final MultiStatusReturnValue multiStatusReturnValue = sourceResource.propfind(deleteManager, depth);
@@ -107,15 +112,15 @@ public abstract class InternalResource {
         return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND).build();
     }
 
-    public static javax.ws.rs.core.Response copy(@NotNull final DeleteManager deleteManager, @NotNull final UriInfo uriInfo, @NotNull final String overwriteStr, @NotNull final String destination) {
+    public static javax.ws.rs.core.Response copy(@NotNull final DeleteManager deleteManager, @NotNull HttpServletRequest req, @NotNull final UriInfo uriInfo, @NotNull final String overwriteStr, @NotNull final String destination) {
         LOGGER.info("ENTER InternalResource.copy() " + uriInfo.getPath() + " " + destination);
 
         try {
             final HRef destHRef = new HRef(destination);
             final URI destUriInfo = destHRef.getURI();
 
-            final InternalResource destinationResource = InternalResource.getInternalResource(null, destUriInfo.getPath());
-            final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
+            final InternalResource destinationResource = InternalResource.getInternalResource(null, req, destUriInfo.getPath());
+            final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
 
             if (destinationResource != null && sourceResource != null) {
                 final ByteArrayReturnValue byteArrayReturnValue = sourceResource.get(deleteManager);
@@ -139,7 +144,7 @@ public abstract class InternalResource {
         return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND).build();
     }
 
-    public static javax.ws.rs.core.Response move(@NotNull final DeleteManager deleteManager, @NotNull final UriInfo uriInfo, @NotNull final String overwriteStr, @NotNull final String destination) {
+    public static javax.ws.rs.core.Response move(@NotNull final DeleteManager deleteManager, @NotNull HttpServletRequest req, @NotNull final UriInfo uriInfo, @NotNull final String overwriteStr, @NotNull final String destination) {
 
         LOGGER.info("ENTER InternalResource.move() " + uriInfo.getPath() + " " + destination);
 
@@ -150,8 +155,8 @@ public abstract class InternalResource {
             return javax.ws.rs.core.Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        final InternalResource destinationResource = InternalResource.getInternalResource(null, "/" + destination.replaceFirst(uriInfo.getBaseUri().toString(), ""));
-        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
+        final InternalResource destinationResource = InternalResource.getInternalResource(null, req, "/" + destination.replaceFirst(uriInfo.getBaseUri().toString(), ""));
+        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
 
         if (destinationResource != null && sourceResource != null) {
             final ByteArrayReturnValue byteArrayReturnValue = sourceResource.get(deleteManager);
@@ -176,8 +181,8 @@ public abstract class InternalResource {
         return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND).build();
     }
 
-    public static javax.ws.rs.core.Response delete(final DeleteManager deleteManager, final UriInfo uriInfo) {
-        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
+    public static javax.ws.rs.core.Response delete(@NotNull final DeleteManager deleteManager, @NotNull HttpServletRequest req, @NotNull final UriInfo uriInfo) {
+        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
 
         if (sourceResource != null) {
             return javax.ws.rs.core.Response.status(sourceResource.delete(deleteManager)).build();
@@ -186,8 +191,8 @@ public abstract class InternalResource {
         return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND).build();
     }
 
-    public static ByteArrayReturnValue get(@NotNull final DeleteManager deleteManager, @NotNull final UriInfo uriInfo) {
-        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
+    public static ByteArrayReturnValue get(@NotNull final DeleteManager deleteManager, @NotNull HttpServletRequest req, @NotNull final UriInfo uriInfo) {
+        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
 
         if (sourceResource != null) {
             ByteArrayReturnValue statusCode;
@@ -201,9 +206,9 @@ public abstract class InternalResource {
         return new ByteArrayReturnValue(javax.ws.rs.core.Response.Status.NOT_FOUND.getStatusCode(), null);
     }
 
-    public static javax.ws.rs.core.Response put(@NotNull final DeleteManager deleteManager, @NotNull final UriInfo uriInfo, @NotNull final InputStream entityStream) {
+    public static javax.ws.rs.core.Response put(@NotNull final DeleteManager deleteManager, @NotNull HttpServletRequest req, @NotNull final UriInfo uriInfo, @NotNull final InputStream entityStream) {
         try {
-            final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, uriInfo.getPath());
+            final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
 
             if (sourceResource != null) {
                 final byte[] data = IOUtils.toByteArray(entityStream);
@@ -225,7 +230,7 @@ public abstract class InternalResource {
      * @param uri The request URI
      * @return  The object to handle the response, or null if the URL is invalid.
      */
-    public static InternalResource getInternalResource(@Nullable final UriInfo uri, @NotNull final String requestPath) {
+    public static InternalResource getInternalResource(@Nullable final UriInfo uri, @NotNull HttpServletRequest req, @NotNull final String requestPath) {
 
         LOGGER.info("ENTER InternalResource.getInternalResource() " + requestPath);
 
@@ -239,32 +244,34 @@ public abstract class InternalResource {
         final Matcher topicContents = TOPIC_CONTENTS_RE.matcher(requestPath);
         if (topicContents.matches()) {
             LOGGER.info("Matched InternalResourceTopicContent");
-            return new InternalResourceTopicContent(uri, Integer.parseInt(topicContents.group("TopicID")));
+            return new InternalResourceTopicContent(uri, req, Integer.parseInt(topicContents.group("TopicID")));
         }
 
         final Matcher topicFolder = TOPIC_FOLDER_RE.matcher(requestPath);
         if (topicFolder.matches()) {
             LOGGER.info("Matched InternalResourceTopicVirtualFolder");
-            return new InternalResourceTopicVirtualFolder(uri, requestPath);
+            return new InternalResourceTopicVirtualFolder(uri, req, requestPath);
         }
 
         final Matcher rootFolder = ROOT_FOLDER_RE.matcher(requestPath);
         if (rootFolder.matches()) {
             LOGGER.info("Matched InternalResourceRoot");
-            return new InternalResourceRoot(uri, requestPath);
+            return new InternalResourceRoot(uri, req, requestPath);
         }
 
         final Matcher topic = TOPIC_RE.matcher(requestPath);
         if (topic.matches()) {
             LOGGER.info("Matched InternalResourceTopic");
-            return new InternalResourceTopic(uri, Integer.parseInt(topic.group("TopicID")));
+            return new InternalResourceTopic(uri, req, Integer.parseInt(topic.group("TopicID")));
         }
 
         final Matcher topicTemp = TOPIC_TEMP_FILE_RE.matcher(requestPath);
         if (topicTemp.matches()) {
             LOGGER.info("Matched InternalResourceTempTopicFile");
-            return new InternalResourceTempTopicFile(uri, requestPath);
+            return new InternalResourceTempTopicFile(uri, req, requestPath);
         }
+
+
 
         LOGGER.info("None matched");
         return null;
@@ -348,5 +355,10 @@ public abstract class InternalResource {
     @Nullable
     public String getStringId() {
         return stringId;
+    }
+
+    @Nullable
+    public HttpServletRequest getReq() {
+        return req;
     }
 }
