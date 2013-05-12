@@ -363,8 +363,8 @@ java -jar "${JING_JAR}" "${TEMP_DOC}" "${DOCBOOK_DTD}" > /tmp/jing1.tmp
 java -jar "${JING_JAR}" "${TEST_DOC}" "${DOCBOOK_DTD}" > /tmp/jing2.tmp
 
 # The file names change
-sed -e 's#'${TEMP_DOC}'##g' /tmp/jing1.tmp | sponge /tmp/jing1.tmp
-sed -e 's#'${TEST_DOC}'##g' /tmp/jing2.tmp | sponge /tmp/jing2.tmp
+sed -e -i 's#'${TEMP_DOC}'##g' /tmp/jing1.tmp
+sed -e -i 's#'${TEST_DOC}'##g' /tmp/jing2.tmp
 
 diff /tmp/jing1.tmp /tmp/jing2.tmp
 
