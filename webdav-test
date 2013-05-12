@@ -184,8 +184,8 @@ echo '<section></section1>' > "${TEST_DOC}"
 xmllint --valid "${TEMP_DOC}" 2> /tmp/xml1.tmp
 xmllint --valid "${TEST_DOC}" 2> /tmp/xml2.tmp
 
-sed -e 's/${TEMP_DOC}//g' /tmp/xml1.tmp > /tmp/xml1.tmp
-sed -e 's/${TEST_DOC}//g' /tmp/xml2.tmp > /tmp/xml2.tmp
+sed -i -e 's#${TEMP_DOC}##g' /tmp/xml1.tmp
+sed -i -e 's#${TEST_DOC}##g' /tmp/xml2.tmp
 
 diff /tmp/xml1.tmp /tmp/xml2.tmp
 
@@ -212,8 +212,8 @@ fi
 echo Starting sed test 1
 echo '<!-- sed test -->' > "${TEMP_DOC}"
 echo '<!-- sed test -->' > "${TEST_DOC}"
-sed -i 's/test/sedreplaced/g' "${TEMP_DOC}"
-sed -i 's/test/sedreplaced/g' "${TEST_DOC}"
+sed -i -e 's/test/sedreplaced/g' "${TEMP_DOC}"
+sed -i -e 's/test/sedreplaced/g' "${TEST_DOC}"
 diff "${TEST_DOC}" "${TEMP_DOC}"
 
 if [[ $? -ne 0 ]]
@@ -279,8 +279,8 @@ xsltproc -o /tmp/docbook1.html "${DOCBOOK_HTML_XSL}" "${TEMP_DOC}"
 xsltproc -o /tmp/docbook2.html "${DOCBOOK_HTML_XSL}" "${TEST_DOC}" 
 
 # the name attributes change
-sed -i 's/name=\".*\"//g' /tmp/docbook1.html
-sed -i 's/name=\".*\"//g' /tmp/docbook2.html
+sed -i -e 's/name=\".*\"//g' /tmp/docbook1.html
+sed -i -e 's/name=\".*\"//g' /tmp/docbook2.html
 
 diff /tmp/docbook1.html /tmp/docbook2.html
 
@@ -324,14 +324,14 @@ cd /tmp/bookwebdav
 publican build --langs=en-US --formats=html-single
 
 # the id and href attributes change, as well as the book title and entity references
-sed -i 's/id=\".*\"//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
-sed -i 's/href=\".*\"//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
-sed -i 's/<title>bookwebdav<\/title>//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
-sed -i 's/bookwebdav.ent//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
-sed -i 's/id=\".*\"//g' /tmp/book/tmp/en-US/html-single/index.html
-sed -i 's/href=\".*\"//g' /tmp/book/tmp/en-US/html-single/index.html
-sed -i 's/<title>book<\/title>//g' /tmp/book/tmp/en-US/html-single/index.html
-sed -i 's/book.ent//g' /tmp/book/tmp/en-US/html-single/index.html
+sed -i -e 's/id=\".*\"//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
+sed -i -e 's/href=\".*\"//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
+sed -i -e 's/<title>bookwebdav<\/title>//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
+sed -i -e 's/bookwebdav.ent//g' /tmp/bookwebdav/tmp/en-US/html-single/index.html
+sed -i -e 's/id=\".*\"//g' /tmp/book/tmp/en-US/html-single/index.html
+sed -i -e 's/href=\".*\"//g' /tmp/book/tmp/en-US/html-single/index.html
+sed -i -e 's/<title>book<\/title>//g' /tmp/book/tmp/en-US/html-single/index.html
+sed -i -e 's/book.ent//g' /tmp/book/tmp/en-US/html-single/index.html
 
 diff /tmp/book/tmp/en-US/html-single/index.html /tmp/bookwebdav/tmp/en-US/html-single/index.html
 
@@ -363,8 +363,8 @@ java -jar "${JING_JAR}" "${TEMP_DOC}" "${DOCBOOK_DTD}" > /tmp/jing1.tmp
 java -jar "${JING_JAR}" "${TEST_DOC}" "${DOCBOOK_DTD}" > /tmp/jing2.tmp
 
 # The file names change
-sed -e -i 's#'${TEMP_DOC}'##g' /tmp/jing1.tmp
-sed -e -i 's#'${TEST_DOC}'##g' /tmp/jing2.tmp
+sed -i -e 's#'${TEMP_DOC}'##g' /tmp/jing1.tmp
+sed -i -e 's#'${TEST_DOC}'##g' /tmp/jing2.tmp
 
 diff /tmp/jing1.tmp /tmp/jing2.tmp
 
