@@ -9,6 +9,7 @@ import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.Int
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +18,12 @@ import java.util.List;
  * The root folder of the WebDAV hierarchy.
  */
 public class InternalResourceRoot extends InternalResource {
-    public InternalResourceRoot(final UriInfo uriInfo, @Nullable final HttpServletRequest req, final String stringId) {
-        super(uriInfo, req, stringId);
+    public InternalResourceRoot(final UriInfo uriInfo, @NotNull final DeleteManager deleteManager, @Nullable final HttpServletRequest req, final String stringId) {
+        super(uriInfo, deleteManager, req, stringId);
     }
 
     @Override
-    public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
+    public MultiStatusReturnValue propfind(final int depth) {
 
         if (getUriInfo() == null) {
             throw new IllegalStateException("Can not perform propfind without uriInfo");

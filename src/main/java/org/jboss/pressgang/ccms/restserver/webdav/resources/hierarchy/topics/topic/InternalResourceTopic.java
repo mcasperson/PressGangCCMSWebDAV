@@ -16,6 +16,7 @@ import org.jboss.pressgang.ccms.restserver.webdav.resources.hierarchy.topics.top
 import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.UriInfo;
 import java.io.File;
 import java.util.ArrayList;
@@ -25,12 +26,12 @@ import java.util.List;
  * Represents the available fields and temporary files associated with a topic.
  */
 public class InternalResourceTopic extends InternalResource {
-    public InternalResourceTopic(final UriInfo uriInfo, @Nullable final HttpServletRequest req, final Integer intId) {
-        super(uriInfo, req, intId);
+    public InternalResourceTopic(final UriInfo uriInfo, @NotNull final DeleteManager deleteManager, @Nullable final HttpServletRequest req, final Integer intId) {
+        super(uriInfo, deleteManager, req, intId);
     }
 
     @Override
-    public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
+    public MultiStatusReturnValue propfind(final int depth) {
 
         if (getUriInfo() == null) {
             throw new IllegalStateException("Can not perform propfind without uriInfo");
@@ -56,7 +57,7 @@ public class InternalResourceTopic extends InternalResource {
                 topic.setLastModifiedDate(EnversUtilities.getFixedLastModifiedDate(entityManager, topic));
 
                 /* Don't list the contents if it is "deleted" */
-                if (!deleteManager.isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteHost(), topic.getId())) {
+                if (!getDeleteManager().isDeleted(ResourceTypes.TOPIC_CONTENTS, getReq().getRemoteHost(), topic.getId())) {
                     responses.add(InternalResourceTopicContent.getProperties(getUriInfo(), topic, false));
                 }
             }

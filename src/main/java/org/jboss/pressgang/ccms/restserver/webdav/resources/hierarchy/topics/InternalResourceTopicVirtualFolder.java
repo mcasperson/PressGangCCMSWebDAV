@@ -11,6 +11,7 @@ import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +26,12 @@ public class InternalResourceTopicVirtualFolder extends InternalResource {
     public static final String RESOURCE_NAME = "TOPICS";
     private static final Logger LOGGER = Logger.getLogger(InternalResourceTopicVirtualFolder.class.getName());
 
-    public InternalResourceTopicVirtualFolder(final UriInfo uriInfo, @Nullable final HttpServletRequest req, final String stringId) {
-        super(uriInfo, req, stringId);
+    public InternalResourceTopicVirtualFolder(final UriInfo uriInfo, @NotNull final DeleteManager deleteManager, @Nullable final HttpServletRequest req, final String stringId) {
+        super(uriInfo, deleteManager, req, stringId);
     }
 
     @Override
-    public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
+    public MultiStatusReturnValue propfind(final int depth) {
 
         LOGGER.info("ENTER InternalResourceTopicVirtualFolder.propfind() " + depth + " " + getStringId());
 

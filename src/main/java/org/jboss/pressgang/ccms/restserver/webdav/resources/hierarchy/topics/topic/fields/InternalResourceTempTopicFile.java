@@ -12,6 +12,7 @@ import org.jboss.pressgang.ccms.restserver.webdav.managers.DeleteManager;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -31,12 +32,12 @@ public class InternalResourceTempTopicFile extends InternalResource {
 
     private static final Logger LOGGER = Logger.getLogger(InternalResourceTempTopicFile.class.getName());
 
-    public InternalResourceTempTopicFile(final UriInfo uriInfo, @Nullable final HttpServletRequest req, final String path) {
-        super(uriInfo, req, path);
+    public InternalResourceTempTopicFile(final UriInfo uriInfo, @NotNull final DeleteManager deleteManager, @Nullable final HttpServletRequest req, final String path) {
+        super(uriInfo, deleteManager, req, path);
     }
 
     @Override
-    public int write(final DeleteManager deleteManager, final byte[] contents) {
+    public int write(final byte[] contents) {
         LOGGER.info("ENTER InternalResourceTempTopicFile.write() " + getStringId());
 
         try {
@@ -67,7 +68,7 @@ public class InternalResourceTempTopicFile extends InternalResource {
     }
 
     @Override
-    public ByteArrayReturnValue get(final DeleteManager deleteManager) {
+    public ByteArrayReturnValue get() {
 
         LOGGER.info("ENTER InternalResourceTempTopicFile.get() " + getStringId());
 
@@ -96,7 +97,7 @@ public class InternalResourceTempTopicFile extends InternalResource {
     }
 
     @Override
-    public int delete(final DeleteManager deleteManager) {
+    public int delete() {
         LOGGER.info("ENTER InternalResourceTempTopicFile.delete() " + getStringId());
 
         final String fileLocation = buildTempFileName(getStringId());
@@ -111,7 +112,7 @@ public class InternalResourceTempTopicFile extends InternalResource {
     }
 
     @Override
-    public MultiStatusReturnValue propfind(final DeleteManager deleteManager, final int depth) {
+    public MultiStatusReturnValue propfind(final int depth) {
 
         if (getUriInfo() == null) {
             throw new IllegalStateException("Can not perform propfind without uriInfo");

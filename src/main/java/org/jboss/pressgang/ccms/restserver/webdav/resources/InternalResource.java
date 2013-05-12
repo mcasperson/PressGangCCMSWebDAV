@@ -63,44 +63,47 @@ public abstract class InternalResource {
     private final UriInfo uriInfo;
     @Nullable
     private final HttpServletRequest req;
+    @NotNull private final DeleteManager deleteManager;
 
-    protected InternalResource(@Nullable final UriInfo uriInfo, @Nullable final HttpServletRequest req, @NotNull final Integer intId) {
+    protected InternalResource(@Nullable final UriInfo uriInfo, final DeleteManager deleteManager, @Nullable final HttpServletRequest req, @NotNull final Integer intId) {
         this.intId = intId;
         this.stringId = null;
         this.uriInfo = uriInfo;
         this.req = req;
+        this.deleteManager = deleteManager;
     }
 
-    protected InternalResource(@Nullable final UriInfo uriInfo, @Nullable final HttpServletRequest req, @NotNull final String stringId) {
+    protected InternalResource(@Nullable final UriInfo uriInfo, final DeleteManager deleteManager, @Nullable final HttpServletRequest req, @NotNull final String stringId) {
         this.intId = null;
         this.stringId = stringId;
         this.uriInfo = uriInfo;
         this.req = req;
+        this.deleteManager = deleteManager;
     }
 
-    public int write(@NotNull final DeleteManager deleteManager, @NotNull final byte[] contents) {
+    public int write(@NotNull final byte[] contents) {
         throw new UnsupportedOperationException();
     }
 
-    public int delete(@NotNull final DeleteManager deleteManager) {
+    public int delete() {
         throw new UnsupportedOperationException();
     }
 
-    public ByteArrayReturnValue get(@NotNull final DeleteManager deleteManager) {
+    public ByteArrayReturnValue get() {
         throw new UnsupportedOperationException();
     }
 
-    public MultiStatusReturnValue propfind(@NotNull final DeleteManager deleteManager, final int depth) {
+    public MultiStatusReturnValue propfind(final int depth) {
         throw new UnsupportedOperationException();
     }
 
     public static javax.ws.rs.core.Response propfind(@NotNull final DeleteManager deleteManager, @NotNull final HttpServletRequest req, @NotNull final UriInfo uriInfo, final int depth) {
         LOGGER.info("ENTER InternalResource.propfind() " + uriInfo.getPath() + " " + depth + " " + req.getRemoteHost());
 
-        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
+        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, deleteManager, req, uriInfo.getPath());
 
         if (sourceResource != null) {
-            final MultiStatusReturnValue multiStatusReturnValue = sourceResource.propfind(deleteManager, depth);
+            final MultiStatusReturnValue multiStatusReturnValue = sourceResource.propfind(depth);
 
             if (multiStatusReturnValue.getStatusCode() != 207) {
                 return javax.ws.rs.core.Response.status(multiStatusReturnValue.getStatusCode()).build();
@@ -119,18 +122,18 @@ public abstract class InternalResource {
             final HRef destHRef = new HRef(destination);
             final URI destUriInfo = destHRef.getURI();
 
-            final InternalResource destinationResource = InternalResource.getInternalResource(null, req, destUriInfo.getPath());
-            final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
+            final InternalResource destinationResource = InternalResource.getInternalResource(null, deleteManager, req, destUriInfo.getPath());
+            final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, deleteManager, req, uriInfo.getPath());
 
             if (destinationResource != null && sourceResource != null) {
-                final ByteArrayReturnValue byteArrayReturnValue = sourceResource.get(deleteManager);
+                final ByteArrayReturnValue byteArrayReturnValue = sourceResource.get();
 
                 if (byteArrayReturnValue.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
                     return javax.ws.rs.core.Response.status(byteArrayReturnValue.getStatusCode()).build();
                 }
 
                 int statusCode;
-                if ((statusCode = destinationResource.write(deleteManager, byteArrayReturnValue.getValue())) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
+                if ((statusCode = destinationResource.write(byteArrayReturnValue.getValue())) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
                     return javax.ws.rs.core.Response.status(statusCode).build();
                 }
 
@@ -155,22 +158,22 @@ public abstract class InternalResource {
             return javax.ws.rs.core.Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        final InternalResource destinationResource = InternalResource.getInternalResource(null, req, "/" + destination.replaceFirst(uriInfo.getBaseUri().toString(), ""));
-        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
+        final InternalResource destinationResource = InternalResource.getInternalResource(null, deleteManager, req, "/" + destination.replaceFirst(uriInfo.getBaseUri().toString(), ""));
+        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, deleteManager, req, uriInfo.getPath());
 
         if (destinationResource != null && sourceResource != null) {
-            final ByteArrayReturnValue byteArrayReturnValue = sourceResource.get(deleteManager);
+            final ByteArrayReturnValue byteArrayReturnValue = sourceResource.get();
 
             if (byteArrayReturnValue.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
                 return javax.ws.rs.core.Response.status(byteArrayReturnValue.getStatusCode()).build();
             }
 
             int statusCode;
-            if ((statusCode = destinationResource.write(deleteManager, byteArrayReturnValue.getValue())) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
+            if ((statusCode = destinationResource.write(byteArrayReturnValue.getValue())) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
                 return javax.ws.rs.core.Response.status(statusCode).build();
             }
 
-            if ((statusCode = sourceResource.delete(deleteManager)) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
+            if ((statusCode = sourceResource.delete()) != javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode()) {
                 return javax.ws.rs.core.Response.status(statusCode).build();
             }
 
@@ -184,10 +187,10 @@ public abstract class InternalResource {
     public static javax.ws.rs.core.Response delete(@NotNull final DeleteManager deleteManager, @NotNull final HttpServletRequest req, @NotNull final UriInfo uriInfo) {
         LOGGER.info("ENTER InternalResource.delete() " + uriInfo.getPath() + " " + req.getRemoteHost());
 
-        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
+        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, deleteManager, req, uriInfo.getPath());
 
         if (sourceResource != null) {
-            return javax.ws.rs.core.Response.status(sourceResource.delete(deleteManager)).build();
+            return javax.ws.rs.core.Response.status(sourceResource.delete()).build();
         }
 
         return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND).build();
@@ -196,11 +199,11 @@ public abstract class InternalResource {
     public static ByteArrayReturnValue get(@NotNull final DeleteManager deleteManager, @NotNull final HttpServletRequest req, @NotNull final UriInfo uriInfo) {
         LOGGER.info("ENTER InternalResource.get() " + uriInfo.getPath() + " " + req.getRemoteHost());
 
-        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
+        final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, deleteManager, req, uriInfo.getPath());
 
         if (sourceResource != null) {
             ByteArrayReturnValue statusCode;
-            if ((statusCode = sourceResource.get(deleteManager)).getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
+            if ((statusCode = sourceResource.get()).getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
                 return statusCode;
             }
 
@@ -214,12 +217,12 @@ public abstract class InternalResource {
         LOGGER.info("ENTER InternalResource.put() " + uriInfo.getPath() + " " + req.getRemoteHost());
 
         try {
-            final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, req, uriInfo.getPath());
+            final InternalResource sourceResource = InternalResource.getInternalResource(uriInfo, deleteManager, req, uriInfo.getPath());
 
             if (sourceResource != null) {
                 final byte[] data = IOUtils.toByteArray(entityStream);
 
-                int statusCode = sourceResource.write(deleteManager, data);
+                int statusCode = sourceResource.write(data);
                 return javax.ws.rs.core.Response.status(statusCode).build();
             }
 
@@ -236,7 +239,7 @@ public abstract class InternalResource {
      * @param uri The request URI
      * @return  The object to handle the response, or null if the URL is invalid.
      */
-    public static InternalResource getInternalResource(@Nullable final UriInfo uri, @NotNull final HttpServletRequest req, @NotNull final String requestPath) {
+    public static InternalResource getInternalResource(@Nullable final UriInfo uri, @NotNull final DeleteManager deleteManager, @NotNull final HttpServletRequest req, @NotNull final String requestPath) {
 
         LOGGER.info("ENTER InternalResource.getInternalResource() " + requestPath);
 
@@ -250,31 +253,31 @@ public abstract class InternalResource {
         final Matcher topicContents = TOPIC_CONTENTS_RE.matcher(requestPath);
         if (topicContents.matches()) {
             LOGGER.info("Matched InternalResourceTopicContent");
-            return new InternalResourceTopicContent(uri, req, Integer.parseInt(topicContents.group("TopicID")));
+            return new InternalResourceTopicContent(uri, deleteManager, req, Integer.parseInt(topicContents.group("TopicID")));
         }
 
         final Matcher topicFolder = TOPIC_FOLDER_RE.matcher(requestPath);
         if (topicFolder.matches()) {
             LOGGER.info("Matched InternalResourceTopicVirtualFolder");
-            return new InternalResourceTopicVirtualFolder(uri, req, requestPath);
+            return new InternalResourceTopicVirtualFolder(uri, deleteManager, req, requestPath);
         }
 
         final Matcher rootFolder = ROOT_FOLDER_RE.matcher(requestPath);
         if (rootFolder.matches()) {
             LOGGER.info("Matched InternalResourceRoot");
-            return new InternalResourceRoot(uri, req, requestPath);
+            return new InternalResourceRoot(uri, deleteManager, req, requestPath);
         }
 
         final Matcher topic = TOPIC_RE.matcher(requestPath);
         if (topic.matches()) {
             LOGGER.info("Matched InternalResourceTopic");
-            return new InternalResourceTopic(uri, req, Integer.parseInt(topic.group("TopicID")));
+            return new InternalResourceTopic(uri, deleteManager, req, Integer.parseInt(topic.group("TopicID")));
         }
 
         final Matcher topicTemp = TOPIC_TEMP_FILE_RE.matcher(requestPath);
         if (topicTemp.matches()) {
             LOGGER.info("Matched InternalResourceTempTopicFile");
-            return new InternalResourceTempTopicFile(uri, req, requestPath);
+            return new InternalResourceTempTopicFile(uri, deleteManager, req, requestPath);
         }
 
 
@@ -366,5 +369,9 @@ public abstract class InternalResource {
     @Nullable
     public HttpServletRequest getReq() {
         return req;
+    }
+
+    public DeleteManager getDeleteManager() {
+        return deleteManager;
     }
 }
