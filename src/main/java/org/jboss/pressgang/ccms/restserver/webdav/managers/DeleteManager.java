@@ -58,9 +58,10 @@ public class DeleteManager {
     }
 
     synchronized public void create(final ResourceTypes resourceType, final String remoteAddress, final Integer id) {
-        if (deletedResources.containsKey(resourceType) && deletedResources.get(resourceType).containsKey(remoteAddress)) {
-            if (deletedResources.get(resourceType).get(remoteAddress).containsKey(id)) {
-                deletedResources.get(resourceType).remove(id);
+        if (deletedResources.containsKey(resourceType) &&
+            deletedResources.get(resourceType).containsKey(remoteAddress) &&
+            deletedResources.get(resourceType).get(remoteAddress).containsKey(id)) {
+                deletedResources.get(resourceType).get(remoteAddress).remove(id);
             }
         }
     }
